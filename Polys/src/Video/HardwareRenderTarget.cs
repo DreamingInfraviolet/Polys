@@ -29,18 +29,53 @@ namespace Polys.Video
         1.0f, 1.0f, 1.0f, 1.0f};
         uint mScreenQuadVBO;
 
+        public HardwareRenderTarget(uint width, uint height, int lowResWidth, int lowResHeight)
+        {
+            initQuad();
+            initShaders();
+            resize(width, height);
+
+            mLowResBuffer = createFramebuffer(new System.Drawing.Size(lowResWidth, lowResHeight));
+        }
+        public void shutdown()
+        {
+            if (mBuffer1 != null)
+                mBuffer1.Dispose();
+            if (mBuffer2 != null)
+                mBuffer2.Dispose();
+            if (mpSoftwareToHardware != null)
+                mpSoftwareToHardware.Dispose();
+        }
+        void initQuad()
+        {
+            mScreenQuadVBO = ~0u;
+            mScreenQuadVBO = Gl.GenBuffer();
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
+            Gl.BufferData<float>(BufferTarget.ArrayBuffer, sizeof(float) * mScreenQuad.Length, mScreenQuad, BufferUsageHint.StaticDraw);
+            Gl.EnableVertexAttribArray(0);
+            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
+        }
+
+        public void clear()
+        {
+            setSourceBuffer();
+            Gl.Clear(ClearBufferMask.ColorBufferBit);
+            setTargetBuffer();
+            Gl.Clear(ClearBufferMask.ColorBufferBit);
+            mLowResBuffer.Enable();
+            Gl.Clear(ClearBufferMask.ColorBufferBit);
+        }
+
         public void draw(TileLayer layer, Camera camera)
         {
-
             if (layer.visible == false)
                 return;
 
             mDrawIndexedBitmapShader.Use();
             mLowResBuffer.Enable();
-            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
-            Gl.EnableVertexAttribArray(0);
-            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
-            
+
+            bindScreenQuad();
+
             foreach (Tile tile in layer.tiles)
             {
                 if (!tile.visible)
@@ -65,84 +100,17 @@ namespace Polys.Video
             }
         }
 
-        public void clear()
-        {
-            setSourceBuffer();
-            Gl.Clear(ClearBufferMask.ColorBufferBit);
-            setTargetBuffer();
-            Gl.Clear(ClearBufferMask.ColorBufferBit);
-        }
-
-            void initQuad()
-        {
-            mScreenQuadVBO = ~0u;
-            mScreenQuadVBO = Gl.GenBuffer();
-            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
-            Gl.BufferData<float>(BufferTarget.ArrayBuffer, sizeof(float) * mScreenQuad.Length, mScreenQuad, BufferUsageHint.StaticDraw);
-            Gl.EnableVertexAttribArray(0);
-            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
-        }
-
-        public void shutdown()
-        {
-            if (mBuffer1 != null)
-                mBuffer1.Dispose();
-            if (mBuffer2 != null)
-                mBuffer2.Dispose();
-            if (mpSoftwareToHardware != null)
-                mpSoftwareToHardware.Dispose();
-        }
-
-        public HardwareRenderTarget(uint width, uint height, int lowResWidth, int lowResHeight)
-        {
-            initQuad();
-            initShaders();
-            resize(width, height);
-
-            mLowResBuffer = new FBO(new System.Drawing.Size(lowResWidth, lowResHeight));
-        }
-
-        private void setBuffer(bool index)
-        {
-            if (index)
-                mBuffer2.Enable();
-            else
-                mBuffer1.Enable();
-
-            Gl.DrawBuffer(DrawBufferMode.ColorAttachment0);
-            Gl.Viewport(0, 0, (int)mWidth, (int)mHeight);
-        }
-
-        private void setSourceBuffer() { setBuffer(mBufferIndex); }
-        private void setTargetBuffer() { setBuffer(!mBufferIndex); }
-
-        private FBO getBuffer(bool index)
-        {
-            if (index)
-                return mBuffer2;
-            else
-                return mBuffer1;
-        }
-
-        private FBO getSourceBuffer() { return getBuffer(mBufferIndex); }
-        private FBO getTargetBuffer() { return getBuffer(!mBufferIndex); }
-
-        
         void _TextureToFullres(uint lowResTexId, int width, int height)
         {
             setSourceBuffer();
             Gl.ClearColor(0, 0, 1, 1);
-
             Gl.Clear(ClearBufferMask.ColorBufferBit);
 
             mpSoftwareToHardware.Use();
             mpSoftwareToHardware["sourceWidth"].SetValue((float)width);
             mpSoftwareToHardware["sourceHeight"].SetValue((float)height);
 
-            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
-            Gl.EnableVertexAttribArray(0);
-            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
-
+            bindScreenQuad();
             Gl.BindTexture(TextureTarget.Texture2D, lowResTexId);
             Gl.ActiveTexture(TextureUnit.Texture0);
 
@@ -159,16 +127,43 @@ namespace Polys.Video
         {
             mpHardwareToScreen.Use();
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
-            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
-            Gl.EnableVertexAttribArray(0);
-            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
-
+            bindScreenQuad();
             Gl.BindTexture(TextureTarget.Texture2D, getSourceBuffer().TextureID[0]);
             Gl.ActiveTexture(TextureUnit.Texture0);
             Gl.DrawArrays(BeginMode.Triangles, 0, 6);
         }
+        
+        void bindScreenQuad()
+        {
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
+            Gl.EnableVertexAttribArray(0);
+            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
+        }
 
+        private void setBuffer(bool index)
+        {
+            if (index)
+                mBuffer2.Enable();
+            else
+                mBuffer1.Enable();
+
+            Gl.DrawBuffer(DrawBufferMode.ColorAttachment0);
+            Gl.Viewport(0, 0, (int)mWidth, (int)mHeight);
+        }
+        private void setSourceBuffer() { setBuffer(mBufferIndex); }
+        private void setTargetBuffer() { setBuffer(!mBufferIndex); }
+        
+        private FBO getBuffer(bool index)
+        {
+            if (index)
+                return mBuffer2;
+            else
+                return mBuffer1;
+        }
+        private FBO getSourceBuffer() { return getBuffer(mBufferIndex); }
+        private FBO getTargetBuffer() { return getBuffer(!mBufferIndex); }
+        
+        
         public static FBO createFramebuffer(System.Drawing.Size size)
         {
             FBO f = new FBO(size, FramebufferAttachment.ColorAttachment0, PixelInternalFormat.Rgba32f, false);
@@ -195,12 +190,7 @@ namespace Polys.Video
             mBuffer1 = createFramebuffer(sds);
             mBuffer2 = createFramebuffer(sds);
         }
-
-        public void renderSoftwareRenderTarget(SoftwareRenderTarget rt)
-        {
-            _TextureToFullres(rt.upload(), (int)rt.width, (int)rt.height);
-        }
-
+        
         private void initShaders()
         {
             mpSoftwareToHardware = new OpenGL.ShaderProgram(
@@ -268,7 +258,7 @@ namespace Polys.Video
                 void main()
                 {
                     gl_Position = vec4(vertuv.xy,0,1);             
-                    uv = vec2(vertuv.z, -vertuv.w);
+                    uv = vec2(vertuv.z, vertuv.w);
                 }",
 
     //Fragment shader
@@ -279,8 +269,7 @@ namespace Polys.Video
 
                 void main()
                 {
-                    //gl_FragColor = texture(paletteTexture, texture(indexTexture, uv).r);
-gl_FragColor=vec4(1,1,1,1);
+                    gl_FragColor = texture(paletteTexture, texture(indexTexture, uv).r);
                 }");
             if (mDrawIndexedBitmapShader.FragmentShader.ShaderLog.Length != 0)
                 throw new Exception("Error compiling fragment shader: " + mDrawIndexedBitmapShader.FragmentShader.ShaderLog);

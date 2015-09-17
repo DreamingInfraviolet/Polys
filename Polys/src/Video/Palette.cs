@@ -68,13 +68,13 @@ namespace Polys.Video
             OpenGL.Gl.BindTexture(OpenGL.TextureTarget.Texture1D, colourTexture);
             OpenGL.Gl.TexImage1D(OpenGL.TextureTarget.Texture1D, 0, OpenGL.PixelInternalFormat.Rgba8, 256, 0, OpenGL.PixelFormat.Rgba, 
                 OpenGL.PixelType.UnsignedByte, System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(colours, 0));
-            OpenGL.Gl.TexParameteri(OpenGL.TextureTarget.Texture2D, OpenGL.TextureParameterName.TextureMagFilter, OpenGL.TextureParameter.Nearest);
-            OpenGL.Gl.TexParameteri(OpenGL.TextureTarget.Texture2D, OpenGL.TextureParameterName.TextureMinFilter, OpenGL.TextureParameter.Nearest);
+            OpenGL.Gl.TexParameteri(OpenGL.TextureTarget.Texture1D, OpenGL.TextureParameterName.TextureMagFilter, OpenGL.TextureParameter.Nearest);
+            OpenGL.Gl.TexParameteri(OpenGL.TextureTarget.Texture1D, OpenGL.TextureParameterName.TextureMinFilter, OpenGL.TextureParameter.Nearest);
         }
 
         public void bind()
         {
-            OpenGL.Gl.ActiveTexture(OpenGL.TextureUnit.Texture1);
+
             OpenGL.Gl.BindTexture(OpenGL.TextureTarget.Texture1D, colourTexture);
         }
     }

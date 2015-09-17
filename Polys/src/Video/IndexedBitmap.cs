@@ -54,7 +54,7 @@ namespace Polys.Video
 
         public void bind()
         {
-            Gl.ActiveTexture(TextureUnit.Texture0);
+
             Gl.BindTexture(TextureTarget.Texture2D, indexTexture);
         }
     }
