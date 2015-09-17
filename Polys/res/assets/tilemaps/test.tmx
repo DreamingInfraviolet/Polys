@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="23" height="19" tilewidth="16" tileheight="16" nextobjectid="11">
+ <tileset firstgid="1" name="Test" tilewidth="16" tileheight="16">
+  <image source="../tilesets/Sprite-0004.bmp" trans="ff00ff" width="256" height="256"/>
+  <terraintypes>
+   <terrain name="Grass" tile="-1"/>
+   <terrain name="Dirt" tile="-1"/>
+  </terraintypes>
+  <tile id="68" terrain="1,1,1,1"/>
+  <tile id="69" terrain="1,1,1,1"/>
+  <tile id="70" terrain="1,1,1,0"/>
+  <tile id="71" terrain="1,1,0,0"/>
+  <tile id="72" terrain="1,1,0,0"/>
+  <tile id="73" terrain="1,1,0,0"/>
+  <tile id="74" terrain="1,1,0,1"/>
+  <tile id="84" terrain="1,1,1,1"/>
+  <tile id="85" terrain="1,1,1,1"/>
+  <tile id="86" terrain="1,0,1,0"/>
+  <tile id="87" terrain="0,0,0,0"/>
+  <tile id="88" terrain="0,0,0,0"/>
+  <tile id="89" terrain="0,0,0,0"/>
+  <tile id="90" terrain="0,1,0,1"/>
+  <tile id="100" terrain="0,0,0,1"/>
+  <tile id="101" terrain="0,0,1,0"/>
+  <tile id="102" terrain="1,0,1,0"/>
+  <tile id="103" terrain="0,0,0,0"/>
+  <tile id="104" terrain="0,0,0,0"/>
+  <tile id="105" terrain="0,0,0,0"/>
+  <tile id="106" terrain="0,1,0,1"/>
+  <tile id="116" terrain="0,1,0,0"/>
+  <tile id="117" terrain="1,0,0,0"/>
+  <tile id="118" terrain="1,0,1,0"/>
+  <tile id="119" terrain="0,0,0,0"/>
+  <tile id="120" terrain="0,0,0,0"/>
+  <tile id="121" terrain="0,0,0,0"/>
+  <tile id="122" terrain="0,1,0,1"/>
+  <tile id="134" terrain="1,0,1,1"/>
+  <tile id="135" terrain="0,0,1,1"/>
+  <tile id="136" terrain="0,0,1,1"/>
+  <tile id="137" terrain="0,0,1,1"/>
+  <tile id="138" terrain="0,1,1,1"/>
+ </tileset>
+ <layer name="Tile Layer 2" width="23" height="19">
+  <data encoding="base64" compression="zlib">
+   eJztVEFuwzAM0+fWbuk5ge2d19neuUPiPaDt+unJAIkwAXbbcQYIp6olipJss/+1X7OjYS/47ntyZNgzEB3BsTjq7r8K3yB7gT3jOwAVMcircXmOPk18spxp8GOMLDl3+5vj7jjDN+Ec+aJwVDlDjoQ94jvK2Q/Hk+MdNuYUZW84S3/yJ+FmHRbJ7eJ4dnxK3Fn2AH/WryFmFTs5KurwDdyAs+jUOpGHvsyLGtiXAPurYwIOjtFxlZp3LQO0UC8REYP6s9iL1JgYwXGVfIvUX2vBeTCpTYGt631IvAnxpx0H68SY2osZsYOtM5MlZ9bk6HhBP3sdTuDYzw7zbbYu1oF6WMvB1vlgr6jpCA72QPsX0S8T3kU4eM90vhI0jcj3IvHvtp2bL2imDs6g9lnvWrPtrCf5PQjPDdoOEk9nnFr4fuhd4cxyNhbhOaEPXNW2bxtnPNu273yLeIZ6dZb/aumd/239ABj0iJk=
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="23" height="19">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFIxnMBuKZZOibAaVbgbgNTW4mFM+CYhifWBAJxNOBeCoQT0OTg5k3Cw3PJsF8XACbO0l1Oz4wHY1PDTdjAzMIK8EKqO0emDtg8TUKRgE9AABQ6BNV
+  </data>
+ </layer>
+ <objectgroup name="MetaObjects"/>
+</map>

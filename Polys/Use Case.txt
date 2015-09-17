@@ -1,0 +1,18 @@
+Use case scenario ( :P ):
+
+The player starts the game (duh)
+The configuration file is read and used to initialise the application
+The player sees a fun little menu :3 They can click New Game, Load, Options and Quit. This is the MenuMode of the game (there are multiple modes implemented as interface-deriving classes)
+They click New Game, and the game begins.
+The screen fades in using a post-filter.
+An intro cinematic is played - recall that the whole system is parameter and event based.
+Characters move around and perform dialogue. Input is in dialogue mode - pressing one of the Skip buttons hurries a dialogue. Between dialogues, actors walk around, the scenes change, and items are picked up - can be achieved using non-player character controllers.
+The user can now play the game (PlayMode) - they can walk (up,down,left,right,topleft, topright, bottomleft, bottomright) and interact with interactible entities.
+They interact with a vial, picking it up.
+They press I to see their inventory (InventoryMode), and select the vial. They can either Drop it (it weighs stuff), investigate it, or drink it. They drink it, and their HP is restored.
+They leave the Inventory, back to the GameMode to see their full HP.
+They walk towards a door (the rest of the room is in darkness) and interact with it. If they have drunk the vial, they get to go outside. Otherwise they don't :b (just an example!)
+They go outside, and it's raining! They are now wet (global Player property mapping)
+
+
+
