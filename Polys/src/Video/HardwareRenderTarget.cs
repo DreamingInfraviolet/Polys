@@ -11,7 +11,7 @@ namespace Polys.Video
     {
         // Current index is the fx source, while the previous one is the target. Use source for drawing.
         bool mBufferIndex;
-        FBO mBuffer1, mBuffer2;
+        FBO mBuffer1, mBuffer2, mLowResBuffer;
         uint mWidth, mHeight;
 
         ShaderProgram mpSoftwareToHardware;
@@ -31,44 +31,38 @@ namespace Polys.Video
 
         public void draw(TileLayer layer, Camera camera)
         {
+
             if (layer.visible == false)
                 return;
 
-            foreach (Tile tile in layer.tiles)
-            {
-                draw(tile, camera);
-            }
-        }
-
-        //Draw into the source buffer
-        public void draw(Tile tile, Camera camera)
-        {
-            if (!tile.visible)
-                return;
-
-            //Get start coordinates and end
-            int startDrawX = tile.worldX * tile.tileset.tileWidth;
-            int startDrawY = tile.worldY * tile.tileset.tileHeight;
-            camera.worldToScreen(ref startDrawX, ref startDrawY);
-
-            int endDrawX = startDrawX + tile.tileset.tileWidth;
-            int endDrawY = startDrawY + tile.tileset.tileHeight;
-
-            //Check if they are on the screen
-            if (endDrawX < 0 || endDrawY < 0 || startDrawX >= (int)mWidth || startDrawY >= (int)mHeight)
-                return;
-
             mDrawIndexedBitmapShader.Use();
-            setSourceBuffer();
-
-            tile.tileset.image.bind();
-            tile.tileset.mPalette.bind();
-
+            mLowResBuffer.Enable();
             Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
             Gl.EnableVertexAttribArray(0);
             Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
+            
+            foreach (Tile tile in layer.tiles)
+            {
+                if (!tile.visible)
+                    return;
 
-            Gl.DrawArrays(BeginMode.Triangles, 0, 6);
+                //Get start coordinates and end
+                int startDrawX = tile.worldX * tile.tileset.tileWidth;
+                int startDrawY = tile.worldY * tile.tileset.tileHeight;
+                camera.worldToScreen(ref startDrawX, ref startDrawY);
+
+                int endDrawX = startDrawX + tile.tileset.tileWidth;
+                int endDrawY = startDrawY + tile.tileset.tileHeight;
+
+                //Check if they are on the screen
+                if (endDrawX < 0 || endDrawY < 0 || startDrawX >= (int)mWidth || startDrawY >= (int)mHeight)
+                    return;
+                
+                tile.tileset.image.bind();
+                tile.tileset.mPalette.bind();
+
+                Gl.DrawArrays(BeginMode.Triangles, 0, 6);
+            }
         }
 
         public void clear()
@@ -99,11 +93,13 @@ namespace Polys.Video
                 mpSoftwareToHardware.Dispose();
         }
 
-        public HardwareRenderTarget(uint width, uint height)
+        public HardwareRenderTarget(uint width, uint height, int lowResWidth, int lowResHeight)
         {
             initQuad();
             initShaders();
             resize(width, height);
+
+            mLowResBuffer = new FBO(new System.Drawing.Size(lowResWidth, lowResHeight));
         }
 
         private void setBuffer(bool index)
@@ -132,6 +128,32 @@ namespace Polys.Video
         private FBO getTargetBuffer() { return getBuffer(!mBufferIndex); }
 
         
+        void _TextureToFullres(uint lowResTexId, int width, int height)
+        {
+            setSourceBuffer();
+            Gl.ClearColor(0, 0, 1, 1);
+
+            Gl.Clear(ClearBufferMask.ColorBufferBit);
+
+            mpSoftwareToHardware.Use();
+            mpSoftwareToHardware["sourceWidth"].SetValue((float)width);
+            mpSoftwareToHardware["sourceHeight"].SetValue((float)height);
+
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
+            Gl.EnableVertexAttribArray(0);
+            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
+
+            Gl.BindTexture(TextureTarget.Texture2D, lowResTexId);
+            Gl.ActiveTexture(TextureUnit.Texture0);
+
+            Gl.DrawArrays(BeginMode.Triangles, 0, 6);
+        }
+
+        public void lowresToHighres()
+        {
+            _TextureToFullres(mLowResBuffer.TextureID[0], mLowResBuffer.Size.Width, mLowResBuffer.Size.Height);
+        }
+
         //Sets this as the current render target to be shown to screen
         public void finaliseAndSet()
         {
@@ -176,23 +198,7 @@ namespace Polys.Video
 
         public void renderSoftwareRenderTarget(SoftwareRenderTarget rt)
         {
-            setSourceBuffer();
-            Gl.ClearColor(0,0,1, 1);
-            
-            Gl.Clear(ClearBufferMask.ColorBufferBit);
-
-            mpSoftwareToHardware.Use();
-            mpSoftwareToHardware["sourceWidth"].SetValue((float)rt.width);
-            mpSoftwareToHardware["sourceHeight"].SetValue((float)rt.height);
-
-            Gl.BindBuffer(BufferTarget.ArrayBuffer, mScreenQuadVBO);
-            Gl.EnableVertexAttribArray(0);
-            Gl.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, sizeof(float) * 4, IntPtr.Zero);
-
-            Gl.BindTexture(TextureTarget.Texture2D, rt.upload());
-            Gl.ActiveTexture(TextureUnit.Texture0);
-
-            Gl.DrawArrays(BeginMode.Triangles, 0, 6);
+            _TextureToFullres(rt.upload(), (int)rt.width, (int)rt.height);
         }
 
         private void initShaders()
@@ -269,11 +275,12 @@ namespace Polys.Video
     @"#version 130
                 varying vec2 uv;
                 uniform sampler2D indexTexture;
-                uniform sampler2D paletteTexture;
+                uniform sampler1D paletteTexture;
 
                 void main()
                 {
-                    gl_FragColor = texture(paletteTexture, vec2(texture(indexTexture, uv).r,0));
+                    //gl_FragColor = texture(paletteTexture, texture(indexTexture, uv).r);
+gl_FragColor=vec4(1,1,1,1);
                 }");
             if (mDrawIndexedBitmapShader.FragmentShader.ShaderLog.Length != 0)
                 throw new Exception("Error compiling fragment shader: " + mDrawIndexedBitmapShader.FragmentShader.ShaderLog);

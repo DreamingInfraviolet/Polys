@@ -53,7 +53,7 @@ namespace Polys.Video
             SDL.SDL_GL_SetSwapInterval(0);
             
             mSoftwareRenderTarget = new SoftwareRenderTarget(256, 192);
-            mHardwareRenderTarget = new HardwareRenderTarget((uint)width, (uint)height);
+            mHardwareRenderTarget = new HardwareRenderTarget((uint)width, (uint)height, 256, 192);
 
             chromaticShiftFx = new Effect(
                 @"#version 130
@@ -113,8 +113,9 @@ namespace Polys.Video
                 mHardwareRenderTarget.draw(layer, camera);
             }
 
+            mHardwareRenderTarget.lowresToHighres();
             //mHardwareRenderTarget.renderSoftwareRenderTarget(mSoftwareRenderTarget);
-            mHardwareRenderTarget.applyEffect(chromaticShiftFx, timeParameter);
+            //mHardwareRenderTarget.applyEffect(chromaticShiftFx, timeParameter);
             mHardwareRenderTarget.finaliseAndSet();
 
 
