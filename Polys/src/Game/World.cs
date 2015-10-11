@@ -55,7 +55,6 @@ namespace Polys.Game
         */
         public bool step(long timeParameter)
         {
-
             mController.begin(timeParameter);
 
             if (mKeyTable[(int)SDL.SDL_Keycode.SDLK_ESCAPE])
