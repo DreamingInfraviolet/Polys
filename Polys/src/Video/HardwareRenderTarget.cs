@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OpenGL;
 
 /** Stores the image to be shown in hardware. Uses internal double buffering to allow one to apply
@@ -81,42 +82,51 @@ namespace Polys.Video
             //In normalised GL coordinates:
             Vector2 screenVec = new Vector2(mDrawTargetWidth, mDrawTargetHeight);
             
-            foreach (Tile tile in layer.tiles)
+            foreach (var tiles in layer.tileDict)
             {
-                if (!tile.visible)
-                    return;
+                //Bind tilesets
+                tiles.Key.image.bind();
+                tiles.Key.mPalette.bind();
 
-                //Get start coordinates and end
-                int startDrawX = tile.worldX * tile.tileset.tileWidth;
-                int startDrawY = tile.worldY * tile.tileset.tileHeight;
-                camera.worldToScreen(ref startDrawX, ref startDrawY);
+                int tileWidth = tiles.Key.tileWidth;
+                int tileHeight = tiles.Key.tileHeight;
+                int tilesetWidth = tiles.Key.image.width;
+                int tilesetHeight = tiles.Key.image.height;
 
-                //Check if they are on the screen
-                if (startDrawX + tile.tileset.tileWidth < 0 || startDrawY + tile.tileset.tileHeight < 0 || 
-                    startDrawX >= (int)mDrawTargetWidth || startDrawY >= (int)mDrawTargetHeight)
-                    continue;
-                
-                Vector2 p = (new Vector2(startDrawX, startDrawY) + 0.5f) / screenVec*2.0f-1.0f;
-                Vector2 s = new Vector2(tile.tileset.tileWidth, tile.tileset.tileHeight) / screenVec;
+                foreach (Tile tile in tiles.Value)
+                {
+                    if (!tile.visible)
+                        return;
 
-                Matrix4 orthoMatrix = new Matrix4(new float[] { s.x, 0, 0, 0,
+                    //Get start coordinates and end
+                    int startDrawX = tile.worldX * tileWidth;
+                    int startDrawY = tile.worldY * tileHeight;
+                    camera.worldToScreen(ref startDrawX, ref startDrawY);
+
+                    //Check if they are on the screen
+                    if (startDrawX + tileWidth < 0 || startDrawY + tileHeight < 0 ||
+                        startDrawX >= (int)mDrawTargetWidth || startDrawY >= (int)mDrawTargetHeight)
+                        continue;
+
+                    Vector2 p = (new Vector2(startDrawX, startDrawY) + 0.5f) / screenVec * 2.0f - 1.0f;
+                    Vector2 s = new Vector2(tileWidth, tileHeight) / screenVec;
+
+                    Matrix4 orthoMatrix = new Matrix4(new float[] { s.x, 0, 0, 0,
                                                            0, s.y, 0, 0,
                                                            0, 0, 0, 0,
                                                            s.x+p.x, s.y+p.y, 0, 1});
 
-                Matrix4 uvMatrix = new Matrix4(new float[] { (float)tile.tileset.tileWidth / tile.tileset.image.width, 0, 0, 0,
-                                                             0, (float)tile.tileset.tileHeight/tile.tileset.image.height, 0, 0,
+                    Matrix4 uvMatrix = new Matrix4(new float[] { (float)tileWidth /tilesetWidth, 0, 0, 0,
+                                                             0, (float)tileHeight/tilesetHeight, 0, 0,
                                                             0, 0, 0, 0,
-                                                            (tile.tilesetX*tile.tileset.tileWidth+0.5f)/(float)tile.tileset.image.width,
-                                                            (tile.tilesetY*tile.tileset.tileHeight+0.5f)/(float)tile.tileset.image.height, 0, 1});
+                                                            (float)(tile.tilesetX*tileWidth+0.5f)/tilesetWidth,
+                                                            (float)(tile.tilesetY*tileHeight+0.5f)/tilesetHeight, 0, 1});
 
-                mDrawIndexedBitmapShader["orthoMatrix"].SetValue(orthoMatrix);
-                mDrawIndexedBitmapShader["uvMatrix"].SetValue(uvMatrix);
-                
-                tile.tileset.image.bind();
-                tile.tileset.mPalette.bind();
+                    mDrawIndexedBitmapShader["orthoMatrix"].SetValue(orthoMatrix);
+                    mDrawIndexedBitmapShader["uvMatrix"].SetValue(uvMatrix);
 
-                Gl.DrawArrays(BeginMode.Triangles, 0, 6);
+                    Gl.DrawArrays(BeginMode.Triangles, 0, 6);
+                }
             }
         }
 
