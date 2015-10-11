@@ -12,7 +12,8 @@ namespace Polys.Video
         // Current index is the fx source, while the previous one is the target. Use source for drawing.
         bool mBufferIndex;
         FBO mBuffer1, mBuffer2, mLowResBuffer;
-        uint mWidth, mHeight;
+        uint mScreenWidth, mScreenHeight;
+        int mDrawTargetWidth, mDrawTargetHeight;
 
         ShaderProgram mpSoftwareToHardware;
         ShaderProgram mpHardwareToScreen;
@@ -35,6 +36,8 @@ namespace Polys.Video
             initShaders();
             resize(width, height);
 
+            mDrawTargetWidth = lowResWidth;
+            mDrawTargetHeight = lowResHeight;
             mLowResBuffer = createFramebuffer(new System.Drawing.Size(lowResWidth, lowResHeight));
         }
         public void shutdown()
@@ -65,17 +68,19 @@ namespace Polys.Video
             mLowResBuffer.Enable();
             Gl.Clear(ClearBufferMask.ColorBufferBit);
         }
-
+        
         public void draw(TileLayer layer, Camera camera)
         {
             if (layer.visible == false)
                 return;
 
             mDrawIndexedBitmapShader.Use();
-            mLowResBuffer.Enable();
 
             bindScreenQuad();
 
+            //In normalised GL coordinates:
+            Vector2 screenVec = new Vector2(mDrawTargetWidth, mDrawTargetHeight);
+            
             foreach (Tile tile in layer.tiles)
             {
                 if (!tile.visible)
@@ -86,12 +91,27 @@ namespace Polys.Video
                 int startDrawY = tile.worldY * tile.tileset.tileHeight;
                 camera.worldToScreen(ref startDrawX, ref startDrawY);
 
-                int endDrawX = startDrawX + tile.tileset.tileWidth;
-                int endDrawY = startDrawY + tile.tileset.tileHeight;
-
                 //Check if they are on the screen
-                if (endDrawX < 0 || endDrawY < 0 || startDrawX >= (int)mWidth || startDrawY >= (int)mHeight)
-                    return;
+                if (startDrawX + tile.tileset.tileWidth < 0 || startDrawY + tile.tileset.tileHeight < 0 || 
+                    startDrawX >= (int)mDrawTargetWidth || startDrawY >= (int)mDrawTargetHeight)
+                    continue;
+                
+                Vector2 p = (new Vector2(startDrawX, startDrawY) + 0.5f) / screenVec*2.0f-1.0f;
+                Vector2 s = new Vector2(tile.tileset.tileWidth, tile.tileset.tileHeight) / screenVec;
+
+                Matrix4 orthoMatrix = new Matrix4(new float[] { s.x, 0, 0, 0,
+                                                           0, s.y, 0, 0,
+                                                           0, 0, 0, 0,
+                                                           s.x+p.x, s.y+p.y, 0, 1});
+
+                Matrix4 uvMatrix = new Matrix4(new float[] { (float)tile.tileset.tileWidth / tile.tileset.image.width, 0, 0, 0,
+                                                             0, (float)tile.tileset.tileHeight/tile.tileset.image.height, 0, 0,
+                                                            0, 0, 0, 0,
+                                                            (tile.tilesetX*tile.tileset.tileWidth+0.5f)/(float)tile.tileset.image.width,
+                                                            (tile.tilesetY*tile.tileset.tileHeight+0.5f)/(float)tile.tileset.image.height, 0, 1});
+
+                mDrawIndexedBitmapShader["orthoMatrix"].SetValue(orthoMatrix);
+                mDrawIndexedBitmapShader["uvMatrix"].SetValue(uvMatrix);
                 
                 tile.tileset.image.bind();
                 tile.tileset.mPalette.bind();
@@ -103,7 +123,7 @@ namespace Polys.Video
         void _TextureToFullres(uint lowResTexId, int width, int height)
         {
             setSourceBuffer();
-            Gl.ClearColor(0, 0, 1, 1);
+            Gl.ClearColor(0, 0, 0, 1);
             Gl.Clear(ClearBufferMask.ColorBufferBit);
 
             mpSoftwareToHardware.Use();
@@ -143,12 +163,12 @@ namespace Polys.Video
         private void setBuffer(bool index)
         {
             if (index)
-                mBuffer2.Enable();
+                Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mBuffer2.BufferID);
             else
-                mBuffer1.Enable();
+                Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mBuffer1.BufferID);
 
             Gl.DrawBuffer(DrawBufferMode.ColorAttachment0);
-            Gl.Viewport(0, 0, (int)mWidth, (int)mHeight);
+            Gl.Viewport(0, 0, (int)mScreenWidth, (int)mScreenHeight);
         }
         private void setSourceBuffer() { setBuffer(mBufferIndex); }
         private void setTargetBuffer() { setBuffer(!mBufferIndex); }
@@ -175,8 +195,8 @@ namespace Polys.Video
 
         public void resize(uint width, uint height)
         {
-            mWidth = width;
-            mHeight = height;
+            mScreenWidth = width;
+            mScreenHeight = height;
 
             mpSoftwareToHardware.Use();
             mpSoftwareToHardware["screenWidth"].SetValue((float)width);
@@ -255,10 +275,12 @@ namespace Polys.Video
   @"#version 130
                 attribute vec4 vertuv;
                 varying vec2 uv;
+                uniform mat4 orthoMatrix;
+                uniform mat4 uvMatrix;
                 void main()
                 {
-                    gl_Position = vec4(vertuv.xy,0,1);             
-                    uv = vec2(vertuv.z, vertuv.w);
+                    gl_Position = orthoMatrix*vec4(vertuv.x,vertuv.y,0,1);             
+                    uv = (uvMatrix*vec4(vec2(vertuv.z, vertuv.w), 0, 1)).xy;
                 }",
 
     //Fragment shader

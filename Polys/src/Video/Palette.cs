@@ -9,10 +9,38 @@ namespace Polys.Video
     class Palette
     {
         //rgba format
-        public byte[] colours = new byte[256*4];
-        uint colourTexture=~0u;
+        public byte[] colours = new byte[256 * 4];
+        uint colourTexture = ~0u;
 
-        public Palette() {}
+        /** Sets the transparent colour of the palette. By default this is the first colour. */
+        public void setTransparentColour(int index)
+        {
+            //Reset all to 255
+            for (int i = 0; i < 256; ++i)
+                colours[(i << 2) + 3] = 255;
+
+            //Set colour at index to 0
+            colours[(index << 2) + 3] = 0;
+        }
+
+        public Palette() { }
+
+        public Colour this[int key]
+        {
+            get
+            {
+                int index = key << 2;
+                return new Colour(colours[index], colours[index+1], colours[index+2], colours[index+3]);
+            }
+            set
+            {
+                int index = key << 2;
+                colours[index] = value.r;
+                colours[index + 1] = value.g;
+                colours[index + 2] = value.b;
+                colours[index + 3] = value.a;
+            }
+        }
 
         public Palette(String path)
         {
@@ -32,12 +60,14 @@ namespace Polys.Video
                 for (int i = 0; i < numberOfColours; ++i)
                 {
                     Colour colour = new Colour(lines[i + 3]);
-                    int index = i * 4;
+                    int index = i << 2;
                     colours[index] = colour.r;
                     colours[index+1] = colour.g;
                     colours[index+2] = colour.b;
-                    colours[index+3] = colour.a;
                 }
+
+                setTransparentColour(0);
+
                 upload();
             }
             catch(Exception e)
@@ -55,8 +85,8 @@ namespace Polys.Video
                 colours[index] = colour.r;
                 colours[index + 1] = colour.g;
                 colours[index + 2] = colour.b;
-                colours[index + 3] = colour.a;
             }
+            setTransparentColour(0);
             upload();
         }
 

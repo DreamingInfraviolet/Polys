@@ -108,7 +108,6 @@
     <Compile Include="src\Video\HardwareRenderTarget.cs" />
     <Compile Include="src\Video\IndexedBitmap.cs" />
     <Compile Include="src\Video\Palette.cs" />
-    <Compile Include="src\Video\SoftwareRenderTarget.cs" />
     <Compile Include="src\Video\Tile.cs" />
     <Compile Include="src\Video\TileLayer.cs" />
     <Compile Include="src\Video\Tileset.cs" />

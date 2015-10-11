@@ -12,7 +12,6 @@ namespace Polys.Video
     {
         private IntPtr mWindow;
         private IntPtr mGglContext;
-        SoftwareRenderTarget mSoftwareRenderTarget;
         HardwareRenderTarget mHardwareRenderTarget;
         int mWidth, mHeight;
         
@@ -51,8 +50,10 @@ namespace Polys.Video
 
             //Set vsync on/off
             SDL.SDL_GL_SetSwapInterval(0);
-            
-            mSoftwareRenderTarget = new SoftwareRenderTarget(256, 192);
+
+            Gl.Enable(EnableCap.Blend);
+            Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
             mHardwareRenderTarget = new HardwareRenderTarget((uint)width, (uint)height, 256, 192);
 
             chromaticShiftFx = new Effect(
@@ -86,7 +87,6 @@ namespace Polys.Video
         public void shutdown()
         {
             mHardwareRenderTarget.shutdown();
-            mSoftwareRenderTarget.shutdown();
             SDL.SDL_GL_DeleteContext(mGglContext);
             SDL.SDL_DestroyWindow(mWindow);
         }
@@ -95,7 +95,7 @@ namespace Polys.Video
 
         public void draw(Game.World world, long timeParameter)
         {
-            Gl.ClearColor(1, 0, 0, 1);
+            Gl.ClearColor(0, 0, 0, 1);
             Gl.Clear(ClearBufferMask.ColorBufferBit);
             
             Game.Scene scene = world.scene;
@@ -114,7 +114,6 @@ namespace Polys.Video
             }
 
             mHardwareRenderTarget.lowresToHighres();
-            //mHardwareRenderTarget.renderSoftwareRenderTarget(mSoftwareRenderTarget);
             //mHardwareRenderTarget.applyEffect(chromaticShiftFx, timeParameter);
             mHardwareRenderTarget.finaliseAndSet();
 
