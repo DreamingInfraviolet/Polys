@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using SDL2;
-
-using TiledSharp;
+using Artemis;
+    
 
 /**
 * Responsible for handling scenes and storing all game data.
@@ -10,42 +10,42 @@ using TiledSharp;
 
 namespace Polys.Game
 {
-    class World
+    class World : IntentHandler
     {
         SceneList mSceneList = new SceneList();
-
-        Player mPlayer;
 
         CharacterController mController = new CharacterController();
 
         public Scene scene { get { return mSceneList.current; } private set { mSceneList.current = value; } }
         public Video.Camera camera { get; private set; }
         
-        //This keytable is used to handle continuous key presses.
-        //Once a key is pressed, it is stored until it is unpressed.
-        //Maps SDL_Keycode value to bool, as it's a non-linear enum.
-        public Dictionary<int, bool> mKeyTable;
+        public IntentManager intentManager = new IntentManager();
 
-        private void initKeyDictionary()
-        {
-            if (mKeyTable != null)
-                return;
-
-            mKeyTable = new Dictionary<int, bool>();
-            string[] entries = Enum.GetNames(typeof(SDL.SDL_Keycode));
-
-            for (int i = 0; i < entries.Length; ++i)
-                mKeyTable.Add((int)Enum.Parse(typeof(SDL.SDL_Keycode), entries[i]), false);
-        }
+        public bool running { get; private set; }
 
 
         public World()
         {
+            running = true;
             camera = new Video.Camera();
-            initKeyDictionary();
             mSceneList.current = mSceneList.get("startup.lua");
+            intentManager.addBinding(SDL.SDL_Keycode.SDLK_RIGHT, IntentManager.IntentType.WALK_RIGHT);
+            intentManager.addBinding(SDL.SDL_Keycode.SDLK_LEFT, IntentManager.IntentType.WALK_LEFT);
+            intentManager.addBinding(SDL.SDL_Keycode.SDLK_UP, IntentManager.IntentType.WALK_UP);
+            intentManager.addBinding(SDL.SDL_Keycode.SDLK_DOWN, IntentManager.IntentType.WALK_DOWN);
+            intentManager.addBinding(SDL.SDL_Keycode.SDLK_ESCAPE, IntentManager.IntentType.ESC);
+
+            intentManager.register(this, IntentManager.IntentType.ESC, IntentManager.KeyType.DOWN);
+            intentManager.register(mController, IntentManager.IntentType.WALK_DOWN, IntentManager.KeyType.HELD);
+            intentManager.register(mController, IntentManager.IntentType.WALK_LEFT, IntentManager.KeyType.HELD);
+            intentManager.register(mController, IntentManager.IntentType.WALK_RIGHT, IntentManager.KeyType.HELD);
+            intentManager.register(mController, IntentManager.IntentType.WALK_UP, IntentManager.KeyType.HELD);
         }
 
+        public void preIntent(long timeParameter)
+        {
+            mController.begin(timeParameter);
+        }
 
         /**
         * Performs a frame of the scene, with the timeParameter indicating the current run time in milliseconds.
@@ -53,35 +53,22 @@ namespace Polys.Game
         * @return True if the program should continue. False otherwise.
         * Assumes that SDL is initialised for the event system.
         */
-        public bool step(long timeParameter)
+        public void postIntent(long timeParameter)
         {
-            mController.begin(timeParameter);
-
-            if (mKeyTable[(int)SDL.SDL_Keycode.SDLK_ESCAPE])
-                return false;
-
-            if (mKeyTable[(int)SDL.SDL_Keycode.SDLK_w] || mKeyTable[(int)SDL.SDL_Keycode.SDLK_UP])
-                mController.addMoveVector(0, 1);
-            if (mKeyTable[(int)SDL.SDL_Keycode.SDLK_s] || mKeyTable[(int)SDL.SDL_Keycode.SDLK_DOWN])
-                mController.addMoveVector(0, -1);
-            if (mKeyTable[(int)SDL.SDL_Keycode.SDLK_d] || mKeyTable[(int)SDL.SDL_Keycode.SDLK_RIGHT])
-                mController.addMoveVector(1, 0);
-            if (mKeyTable[(int)SDL.SDL_Keycode.SDLK_a] || mKeyTable[(int)SDL.SDL_Keycode.SDLK_LEFT])
-                mController.addMoveVector(-1, 0);
-            
             mController.end();
-
             camera.move(mController.movementX, mController.movementY);
-            
-
-            
-            return true;
         }
 
         public void shutdown()
         {
             if (mSceneList != null)
                 mSceneList.Dispose();
+        }
+
+        public void handleIntent(IntentManager.IntentType intentCode, IntentManager.KeyType type)
+        {
+            if (intentCode == IntentManager.IntentType.ESC)
+                running = false;
         }
     }
 }
