@@ -41,16 +41,17 @@ class Program
         Polys.Audio.Audio audio;
         Polys.Game.World world;
 
+
         Genesis(out video, out audio, out world);
         
         System.Diagnostics.Stopwatch worldTimeBegin = new System.Diagnostics.Stopwatch();
         worldTimeBegin.Start();
 
-        //Configure world
-
+        Polys.Input input = new Polys.Input(world.intentManager);
+        
         bool run = true;
 
-        while (true && run)
+        while (world.running && run)
         {
             SDL.SDL_Event e;
             while (SDL.SDL_PollEvent(out e) != 0)
@@ -58,10 +59,10 @@ class Program
                 switch (e.type)
                 {
                     case SDL.SDL_EventType.SDL_KEYDOWN:
-                        world.mKeyTable[(int)e.key.keysym.sym] = true;
+                        input.keyDown(e.key.keysym.sym);
                         break;
                     case SDL.SDL_EventType.SDL_KEYUP:
-                        world.mKeyTable[(int)e.key.keysym.sym] = false;
+                        input.keyUp(e.key.keysym.sym);
                         break;
                     case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
                         break;
@@ -84,8 +85,9 @@ class Program
             }
 
             long time = worldTimeBegin.ElapsedMilliseconds;
-            if (!world.step(time))
-                break;
+            world.preIntent(time);
+            input.process();
+            world.postIntent(time);
             video.draw(world, time);
             audio.play(world);
         }
