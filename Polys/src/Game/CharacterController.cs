@@ -15,7 +15,7 @@ namespace Polys.Game
 
         public int movementX, movementY;
 
-        public void begin(long timeParameter)
+        public void begin(float deltaTime)
         {
             movementX = movementY = 0;
         }

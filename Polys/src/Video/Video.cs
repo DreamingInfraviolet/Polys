@@ -71,7 +71,7 @@ namespace Polys.Video
 
 
 
-        public void draw(Game.World world, long timeParameter)
+        public void draw(Game.World world)
         {
             Gl.ClearColor(0, 0, 0, 1);
             Gl.Clear(ClearBufferMask.ColorBufferBit);
@@ -96,7 +96,7 @@ namespace Polys.Video
 
             if (postFx)
             {
-                mHardwareRenderTarget.applyEffect(chromaticShiftFx, timeParameter);
+                mHardwareRenderTarget.applyEffect(chromaticShiftFx, Time.currentTime);
                 mHardwareRenderTarget.highresToScreen();
             }
             

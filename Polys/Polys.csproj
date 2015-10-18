@@ -103,6 +103,8 @@
     <Compile Include="src\Input.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\ScriptManager.cs" />
+    <Compile Include="src\Time.cs" />
     <Compile Include="src\Util\Pair.cs" />
     <Compile Include="src\Util\UniqueList.cs" />
     <Compile Include="src\Util\Util.cs" />
@@ -122,10 +124,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Components\" />
-    <Folder Include="src\Systems\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

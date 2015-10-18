@@ -19,7 +19,7 @@ namespace Polys.Game
         public Video.Camera camera { get; private set; }
         
         public IntentManager intentManager = new IntentManager();
-
+        
         public bool running { get; private set; }
 
 
@@ -41,9 +41,10 @@ namespace Polys.Game
             intentManager.register(mController, IntentManager.IntentType.WALK_UP, IntentManager.KeyType.HELD);  
         }
 
-        public void preIntent(long timeParameter)
+        public void frameStart()
         {
-            mController.begin(timeParameter);
+            Time.startFrame();
+            mController.begin(Time.deltaTime);
         }
 
         /**
@@ -52,10 +53,15 @@ namespace Polys.Game
         * @return True if the program should continue. False otherwise.
         * Assumes that SDL is initialised for the event system.
         */
-        public void postIntent(long timeParameter)
+        public void frameMiddle()
         {
             mController.end();
             camera.move(mController.movementX, mController.movementY);
+        }
+
+        public void frameEnd()
+        {
+            Time.endFrame();
         }
 
         public void shutdown()
