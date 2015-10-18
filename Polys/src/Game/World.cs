@@ -34,12 +34,12 @@ namespace Polys.Game
             intentManager.addBinding(SDL.SDL_Keycode.SDLK_UP, IntentManager.IntentType.WALK_UP);
             intentManager.addBinding(SDL.SDL_Keycode.SDLK_DOWN, IntentManager.IntentType.WALK_DOWN);
             intentManager.addBinding(SDL.SDL_Keycode.SDLK_ESCAPE, IntentManager.IntentType.ESC);
-
+                
             intentManager.register(this, IntentManager.IntentType.ESC, IntentManager.KeyType.DOWN);
             intentManager.register(mController, IntentManager.IntentType.WALK_DOWN, IntentManager.KeyType.HELD);
             intentManager.register(mController, IntentManager.IntentType.WALK_LEFT, IntentManager.KeyType.HELD);
             intentManager.register(mController, IntentManager.IntentType.WALK_RIGHT, IntentManager.KeyType.HELD);
-            intentManager.register(mController, IntentManager.IntentType.WALK_UP, IntentManager.KeyType.HELD);
+            intentManager.register(mController, IntentManager.IntentType.WALK_UP, IntentManager.KeyType.HELD);  
         }
 
         public void preIntent(long timeParameter)
