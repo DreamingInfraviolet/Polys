@@ -3,33 +3,55 @@ using SDL2;
 
 class Program
 {
+
+    static T retrieveValue<T> (MoonSharp.Interpreter.Table table, String str, T def)
+    {
+        MoonSharp.Interpreter.DynValue value = table.Get(str);
+        if (value.IsNilOrNan())
+            return def;
+        else
+        {
+            //Do some type checking
+            if (def is string && value.Type == MoonSharp.Interpreter.DataType.String)
+                return (T)Convert.ChangeType(value.String, typeof(T));
+            if (def is int && value.Type == MoonSharp.Interpreter.DataType.Number)
+                return (T)Convert.ChangeType((int)value.Number, typeof(T));
+            if (def is double && value.Type == MoonSharp.Interpreter.DataType.Number)
+                return (T)Convert.ChangeType(value.Number, typeof(T));
+            else
+                throw new Exception("Invalid type for variable " + value.ToString() + " in LUA table.");
+
+        }
+    }
+    
     /** Initialises the systems from script. */
     static void Genesis(out Polys.Video.Video video, out Polys.Audio.Audio audio, out Polys.Game.World world)
     {
-        video = new Polys.Video.Video(400, 300);
-        audio = new Polys.Audio.Audio();
-        world = new Polys.Game.World();
-
-        //Configure systems:
-
-        //Register classes to be configured
-        MoonSharp.Interpreter.UserData.RegisterType<Polys.Video.Video>();
-        MoonSharp.Interpreter.UserData.RegisterType<Polys.Audio.Audio>();
-        MoonSharp.Interpreter.UserData.RegisterType<Polys.Game.World>();
-
-        //Create MS objects:
-        MoonSharp.Interpreter.DynValue videoDN = MoonSharp.Interpreter.UserData.Create(video);
-        MoonSharp.Interpreter.DynValue audioDN = MoonSharp.Interpreter.UserData.Create(audio);
-        MoonSharp.Interpreter.DynValue worldDN = MoonSharp.Interpreter.UserData.Create(world);
-
-        //Create script and assign objects to LUA variables:
         MoonSharp.Interpreter.Script configurationScript = new MoonSharp.Interpreter.Script();
-        configurationScript.Globals.Set("video", videoDN);
-        configurationScript.Globals.Set("audio", audioDN);
-        configurationScript.Globals.Set("world", worldDN);
 
-        //Perform initialisation
+
+        //Create tables
+        MoonSharp.Interpreter.Table videoTable = new MoonSharp.Interpreter.Table(configurationScript);
+        MoonSharp.Interpreter.Table audioTable = new MoonSharp.Interpreter.Table(configurationScript);
+        MoonSharp.Interpreter.Table worldTable = new MoonSharp.Interpreter.Table(configurationScript);
+
+        //Add them to the script
+        configurationScript.Globals["video"] = videoTable;
+        configurationScript.Globals["audio"] = audioTable;
+        configurationScript.Globals["world"] = worldTable;
+
+        //Fill in
         configurationScript.DoFile("configure.lua");
+
+        //Init video
+        video = new Polys.Video.Video(retrieveValue(videoTable, "width", 600), retrieveValue(videoTable, "height", 480));
+        video.postFx = retrieveValue(videoTable, "postFx", 1) != 0;
+
+        //Init audio
+        audio = new Polys.Audio.Audio();
+
+        //Init world
+        world = new Polys.Game.World();
     }
 
     static void Main()
@@ -48,10 +70,8 @@ class Program
         worldTimeBegin.Start();
 
         Polys.Input input = new Polys.Input(world.intentManager);
-        
-        bool run = true;
 
-        while (world.running && run)
+        while (world.running)
         {
             SDL.SDL_Event e;
             while (SDL.SDL_PollEvent(out e) != 0)
@@ -71,7 +91,7 @@ class Program
                     case SDL.SDL_EventType.SDL_MOUSEMOTION:
                         break;
                     case SDL.SDL_EventType.SDL_QUIT:
-                        run = false;
+                        world.end();
                         break;
                     case SDL.SDL_EventType.SDL_WINDOWEVENT:
                         switch (e.window.windowEvent)

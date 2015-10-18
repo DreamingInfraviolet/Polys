@@ -55,9 +55,6 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="artemis">
-      <HintPath>..\..\..\Users\light\Desktop\artemis_CSharp-1.4\bin\Release\PC\artemis.dll</HintPath>
-    </Reference>
     <Reference Include="KeraLua">
       <HintPath>..\..\..\Users\light\Desktop\nlua\KeraLua.dll</HintPath>
     </Reference>
@@ -94,6 +91,7 @@
     <Compile Include="src\Game\Entity.cs" />
     <Compile Include="src\Game\Character.cs" />
     <Compile Include="src\Game\CharacterController.cs" />
+    <Compile Include="src\Game\State.cs" />
     <Compile Include="src\IntentHandler.cs" />
     <Compile Include="src\IntentManager.cs" />
     <Compile Include="src\Game\Inventory.cs" />

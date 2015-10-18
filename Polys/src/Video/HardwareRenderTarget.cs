@@ -16,10 +16,10 @@ namespace Polys.Video
         uint mScreenWidth, mScreenHeight;
         int mDrawTargetWidth, mDrawTargetHeight;
 
-        ShaderProgram mpSoftwareToHardware;
-        ShaderProgram mpHardwareToScreen;
+        ShaderProgram shaderLowResRenderTargetToScreen;
+        ShaderProgram shaderCopyFlipped;
 
-        ShaderProgram mDrawIndexedBitmapShader;
+        ShaderProgram shaderIndexedBitmapSprite;
 
         //6 vertices in {x,y,u,v} format.
         float[] mScreenQuad = {
@@ -47,8 +47,8 @@ namespace Polys.Video
                 mBuffer1.Dispose();
             if (mBuffer2 != null)
                 mBuffer2.Dispose();
-            if (mpSoftwareToHardware != null)
-                mpSoftwareToHardware.Dispose();
+            if (shaderLowResRenderTargetToScreen != null)
+                shaderLowResRenderTargetToScreen.Dispose();
         }
         void initQuad()
         {
@@ -75,7 +75,7 @@ namespace Polys.Video
             if (layer.visible == false)
                 return;
 
-            mDrawIndexedBitmapShader.Use();
+            shaderIndexedBitmapSprite.Use();
 
             bindScreenQuad();
 
@@ -122,40 +122,53 @@ namespace Polys.Video
                                                             (float)(tile.tilesetX*tileWidth+0.5f)/tilesetWidth,
                                                             (float)(tile.tilesetY*tileHeight+0.5f)/tilesetHeight, 0, 1});
 
-                    mDrawIndexedBitmapShader["orthoMatrix"].SetValue(orthoMatrix);
-                    mDrawIndexedBitmapShader["uvMatrix"].SetValue(uvMatrix);
+                    shaderIndexedBitmapSprite["orthoMatrix"].SetValue(orthoMatrix);
+                    shaderIndexedBitmapSprite["uvMatrix"].SetValue(uvMatrix);
 
                     Gl.DrawArrays(BeginMode.Triangles, 0, 6);
                 }
             }
         }
 
-        void _TextureToFullres(uint lowResTexId, int width, int height)
+        void _TextureToFullres(uint lowResTexId, int width, int height, bool targetIsScreen = false)
         {
-            setSourceBuffer();
+            shaderLowResRenderTargetToScreen.Use();
+
+            if (targetIsScreen)
+            {
+                Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                Gl.Viewport(0, 0, (int)mScreenWidth, (int)mScreenHeight);
+                shaderLowResRenderTargetToScreen["uvMultiplier"].SetValue(-1.0f);
+            }
+            else
+            {
+                setSourceBuffer();
+                shaderLowResRenderTargetToScreen["uvMultiplier"].SetValue(1.0f);
+            }
+            
             Gl.ClearColor(0, 0, 0, 1);
             Gl.Clear(ClearBufferMask.ColorBufferBit);
 
-            mpSoftwareToHardware.Use();
-            mpSoftwareToHardware["sourceWidth"].SetValue((float)width);
-            mpSoftwareToHardware["sourceHeight"].SetValue((float)height);
+            shaderLowResRenderTargetToScreen["sourceWidth"].SetValue((float)width);
+            shaderLowResRenderTargetToScreen["sourceHeight"].SetValue((float)height);
 
             bindScreenQuad();
+
             Gl.BindTexture(TextureTarget.Texture2D, lowResTexId);
             Gl.ActiveTexture(TextureUnit.Texture0);
 
             Gl.DrawArrays(BeginMode.Triangles, 0, 6);
         }
 
-        public void lowresToHighres()
+        public void lowresToHighres(bool directlyToScreen)
         {
-            _TextureToFullres(mLowResBuffer.TextureID[0], mLowResBuffer.Size.Width, mLowResBuffer.Size.Height);
+            _TextureToFullres(mLowResBuffer.TextureID[0], mLowResBuffer.Size.Width, mLowResBuffer.Size.Height, directlyToScreen);
         }
 
         //Sets this as the current render target to be shown to screen
-        public void finaliseAndSet()
+        public void highresToScreen()
         {
-            mpHardwareToScreen.Use();
+            shaderCopyFlipped.Use();
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             bindScreenQuad();
             Gl.BindTexture(TextureTarget.Texture2D, getSourceBuffer().TextureID[0]);
@@ -208,9 +221,9 @@ namespace Polys.Video
             mScreenWidth = width;
             mScreenHeight = height;
 
-            mpSoftwareToHardware.Use();
-            mpSoftwareToHardware["screenWidth"].SetValue((float)width);
-            mpSoftwareToHardware["screenHeight"].SetValue((float)height);
+            shaderLowResRenderTargetToScreen.Use();
+            shaderLowResRenderTargetToScreen["screenWidth"].SetValue((float)width);
+            shaderLowResRenderTargetToScreen["screenHeight"].SetValue((float)height);
             if (mBuffer1 != null)
                 mBuffer1.Dispose();
             if (mBuffer2 != null)
@@ -223,106 +236,9 @@ namespace Polys.Video
         
         private void initShaders()
         {
-            mpSoftwareToHardware = new OpenGL.ShaderProgram(
-            //Vertex shader
-              @"#version 130
-                attribute vec4 vertuv;
-                varying vec2 uv;
-                uniform float screenWidth;
-                uniform float screenHeight;
-                uniform float sourceWidth;
-                uniform float sourceHeight;
-
-                void main()
-                {
-                        float aspecti = sourceWidth/sourceHeight;
-                        float aspectr = screenWidth/screenHeight;
-
-                        vec2 scale = vec2(1,1);
-                        if(aspectr<aspecti)
-                            scale.y = aspectr/aspecti;
-                        else
-                            scale.x = aspecti/aspectr;
-                      
-                    gl_Position = vec4(vertuv.xy*scale,0,1);
-                
-                uv = vec2(vertuv.z, vertuv.w);
-                }",
-
-                //Fragment shader
-                @"#version 130
-                varying vec2 uv;
-                uniform sampler2D diffuse;
-
-                void main()
-                {
-                    gl_FragColor = texture(diffuse, uv);
-                }");
-
-            mpHardwareToScreen = new OpenGL.ShaderProgram(
-              //Vertex shader
-              @"#version 130
-                attribute vec4 vertuv;
-                varying vec2 uv;
-                void main()
-                {
-                    gl_Position = vec4(vertuv.xy,0,1);             
-                    uv = vec2(vertuv.z, -vertuv.w);
-                }",
-
-                //Fragment shader
-                @"#version 130
-                varying vec2 uv;
-                uniform sampler2D diffuse;
-
-                void main()
-                {
-                    gl_FragColor = texture(diffuse, uv);
-                }");
-
-            mDrawIndexedBitmapShader = new ShaderProgram(
-  //Vertex shader
-  @"#version 130
-                attribute vec4 vertuv;
-                varying vec2 uv;
-                uniform mat4 orthoMatrix;
-                uniform mat4 uvMatrix;
-                void main()
-                {
-                    gl_Position = orthoMatrix*vec4(vertuv.x,vertuv.y,0,1);             
-                    uv = (uvMatrix*vec4(vec2(vertuv.z, vertuv.w), 0, 1)).xy;
-                }",
-
-    //Fragment shader
-    @"#version 130
-                varying vec2 uv;
-                uniform sampler2D indexTexture;
-                uniform sampler1D paletteTexture;
-
-                void main()
-                {
-                    gl_FragColor = texture(paletteTexture, texture(indexTexture, uv).r);
-                }");
-            if (mDrawIndexedBitmapShader.FragmentShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling fragment shader: " + mDrawIndexedBitmapShader.FragmentShader.ShaderLog);
-            if (mDrawIndexedBitmapShader.VertexShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling vertex shader: " + mDrawIndexedBitmapShader.VertexShader.ShaderLog);
-            if (mDrawIndexedBitmapShader.ProgramLog.Length != 0)
-                throw new Exception("Error linking shader: " + mDrawIndexedBitmapShader.ProgramLog);
-
-            if (mpSoftwareToHardware.FragmentShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling fragment shader: " + mpSoftwareToHardware.FragmentShader.ShaderLog);
-            if (mpSoftwareToHardware.VertexShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling vertex shader: " + mpSoftwareToHardware.VertexShader.ShaderLog);
-            if (mpSoftwareToHardware.ProgramLog.Length != 0)
-                throw new Exception("Error linking shader: " + mpSoftwareToHardware.ProgramLog);
-
-            if (mpHardwareToScreen.FragmentShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling fragment shader: " + mpHardwareToScreen.FragmentShader.ShaderLog);
-            if (mpHardwareToScreen.VertexShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling vertex shader: " + mpHardwareToScreen.VertexShader.ShaderLog);
-            if (mpHardwareToScreen.ProgramLog.Length != 0)
-                throw new Exception("Error linking shader: " + mpHardwareToScreen.ProgramLog);
+            shaderLowResRenderTargetToScreen = Video.loadShader("lowResRenderTargetToScreen");
+            shaderCopyFlipped = Video.loadShader("copyFlipped");
+            shaderIndexedBitmapSprite = Video.loadShader("indexedBitmapSprite");
         }
 
         public void applyEffect(Effect effect, long timeParameter)

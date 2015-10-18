@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using SDL2;
-using Artemis;
     
 
 /**
@@ -68,7 +67,12 @@ namespace Polys.Game
         public void handleIntent(IntentManager.IntentType intentCode, IntentManager.KeyType type)
         {
             if (intentCode == IntentManager.IntentType.ESC)
-                running = false;
+                end();
+        }
+
+        public void end()
+        {
+            running = false;
         }
     }
 }

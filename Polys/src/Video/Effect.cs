@@ -7,15 +7,9 @@ namespace Polys.Video
     {
         public ShaderProgram program { get; private set; }
 
-        public Effect(String vertex, String fragment)
+        public Effect(OpenGL.ShaderProgram shader)
         {
-            program = new ShaderProgram(vertex, fragment);
-            if (program.FragmentShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling fragment shader: " + program.FragmentShader.ShaderLog);
-            if (program.VertexShader.ShaderLog.Length != 0)
-                throw new Exception("Error compiling vertex shader: " + program.VertexShader.ShaderLog);
-            if (program.ProgramLog.Length != 0)
-                throw new Exception("Error linking shader: " + program.ProgramLog);
+            program = shader;
         }
 
         public void setUniforms(long time)

@@ -15,6 +15,8 @@ namespace Polys.Video
         HardwareRenderTarget mHardwareRenderTarget;
         int mWidth, mHeight;
         
+        public bool postFx { get; set; }
+
         public void updateWindowSize()
         {
             int width, height;
@@ -56,31 +58,7 @@ namespace Polys.Video
 
             mHardwareRenderTarget = new HardwareRenderTarget((uint)width, (uint)height, 256, 192);
 
-            chromaticShiftFx = new Effect(
-                @"#version 130
-                attribute vec4 vertuv;
-                varying vec2 uv;
-                void main()
-                {
-                    gl_Position = vec4(vertuv.xy,0,1);             
-                    uv = vec2(vertuv.z, vertuv.w);
-                }",
-
-                //Fragment shader
-                @"#version 130
-                varying vec2 uv;
-                uniform sampler2D diffuse;  
-                uniform float time;
-                vec2 amount = vec2(0.009, 0.009)*sin(time*0.01);
-
-                void main()
-                {
-                    float r = texture(diffuse, uv+amount).r;
-                    float g = texture(diffuse, uv).g;
-                    float b = texture(diffuse, uv-amount).b;
-                    float a = texture(diffuse, uv).a;
-                    gl_FragColor = vec4(r,g,b,a);
-                }");
+            chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
 
         }
 
@@ -113,16 +91,37 @@ namespace Polys.Video
                 mHardwareRenderTarget.draw(layer, camera);
             }
 
-            mHardwareRenderTarget.lowresToHighres();
-            //mHardwareRenderTarget.applyEffect(chromaticShiftFx, timeParameter);
-            mHardwareRenderTarget.finaliseAndSet();
+            //Finalise
+            mHardwareRenderTarget.lowresToHighres(!postFx);
 
+            if (postFx)
+            {
+                mHardwareRenderTarget.applyEffect(chromaticShiftFx, timeParameter);
+                mHardwareRenderTarget.highresToScreen();
+            }
+            
 
             SDL.SDL_GL_SwapWindow(mWindow);
 
             ErrorCode err = Gl.GetError();
             if (err != ErrorCode.NoError)
                 Console.WriteLine(err);
+        }
+
+        public static ShaderProgram loadShader(string relativePathWithoutExtension)
+        {
+            string vert = System.IO.File.ReadAllText(String.Format("shaders/{0}.vert", relativePathWithoutExtension));
+            string frag = System.IO.File.ReadAllText(String.Format("shaders/{0}.frag", relativePathWithoutExtension));
+            ShaderProgram program = new ShaderProgram(vert, frag);
+
+            if (program.FragmentShader.ShaderLog.Length != 0)
+                throw new Exception("Error compiling fragment shader: " + program.FragmentShader.ShaderLog);
+            if (program.VertexShader.ShaderLog.Length != 0)
+                throw new Exception("Error compiling vertex shader: " + program.VertexShader.ShaderLog);
+            if (program.ProgramLog.Length != 0)
+                throw new Exception("Error linking shader: " + program.ProgramLog);
+
+            return program;
         }
     }
 }
