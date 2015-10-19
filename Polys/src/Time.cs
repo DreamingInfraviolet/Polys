@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Polys
+﻿namespace Polys
 {
     /** A class to help handle time, providing functions to get the current time as well as the delta time. */
     class Time

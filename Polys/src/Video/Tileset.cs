@@ -1,58 +1,72 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Polys.Video
 {
+    /** A class to represent a tileset image, based on a subset of the tmx format. It does not support a border, or spacing
+      * between the tiles. Internally it uses a palette to store colours. */
     class Tileset
     {
-        //A global list of images to avoid duplication.
-        static Util.UniqueList<String, IndexedBitmap> sImageList = new Util.UniqueList<string, IndexedBitmap>();
+        //A global cache of images to avoid duplication.
+        static Util.ObjectCache<String, IndexedBitmap> sImageCache = new Util.ObjectCache<string, IndexedBitmap>();
 
-        //The image for the tileset
-        public IndexedBitmap image;
+        //The image reference for the tileset
+        IndexedBitmap image;
 
-        //The currently selected palette for the tileset.
-        public Palette mPalette;
-
-        public byte invisibilityColourIndex = 0;
-
-        //The path of the image to be used for this tileset.
+        //The path of the image to be used for this tileset
         String mImagePath = "";
 
-        //The name of this tileset.
+        /** The currently selected palette for the tileset */
+        public Palette palette { get; set; }
+
+        /** The name of this tileset. */
         public String name { get; private set; }
 
-        //The (maximum) width of the tiles in this tileset. 
+        /** The width of the tileset */
+        public int width { get { return image.width; } }
+
+        /** The height of the tileset */
+        public int height { get { return image.height; } }
+
+        /** The width of the tiles in this tileset */
         public int tileWidth { get; private set; }
 
-        //The (maximum) height of the tiles in this tileset.
+        /** The height of the tiles in this tileset */
         public int tileHeight { get; private set; }
 
+        /** The number of tiles along the x axis */
         public int tileCountX { get; private set; }
+
+        /** The number of tiles along the y axis */
         public int tileCountY { get; private set; }
 
-        //The starting GID of the tileset
+        /** The starting GID of the tileset (as defined in the tmx format) */
         public int firstGid { get; private set; }
 
+        /** A constructor that loads the tileset and initialises the internal fields */
         public Tileset(String path, String name, int tilewidth, int tileheight, int firstGid)
         {
-            mImagePath = path;
-            image = sImageList.register(path, x => new IndexedBitmap(x));
-            mPalette = image.palette;
+            this.image = sImageCache.register(path, x => new IndexedBitmap(x));
+            this.mImagePath = path;
+            this.palette = image.palette;
             this.name = name;
             this.tileWidth = tilewidth;
             this.tileHeight = tileheight;
             this.firstGid = firstGid;
             this.tileCountX = image.width / tileWidth;
-            this.tileCountY = image.height / tileHeight; 
+            this.tileCountY = image.height / tileHeight;
         }
 
+        /** Disposes of the object, marking it for removal from the cache. */
         public void Dispose()
         {
-            sImageList.deregister(mImagePath);
+            sImageCache.deregister(mImagePath);
+        }
+
+        /** Binds the tileset and its palette */
+        public void bind()
+        {
+            image.bind();
+            palette.bind();
         }
     }
 }

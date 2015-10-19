@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Polys.Video
 {
+    /** Represents a colour, allowing useful colour operations. */
     struct Colour
     {
+        //Components
         public byte r, g, b, a;
 
+        /** Initialises the colour from the parameters */
         public Colour(byte r_ = 0, byte g_ = 0, byte b_ = 0, byte a_ = 255)
         {
             r = r_;
@@ -18,7 +17,7 @@ namespace Polys.Video
             a = a_;
         }
 
-        //initialises from a "r g b" string (e.g., 200 121 1) 
+        /** Initialises the colour from an "r g b" string (e.g., 200 121 1). A is set to 255  */
         public Colour(String rgbstr)
         {
             int r_, g_, b_;
@@ -33,6 +32,7 @@ namespace Polys.Video
             a = 255;
         }
 
+        /** Initialises the colour from a System.Drawing.Color object */
         public Colour(System.Drawing.Color colour)
         {
             r = colour.R;

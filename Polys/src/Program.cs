@@ -1,9 +1,8 @@
-﻿using System;
-using SDL2;
-using Polys;
-using Polys.Video;
+﻿using Polys;
 using Polys.Audio;
 using Polys.Game;
+using Polys.Video;
+using SDL2;
 
 class Program
 {

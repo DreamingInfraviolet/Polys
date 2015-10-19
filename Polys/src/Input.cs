@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using MoonSharp.Interpreter;
+﻿using MoonSharp.Interpreter;
 using SDL2;
+using System;
+using System.Collections.Generic;
 
 namespace Polys
 {

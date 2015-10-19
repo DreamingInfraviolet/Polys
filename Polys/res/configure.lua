@@ -2,6 +2,8 @@
 video["width"]            = 640
 video["height"]           = 480
 video["postFx"]           = 0
+video["vsync"]            = 0
+video["fullscreen"]       = 0
 
 --audio
 

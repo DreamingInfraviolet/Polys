@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Polys.Util
+﻿namespace Polys.Util
+    /** A generic pair class */
 {
     class Pair<First, Second>
     {
         public First first;
         public Second second;
 
+        /** Trivial constructor */
         public Pair()
         {
 
         }
 
+        /** Initialises the class with the given arguments */
         public Pair(First f, Second s)
         {
             first = f;

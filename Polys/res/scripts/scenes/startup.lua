@@ -1,2 +1,1 @@
-tilemap = "test.tmx"
-palette = "test.pal"
+scene["tilemap"] = "test.tmx"

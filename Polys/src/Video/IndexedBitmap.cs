@@ -1,16 +1,24 @@
-﻿using System;
-using OpenGL;
+﻿using OpenGL;
+using System;
 
 namespace Polys.Video
 {
+    /** Represents an indexed bitmap image. Each pixel is an unsigned byte indexing a colour in a palette. */
     class IndexedBitmap
     {
+        /** The original palette associated with the bitmap */
         public Palette palette { get; private set; }
+
+        /** The width of the image */
         public int width { get; private set; }
+
+        /** The height of the image */
         public int height { get; private set; }
 
+        //The OpenGL texture handle
         uint indexTexture;
         
+        /** Load the image from file */
         public IndexedBitmap(String pathIn)
         {
             String path = pathIn.Replace('/', '\\');
@@ -52,9 +60,9 @@ namespace Polys.Video
             }
         }
 
+        /** Makes the texture active */
         public void bind()
         {
-
             Gl.BindTexture(TextureTarget.Texture2D, indexTexture);
         }
     }

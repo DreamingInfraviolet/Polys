@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Polys.Game
 {
+    /** Represents the inventory */
     class Inventory
     {
-        private List<InventoryItem> mItems;
-
-        public List<InventoryItem> items
-        {
-            get { return mItems; }
-        }
+        public List<InventoryItem> items { get; private set; }
     }
 }

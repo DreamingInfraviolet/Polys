@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Polys.Util
 {
     /** Allows registering and deregistering of an object in such a
-        way as to help avoid duplication of resources. */
-        
-    class UniqueList<First, Second>
+        way as to help avoid duplication of resources, retaining only a single copy in a cache. */
+    class ObjectCache<First, Second>
     {
-        static Dictionary<First, Pair<int, Second> > mList = new Dictionary<First, Pair<int, Second>>();
+        //The dictionary mapping keys to values
+        Dictionary<First, Pair<int, Second> > mList = new Dictionary<First, Pair<int, Second>>();
 
-        //Must create a Second object given First as parameter.
+        //Defines how to create a value with a key as input.
         public delegate Second Creator(First x);
 
         /**If the object already exists as determined by the parameter, return it.

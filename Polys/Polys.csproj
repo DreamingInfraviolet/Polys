@@ -102,7 +102,6 @@
     <Compile Include="src\Game\SceneList.cs" />
     <Compile Include="src\Game\Player.cs" />
     <Compile Include="src\Game\Scene.cs" />
-    <Compile Include="src\Game\SceneScript.cs" />
     <Compile Include="src\Input.cs" />
     <Compile Include="src\IScriptInitialisable.cs" />
     <Compile Include="src\Program.cs" />
@@ -110,12 +109,12 @@
     <Compile Include="src\ScriptManager.cs" />
     <Compile Include="src\Time.cs" />
     <Compile Include="src\Util\Pair.cs" />
-    <Compile Include="src\Util\UniqueList.cs" />
+    <Compile Include="src\Util\ObjectCache.cs" />
     <Compile Include="src\Util\Util.cs" />
     <Compile Include="src\Video\Camera.cs" />
     <Compile Include="src\Video\Colour.cs" />
     <Compile Include="src\Video\Effect.cs" />
-    <Compile Include="src\Video\HardwareRenderTarget.cs" />
+    <Compile Include="src\Video\LowLevelRenderer.cs" />
     <Compile Include="src\Video\IndexedBitmap.cs" />
     <Compile Include="src\Video\Palette.cs" />
     <Compile Include="src\Video\Tile.cs" />

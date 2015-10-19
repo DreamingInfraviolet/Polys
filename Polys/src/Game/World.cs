@@ -1,80 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using MoonSharp.Interpreter;
-using SDL2;
-
+﻿using MoonSharp.Interpreter;
 
 /**
-* Responsible for handling scenes and storing all game data.
+* Responsible for handling scenes and storing all game state.
 */
 
 namespace Polys.Game
 {
     class World : IIntentHandler, IScriptInitialisable
     {
+        //The current list of scenes
         SceneList mSceneList = new SceneList();
 
+        //The active character controller
         CharacterController mController = new CharacterController();
 
+        /** The current scene */
         public Scene scene { get { return mSceneList.current; } private set { mSceneList.current = value; } }
+
+        /** The current camera */
         public Video.Camera camera { get; private set; }
         
+        /** The active intent manager */
         public IntentManager intentManager = new IntentManager();
         
+        /** Whether the world should be running */
         public bool running { get; private set; }
 
-
+        /** This method is executed each frame before input is collected */
         public void beforeInput()
         {
             Time.startFrame();
             mController.begin(Time.deltaTime);
         }
 
-        /**
-        * Performs a frame of the scene, with the timeParameter indicating the current run time in milliseconds.
-        * The run time is used to interpolate between the game actions, and to execute time-based events.
-        * @return True if the program should continue. False otherwise.
-        * Assumes that SDL is initialised for the event system.
-        */
+        /** This method is executed each frame after input is collected */
         public void afterInput()
         {
             mController.end();
             camera.move(mController.movementX, mController.movementY);
         }
 
+        /** This method is executed each frame just before the end of the frame */
         public void AfterLoop()
         {
             Time.endFrame();
         }
 
+        /** Shuts down the world, freeing resources */
         public void shutdown()
         {
             if (mSceneList != null)
                 mSceneList.Dispose();
         }
 
+        /** Handles the intents for which the world is registered */
         public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
         {
             if (intentCode == IntentManager.IntentType.ESC)
                 end();
         }
 
+        /** Marks that the world should no longer be running */
         public void end()
         {
             running = false;
         }
 
+        /** Returns the script representation of the world table */
         public string ScriptName()
         {
             return "world";
         }
 
+        /** Initialises the world from script */
         public void InitialiseFromScript(Table table)
         {
             running = true;
             camera = new Video.Camera();
-            mSceneList.current = mSceneList.get("startup.lua");
-
 
             intentManager.register(this, IntentManager.IntentType.ESC, true, false, false);
             intentManager.register(mController, IntentManager.IntentType.WALK_DOWN, true, false, true);

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Polys.Util
 {
+    /** A miscallaneous utility class. */
     class Util
     {
+        /** Clamps a number into a specific range. */
         public static T Clamp<T>(T x, T min, T max) where T : IComparable<T>
         {
             if (x.CompareTo(min) < 0) return min;
@@ -15,6 +13,7 @@ namespace Polys.Util
             else return x;
         }
 
+        /** Fast memset algorithm. */
         public static void MemSet(byte[] array, byte value, int block = 32)
         {
             if (array == null)

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Polys.Video
 {
+    /** Represents a colour palette in CPU+GPU memory. It is a 1-D texture with 255 components. */
     class Palette
     {
-        //rgba format
-        public byte[] colours = new byte[256 * 4];
+        //Array of pixels in rgba format
+        byte[] colours = new byte[256 * 4];
+
+        //The GL texture handle
         uint colourTexture = ~0u;
 
         /** Sets the transparent colour of the palette. By default this is the first colour. */
@@ -21,27 +20,14 @@ namespace Polys.Video
 
             //Set colour at index to 0
             colours[(index << 2) + 3] = 0;
+
+            upload();
         }
 
+        /** Trivial constructor */
         public Palette() { }
 
-        public Colour this[int key]
-        {
-            get
-            {
-                int index = key << 2;
-                return new Colour(colours[index], colours[index+1], colours[index+2], colours[index+3]);
-            }
-            set
-            {
-                int index = key << 2;
-                colours[index] = value.r;
-                colours[index + 1] = value.g;
-                colours[index + 2] = value.b;
-                colours[index + 3] = value.a;
-            }
-        }
-
+        /** Constructs the palette from a .pal file */
         public Palette(String path)
         {
             try
@@ -55,7 +41,7 @@ namespace Polys.Video
                 int numberOfColours = int.Parse(lines[2]);
 
                 if (lines.Length - 3 < numberOfColours)
-                    throw new Exception("invalid number of colours entries.");
+                    throw new Exception("invalid number of colour entries.");
 
                 for (int i = 0; i < numberOfColours; ++i)
                 {
@@ -76,6 +62,7 @@ namespace Polys.Video
             }
         }
 
+        /** Construct the palette from an Imaging.ColorPalette object */
         public Palette(System.Drawing.Imaging.ColorPalette p)
         {
             for (int i = 0; i < p.Entries.Length; ++i)
@@ -90,6 +77,25 @@ namespace Polys.Video
             upload();
         }
 
+        /** Returns the colour at a specific index */
+        public Colour this[int key]
+        {
+            get
+            {
+                int index = key << 2;
+                return new Colour(colours[index], colours[index+1], colours[index+2], colours[index+3]);
+            }
+            set
+            {
+                int index = key << 2;
+                colours[index] = value.r;
+                colours[index + 1] = value.g;
+                colours[index + 2] = value.b;
+                colours[index + 3] = value.a;
+            }
+        }
+
+        /** Uploads the palette into GPU memory */
         void upload()
         {
             if(colourTexture==~0u)
@@ -102,6 +108,7 @@ namespace Polys.Video
             OpenGL.Gl.TexParameteri(OpenGL.TextureTarget.Texture1D, OpenGL.TextureParameterName.TextureMinFilter, OpenGL.TextureParameter.Nearest);
         }
 
+        /** Binds the palette as the current 1D texture */
         public void bind()
         {
 

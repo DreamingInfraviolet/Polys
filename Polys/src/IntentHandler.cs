@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Polys
+﻿namespace Polys
 {
     /** A class wishing to receive intents must implement this interface, after which they can register with the intent system. */
     interface IIntentHandler

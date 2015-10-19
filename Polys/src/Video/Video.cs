@@ -1,119 +1,139 @@
-﻿using SDL2;
-using System;
+﻿using MoonSharp.Interpreter;
 using OpenGL;
-using TiledSharp;
-using MoonSharp.Interpreter;
+using SDL2;
+using System;
 
-/**
-* This class is responsible for handling the window and drawing the world.
-*/
 namespace Polys.Video
 {
+    /**
+    * This class is responsible for handling the window and doing high-level drawing.
+    */
+
     class Video : IScriptInitialisable
     {
-        private IntPtr mWindow;
-        private IntPtr mGglContext;
-        HardwareRenderTarget mHardwareRenderTarget;
-        int mWidth, mHeight;
-        
+        //A pointer to the window
+        IntPtr window;
+
+        //A pointer to the GL context
+        IntPtr mGglContext;
+
+        //The low level renderer that handles the screen buffers
+        LowLevelRenderer lowLevelRenderer;
+
+        //The width and height of the window
+        int width, height;
+
+        //A temporary effect, later to be replaced with an effect pipeline.
+        Effect chromaticShiftFx;
+
+        /** If this is enabled, the post processing filters are active. This introduces an intermediary texture to which the game
+          * is rendered before it is sent to the screen. If this is false, then that stage is skipped, resulting in a dramatic performance
+          * increase on systems with weak graphics cards but also skipping all post-processing steps (e.g., Effects). */
         public bool postFx { get; set; }
 
+        /** Updates internal parameters to correctly handle the new size of the window. Call his whenever the window is resized */
         public void updateWindowSize()
         {
-            int width, height;
-            SDL.SDL_GetWindowSize(mWindow, out width, out height);
-            mWidth = width;
-            mHeight = height;
-            mHardwareRenderTarget.resize((uint)width, (uint)height);
+            SDL.SDL_GetWindowSize(window, out this.width, out this.height);
+            lowLevelRenderer.resize(width, height);
             Gl.Viewport(0, 0, width, height);
         }
 
+        /** Forces the window to resized to a particular size. Updates internal state automatically. */
         public void setWindowSize(int width, int height)
         {
-            SDL.SDL_SetWindowSize(mWindow, width, height);
+            SDL.SDL_SetWindowSize(window, width, height);
             updateWindowSize();
         }
 
-        Effect chromaticShiftFx;
-
+        /** The constructor creates the window and initialises a graphics state.
+          * Note: For some reason, if put elsewhere this code causes a DLL error. */
         public Video()
         {
-            //This seems to be have to be put into the constructor, as otherwise I get a DLL error.
+            //Initialise SDL
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
                 throw new Exception("Could not initialise video system");
 
-            mWindow = SDL.SDL_CreateWindow("Polys",
+            //Create a window
+            window = SDL.SDL_CreateWindow("Polys",
                 SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED,
-                640,480,
+                640, 480,
                 SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL |
                 SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE |
                 SDL.SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS);
 
-            mGglContext = SDL.SDL_GL_CreateContext(mWindow);
+            //Create the GL context
+            mGglContext = SDL.SDL_GL_CreateContext(window);
 
-            //Set vsync on/off
-            SDL.SDL_GL_SetSwapInterval(0);
-
+            //Enable blending
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            mHardwareRenderTarget = new HardwareRenderTarget(640, 480, 256, 192);
+            //Create low level renderer
+            lowLevelRenderer = new LowLevelRenderer(640, 480, 256, 192);
 
+            //Temporarily initialise chromatic shift effect
             chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
         }
 
+        /** Shuts down the video state, destroying the window and GL context. */
         public void shutdown()
         {
-            mHardwareRenderTarget.shutdown();
+            lowLevelRenderer.shutdown();
             SDL.SDL_GL_DeleteContext(mGglContext);
-            SDL.SDL_DestroyWindow(mWindow);
+            SDL.SDL_DestroyWindow(window);
         }
 
-
-
+        /** Draws everything in a world that should be drawn. */
         public void draw(Game.World world)
         {
+            //Clear main screen
             Gl.ClearColor(0, 0, 0, 1);
             Gl.Clear(ClearBufferMask.ColorBufferBit);
-            
+
+            //Get current scene and camera
             Game.Scene scene = world.scene;
             Camera camera = world.camera;
 
-            mHardwareRenderTarget.clear();
+            //Clear render buffers
+            lowLevelRenderer.clear();
 
             //Draw the tilemap
 
-            //Draw each layer:
-            
-            foreach(TileLayer layer in scene.layers)
-            {
-                //Draw grid
-                mHardwareRenderTarget.draw(layer, camera);
-            }
+            //Draw all layers to the low-res target
+            foreach (TileLayer layer in scene.layers)
+                lowLevelRenderer.draw(layer, camera);
 
-            //Finalise
-            mHardwareRenderTarget.lowresToHighres(!postFx);
+            //Draw the low-res target onto a high-res target (screen or indermediary buffer)
+            lowLevelRenderer.lowresToHighres(!postFx);
 
+            //If drawn to the intermediary buffer, apply effects and draw to the screen.
             if (postFx)
             {
-                mHardwareRenderTarget.applyEffect(chromaticShiftFx, Time.currentTime);
-                mHardwareRenderTarget.highresToScreen();
+                lowLevelRenderer.applyEffect(chromaticShiftFx, Time.currentTime);
+                lowLevelRenderer.highresToScreen();
             }
-            
 
-            SDL.SDL_GL_SwapWindow(mWindow);
+            //Present to the user
+            SDL.SDL_GL_SwapWindow(window);
 
+            //Report any errors
             ErrorCode err = Gl.GetError();
             if (err != ErrorCode.NoError)
-                Console.WriteLine(err);
+                Console.WriteLine("OpenGl error: " + err);
         }
 
+        /** Loads a shader from file, checking for any errors.
+          * @param relativePathWithoutExtension The path to the shader file pair in shaders/. For example,
+                   for two files shaders/test.frag and shaders/test.vert, the input would be "test". */
         public static ShaderProgram loadShader(string relativePathWithoutExtension)
         {
+            //Get the text for the shaders and compile
             string vert = System.IO.File.ReadAllText(String.Format("shaders/{0}.vert", relativePathWithoutExtension));
             string frag = System.IO.File.ReadAllText(String.Format("shaders/{0}.frag", relativePathWithoutExtension));
             ShaderProgram program = new ShaderProgram(vert, frag);
 
+            //Check for errors
             if (program.FragmentShader.ShaderLog.Length != 0)
                 throw new Exception("Error compiling fragment shader: " + program.FragmentShader.ShaderLog);
             if (program.VertexShader.ShaderLog.Length != 0)
@@ -124,16 +144,30 @@ namespace Polys.Video
             return program;
         }
 
+        /** Inherited from IScriptInitialisable */
         public string ScriptName()
         {
             return "video";
         }
 
+        /** Inherited from IScriptInitialisable */
         public void InitialiseFromScript(Table table)
         {
+            //Set screen size
             setWindowSize(ScriptManager.retrieveValue(table, "width", 600),
                        ScriptManager.retrieveValue(table, "height", 400));
+
+            //Post effects?
             postFx = ScriptManager.retrieveValue(table, "postFx", 1) != 0;
+
+            //Set vsync on/off
+            SDL.SDL_GL_SetSwapInterval((ScriptManager.retrieveValue(table, "vsync", 0) != 0) ? 1 : 0);
+
+            //Fullscreen?
+            if (ScriptManager.retrieveValue(table, "fullscreen", 0) != 0)
+                SDL.SDL_SetWindowFullscreen(window, (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP);
         }
     }
 }
+
+

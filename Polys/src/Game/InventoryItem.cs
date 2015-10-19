@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Polys.Game
 {
+    /** Represents a single inventory item */
     class InventoryItem
     {
         public InventoryItem(String name)
@@ -13,34 +10,15 @@ namespace Polys.Game
 
         }
 
-        public String name
-        {
-            get { return "";  }
-        }
+        public String name { get; private set; }
 
-        public String cescription
-        {
-            get { return ""; }
-            set {}
-        }
+        public String description { get; private set; }
 
-        public int value
-        {
-            get { return -1; }
-            set { }
-        }
+        public int value { get; private set; }
 
-        public float lootFrequency
-        {
-            get { return 0.0f; }
-            set { }
-        }
+        public float lootFrequency { get; private set; }
 
-        public bool wearable
-        {
-            get { return false; }
-            set { }
-        }
+        public bool wearable { get; private set; }
 
     }
 }
