@@ -58,7 +58,7 @@ namespace Polys.Video
             }
             catch(Exception e)
             {
-                throw new Exception(String.Format("Error loading palette \"{0}\": {1}", path, e.Message, e));
+                throw new Exception(String.Format("Error loading palette \"{0}\": {1}", path, e.Message));
             }
         }
 

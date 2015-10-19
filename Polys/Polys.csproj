@@ -93,10 +93,10 @@
     <Compile Include="src\Audio\Audio.cs" />
     <Compile Include="src\Audio\Music.cs" />
     <Compile Include="src\Audio\Sound.cs" />
-    <Compile Include="src\Game\Entity.cs" />
     <Compile Include="src\Game\Character.cs" />
     <Compile Include="src\Game\CharacterController.cs" />
     <Compile Include="src\Game\State.cs" />
+    <Compile Include="src\Game\StateManager.cs" />
     <Compile Include="src\IntentHandler.cs" />
     <Compile Include="src\IntentManager.cs" />
     <Compile Include="src\Game\Inventory.cs" />
@@ -116,8 +116,11 @@
     <Compile Include="src\Video\Camera.cs" />
     <Compile Include="src\Video\Colour.cs" />
     <Compile Include="src\Video\Effect.cs" />
-    <Compile Include="src\Video\LowLevelRenderer.cs" />
+    <Compile Include="src\Video\GeometryGPU.cs" />
+    <Compile Include="src\Video\HighLevelRenderer.cs" />
+    <Compile Include="src\Video\FramebufferManager.cs" />
     <Compile Include="src\Video\IndexedBitmap.cs" />
+    <Compile Include="src\Video\LowLevelRenderer.cs" />
     <Compile Include="src\Video\Palette.cs" />
     <Compile Include="src\Video\Tile.cs" />
     <Compile Include="src\Video\TileLayer.cs" />

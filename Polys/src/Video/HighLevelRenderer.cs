@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Polys.Video
 {
-    class LowLevelRenderer
+    class HighLevelRenderer
     {
     }
 }

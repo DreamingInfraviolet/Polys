@@ -18,7 +18,7 @@ namespace Polys.Video
         IntPtr mGglContext;
 
         //The low level renderer that handles the screen buffers
-        LowLevelRenderer lowLevelRenderer;
+        FramebufferManager lowLevelRenderer;
 
         //The width and height of the window
         int width, height;
@@ -70,7 +70,7 @@ namespace Polys.Video
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             //Create low level renderer
-            lowLevelRenderer = new LowLevelRenderer(640, 480, 256, 192);
+            lowLevelRenderer = new FramebufferManager(640, 480, 256, 192);
 
             //Temporarily initialise chromatic shift effect
             chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
