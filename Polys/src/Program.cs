@@ -12,28 +12,34 @@ class Program
     static World world;
     static Input input;
 
+    /** The entry point of the program. It controls the initialisation and defines the main game loop. */
     static void Main()
     {
         //Temporary solution to set the resource directory:
         System.IO.Directory.SetCurrentDirectory("..\\..\\..\\res");
 
         //Initialise subsystems
-        initialiseSubsystems(out video, out audio, out world);
+        video = new Video();
+        audio = new Audio();
+        world = new World();
+        input = new Input(world.intentManager);
+
+        ScriptManager.initialiseFromScript("configure.lua", video, audio, world, input);
 
         //Main loop
         while (world.running)
         {
-            world.frameStart();
+            world.beforeInput();
 
             handleEvents();
-            input.process();
+            input.finalise();
 
-            world.frameMiddle();
+            world.afterInput();
 
             video.draw(world);
             audio.play(world);
 
-            world.frameEnd();
+            world.AfterLoop();
         }
 
         world.shutdown();
@@ -41,41 +47,7 @@ class Program
         video.shutdown();
     }
     
-    /** Initialises the systems. */
-    static void initialiseSubsystems(out Video video, out Audio audio, out World world)
-    {
-        //Create script
-        MoonSharp.Interpreter.Script configurationScript = new MoonSharp.Interpreter.Script();
-
-        //Create tables
-        MoonSharp.Interpreter.Table tVideo = new MoonSharp.Interpreter.Table(configurationScript);
-        MoonSharp.Interpreter.Table tAudio = new MoonSharp.Interpreter.Table(configurationScript);
-        MoonSharp.Interpreter.Table tWorld = new MoonSharp.Interpreter.Table(configurationScript);
-
-        //Add them to the script
-        configurationScript.Globals["video"] = tVideo;
-        configurationScript.Globals["audio"] = tAudio;
-        configurationScript.Globals["world"] = tWorld;
-
-        //Fill in the tables
-        configurationScript.DoFile("configure.lua");
-
-        //Init video
-        video = new Video(ScriptManager.retrieveValue(tVideo, "width", 600),
-                          ScriptManager.retrieveValue(tVideo, "height", 480));
-
-        video.postFx = ScriptManager.retrieveValue(tVideo, "postFx", 1) != 0;
-
-        //Init audio
-        audio = new Audio();
-
-        //Init world
-        world = new World();
-
-        //Init input
-        input = new Input(world.intentManager);
-    }
-
+    /** Handles window events, feeding them into the relevant subsystems. */
     static void handleEvents()
     {
         SDL.SDL_Event e;

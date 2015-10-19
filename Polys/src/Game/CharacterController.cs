@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Polys.Game
 {
-    class CharacterController : IntentHandler
+    class CharacterController : IIntentHandler
     {
         public Character character
         {
@@ -31,7 +31,7 @@ namespace Polys.Game
             movementY += v2;
         }
 
-        public void handleIntent(IntentManager.IntentType intentCode, IntentManager.KeyType type)
+        public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
         {
             switch(intentCode)
             {

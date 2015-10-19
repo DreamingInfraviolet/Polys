@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using MoonSharp.Interpreter;
 using SDL2;
-    
+
 
 /**
 * Responsible for handling scenes and storing all game data.
@@ -9,7 +10,7 @@ using SDL2;
 
 namespace Polys.Game
 {
-    class World : IntentHandler
+    class World : IIntentHandler, IScriptInitialisable
     {
         SceneList mSceneList = new SceneList();
 
@@ -23,25 +24,7 @@ namespace Polys.Game
         public bool running { get; private set; }
 
 
-        public World()
-        {
-            running = true;
-            camera = new Video.Camera();
-            mSceneList.current = mSceneList.get("startup.lua");
-            intentManager.addBinding(SDL.SDL_Keycode.SDLK_RIGHT, IntentManager.IntentType.WALK_RIGHT);
-            intentManager.addBinding(SDL.SDL_Keycode.SDLK_LEFT, IntentManager.IntentType.WALK_LEFT);
-            intentManager.addBinding(SDL.SDL_Keycode.SDLK_UP, IntentManager.IntentType.WALK_UP);
-            intentManager.addBinding(SDL.SDL_Keycode.SDLK_DOWN, IntentManager.IntentType.WALK_DOWN);
-            intentManager.addBinding(SDL.SDL_Keycode.SDLK_ESCAPE, IntentManager.IntentType.ESC);
-                
-            intentManager.register(this, IntentManager.IntentType.ESC, IntentManager.KeyType.DOWN);
-            intentManager.register(mController, IntentManager.IntentType.WALK_DOWN, IntentManager.KeyType.HELD);
-            intentManager.register(mController, IntentManager.IntentType.WALK_LEFT, IntentManager.KeyType.HELD);
-            intentManager.register(mController, IntentManager.IntentType.WALK_RIGHT, IntentManager.KeyType.HELD);
-            intentManager.register(mController, IntentManager.IntentType.WALK_UP, IntentManager.KeyType.HELD);  
-        }
-
-        public void frameStart()
+        public void beforeInput()
         {
             Time.startFrame();
             mController.begin(Time.deltaTime);
@@ -53,13 +36,13 @@ namespace Polys.Game
         * @return True if the program should continue. False otherwise.
         * Assumes that SDL is initialised for the event system.
         */
-        public void frameMiddle()
+        public void afterInput()
         {
             mController.end();
             camera.move(mController.movementX, mController.movementY);
         }
 
-        public void frameEnd()
+        public void AfterLoop()
         {
             Time.endFrame();
         }
@@ -70,7 +53,7 @@ namespace Polys.Game
                 mSceneList.Dispose();
         }
 
-        public void handleIntent(IntentManager.IntentType intentCode, IntentManager.KeyType type)
+        public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
         {
             if (intentCode == IntentManager.IntentType.ESC)
                 end();
@@ -79,6 +62,25 @@ namespace Polys.Game
         public void end()
         {
             running = false;
+        }
+
+        public string ScriptName()
+        {
+            return "world";
+        }
+
+        public void InitialiseFromScript(Table table)
+        {
+            running = true;
+            camera = new Video.Camera();
+            mSceneList.current = mSceneList.get("startup.lua");
+
+
+            intentManager.register(this, IntentManager.IntentType.ESC, true, false, false);
+            intentManager.register(mController, IntentManager.IntentType.WALK_DOWN, true, false, true);
+            intentManager.register(mController, IntentManager.IntentType.WALK_LEFT, true, false, true);
+            intentManager.register(mController, IntentManager.IntentType.WALK_RIGHT, true, false, true);
+            intentManager.register(mController, IntentManager.IntentType.WALK_UP, true, false, true);
         }
     }
 }

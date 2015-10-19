@@ -2,13 +2,14 @@
 using System;
 using OpenGL;
 using TiledSharp;
+using MoonSharp.Interpreter;
 
 /**
 * This class is responsible for handling the window and drawing the world.
 */
 namespace Polys.Video
 {
-    class Video
+    class Video : IScriptInitialisable
     {
         private IntPtr mWindow;
         private IntPtr mGglContext;
@@ -35,15 +36,15 @@ namespace Polys.Video
 
         Effect chromaticShiftFx;
 
-        public Video(int width, int height)
+        public Video()
         {
-
+            //This seems to be have to be put into the constructor, as otherwise I get a DLL error.
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
                 throw new Exception("Could not initialise video system");
 
             mWindow = SDL.SDL_CreateWindow("Polys",
                 SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED,
-                width, height,
+                640,480,
                 SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL |
                 SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE |
                 SDL.SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS);
@@ -56,10 +57,9 @@ namespace Polys.Video
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            mHardwareRenderTarget = new HardwareRenderTarget((uint)width, (uint)height, 256, 192);
+            mHardwareRenderTarget = new HardwareRenderTarget(640, 480, 256, 192);
 
             chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
-
         }
 
         public void shutdown()
@@ -122,6 +122,18 @@ namespace Polys.Video
                 throw new Exception("Error linking shader: " + program.ProgramLog);
 
             return program;
+        }
+
+        public string ScriptName()
+        {
+            return "video";
+        }
+
+        public void InitialiseFromScript(Table table)
+        {
+            setWindowSize(ScriptManager.retrieveValue(table, "width", 600),
+                       ScriptManager.retrieveValue(table, "height", 400));
+            postFx = ScriptManager.retrieveValue(table, "postFx", 1) != 0;
         }
     }
 }

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Polys
 {
-    interface IntentHandler
+    /** A class wishing to receive intents must implement this interface, after which they can register with the intent system. */
+    interface IIntentHandler
     {
-        void handleIntent(IntentManager.IntentType intentCode, IntentManager.KeyType type);
+        /** Handles an intent for which the class was registered. */
+        void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld);
     }
 }
