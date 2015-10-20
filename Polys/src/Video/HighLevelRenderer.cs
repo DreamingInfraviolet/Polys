@@ -64,8 +64,11 @@ namespace Polys.Video
                         continue;
 
                     //Set matrix uniforms
+                    //shaderIndexedBitmapSprite["orthoMatrix"].SetValue(Matrix4.Identity);
+
                     shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
                         Util.Maths.matrixPixelProjection(screenPosX, screenPosY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight));
+
                     shaderIndexedBitmapSprite["uvMatrix"].SetValue(tile.uvMatrix());
 
                     //Draw
@@ -76,7 +79,7 @@ namespace Polys.Video
 
         public void draw(Tile tile, Camera camera, ShaderProgram program)
         {
-
+            throw new NotImplementedException();
         }
     }
 }
