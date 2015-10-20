@@ -15,7 +15,7 @@ class Program
     static void Main()
     {
         //Temporary solution to set the resource directory:
-        System.IO.Directory.SetCurrentDirectory("..\\..\\res");
+        System.IO.Directory.SetCurrentDirectory("..\\..\\..\\res");
 
         //Initialise subsystems
         video = new Video();

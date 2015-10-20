@@ -7,8 +7,8 @@ namespace Polys.Video
     class GeometryGPU
         : IDisposable
     {
-        public uint vbo { get; private set; }
-        public int vertexCount { get; private set; }
+        public uint vbo { get; }
+        public int vertexCount { get; }
 
         /** Upload the following vertex data.
           * The vertex data is in the form {posx, posy, uvx, uvy}
