@@ -33,7 +33,8 @@ namespace Polys.Video
             for (int i = 0; i < layer.Tiles.Count; ++i)
             {
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
-                Tile tile = new Tile(layer.Tiles[i], tileset.tileCountX, tileset.tileCountY);
+                Tile tile = new Tile(layer.Tiles[i], tileset.tileCountX, tileset.tileCountY,
+                    tileset.tileWidth, tileset.tileHeight, tileset.width, tileset.height);
 
                 if (!tileDict.ContainsKey(tileset))
                     tileDict[tileset] = new List<Tile>();

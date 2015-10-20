@@ -1,19 +1,32 @@
-﻿namespace Polys.Video
+﻿using OpenGL;
+
+namespace Polys.Video
 {
-    /** Represents a single tile. */
-    struct Tile
+    /** Represents a single tile.. */
+    class Tile : Sprite
     {
-        /** Whether the tile should be flipped, and whether it is visible. */
-        public bool diagonalFlip, horizontalFlip, verticalFlip, visible;
-
-        /** The world position of the tile (in tile coordinates) */
-        public short worldX, worldY;
-
-        /** The tile source texture coordinates in the tileset (in pixels) */
-        public short tilesetX, tilesetY;
-
         /** Constructs the tile */
-        public Tile(TiledSharp.TmxLayerTile tile, int tileCountX, int tileCountY)
+        public Tile(TiledSharp.TmxLayerTile tile, int tileCountX, int tileCountY,
+                    int tileWidth, int tileHeight,
+                    int tilesetWidth, int tilesetHeight)
+            : base(tile.X, tile.Y,
+                  visible : true,
+                  diagonalFlip : tile.DiagonalFlip,
+                  horizontalFlip : tile.HorizontalFlip,
+                  verticalFlip : tile.VerticalFlip,
+
+                  uvX :
+                  //(float)(tilesetXIndex * tileWidth + 0.5f) / tilesetWidth
+                  (float)((tile.Gid == 0 ? 0 : (((tile.Gid - 1) % tileCountX)) *
+                      tileWidth + 0.5f)  / tilesetWidth),
+
+                  uvY : 
+                  //(float)(tilesetYIndex * tileHeight + 0.5f) / tilesetHeight
+                  (float)((tile.Gid == 0 ? 0 : (((tile.Gid - 1) % tileCountY)) *
+                      tileHeight + 0.5f) / tilesetHeight),
+                  
+                  uvSizeX : (float)tileWidth  / tilesetWidth,
+                  uvSizeY : (float)tileHeight / tilesetHeight)
         {
             //Copy in properties
             visible = tile.Gid != 0;
@@ -21,21 +34,16 @@
             horizontalFlip = tile.HorizontalFlip;
             verticalFlip = tile.VerticalFlip;
 
-            worldX = (short)tile.X;
-            worldY = (short)tile.Y;
+            posX = tile.X;
+            posY = tile.Y;
+        }
 
-            //If it is not visible, then its GID is 0, which is illegal.
-
-            if (visible)
-            {
-                tilesetX = (short)((tile.Gid - 1) % tileCountX);
-                tilesetY = (short)((tile.Gid - 1) / tileCountY);
-            }
-            else
-            {
-                tilesetX = 0;
-                tilesetY = 0;
-            }
+        public Matrix4 uvMatrix()
+        {
+            return new Matrix4(new float[] { uvSizeX, 0, 0, 0,
+                               0, uvSizeY, 0, 0,
+                               0, 0, 0, 0,
+                               uvX, uvY, 0, 1 });
         }
     }
 }

@@ -4,7 +4,7 @@ using System;
 namespace Polys.Video
 {
     /** Represents an indexed bitmap image. Each pixel is an unsigned byte indexing a colour in a palette. */
-    class IndexedBitmap
+    class IndexedTexture
     {
         /** The original palette associated with the bitmap */
         public Palette palette { get; private set; }
@@ -19,7 +19,7 @@ namespace Polys.Video
         uint indexTexture;
         
         /** Load the image from file */
-        public IndexedBitmap(String pathIn)
+        public IndexedTexture(String pathIn)
         {
             String path = pathIn.Replace('/', '\\');
             try

@@ -38,5 +38,12 @@ namespace Polys.Util
                 block *= 2;
             }
         }
+
+        public static void CheckGl()
+        {
+            OpenGL.ErrorCode err = OpenGL.Gl.GetError();
+            if (err != OpenGL.ErrorCode.NoError)
+                Console.WriteLine("Open GL Error: " + err);
+        }
     }
 }

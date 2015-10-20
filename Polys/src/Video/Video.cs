@@ -18,7 +18,7 @@ namespace Polys.Video
         IntPtr mGglContext;
 
         //The low level renderer that handles the screen buffers
-        FramebufferManager lowLevelRenderer;
+        FramebufferManager framebufferManager;
 
         //The width and height of the window
         int width, height;
@@ -35,7 +35,7 @@ namespace Polys.Video
         public void updateWindowSize()
         {
             SDL.SDL_GetWindowSize(window, out this.width, out this.height);
-            lowLevelRenderer.resize(width, height);
+            framebufferManager.resize(width, height);
             Gl.Viewport(0, 0, width, height);
         }
 
@@ -65,13 +65,11 @@ namespace Polys.Video
             //Create the GL context
             mGglContext = SDL.SDL_GL_CreateContext(window);
 
-            //Enable blending
-            Gl.Enable(EnableCap.Blend);
-            Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            LowLevelRenderer.initialise();
+            LowLevelRenderer.blending = true;
 
-            //Create low level renderer
-            lowLevelRenderer = new FramebufferManager(640, 480, 256, 192);
-
+            framebufferManager = new FramebufferManager(640, 480, 256, 192);
+            
             //Temporarily initialise chromatic shift effect
             chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
         }
@@ -79,7 +77,7 @@ namespace Polys.Video
         /** Shuts down the video state, destroying the window and GL context. */
         public void shutdown()
         {
-            lowLevelRenderer.shutdown();
+            framebufferManager.Dispose();
             SDL.SDL_GL_DeleteContext(mGglContext);
             SDL.SDL_DestroyWindow(window);
         }
@@ -87,40 +85,30 @@ namespace Polys.Video
         /** Draws everything in a world that should be drawn. */
         public void draw(Game.World world)
         {
-            //Clear main screen
-            Gl.ClearColor(0, 0, 0, 1);
-            Gl.Clear(ClearBufferMask.ColorBufferBit);
-
-            //Get current scene and camera
-            Game.Scene scene = world.scene;
-            Camera camera = world.camera;
-
             //Clear render buffers
-            lowLevelRenderer.clear();
 
-            //Draw the tilemap
+            framebufferManager.clear();
 
+            framebufferManager.bind();
+
+            HighLevelRenderer.setTargetSize(framebufferManager.lowResWidth, framebufferManager.lowResHeight);
+ 
             //Draw all layers to the low-res target
-            foreach (TileLayer layer in scene.layers)
-                lowLevelRenderer.draw(layer, camera);
+            foreach (TileLayer layer in world.scene.layers)
+                HighLevelRenderer.draw(layer, world.camera);
 
-            //Draw the low-res target onto a high-res target (screen or indermediary buffer)
-            lowLevelRenderer.lowresToHighres(!postFx);
+            framebufferManager.lowresToHighres(!postFx);
 
-            //If drawn to the intermediary buffer, apply effects and draw to the screen.
             if (postFx)
             {
-                lowLevelRenderer.applyEffect(chromaticShiftFx, Time.currentTime);
-                lowLevelRenderer.highresToScreen();
+                framebufferManager.applyEffect(chromaticShiftFx, Time.currentTime);
+                framebufferManager.highresToScreen();
             }
 
             //Present to the user
             SDL.SDL_GL_SwapWindow(window);
 
-            //Report any errors
-            ErrorCode err = Gl.GetError();
-            if (err != ErrorCode.NoError)
-                Console.WriteLine("OpenGl error: " + err);
+            Util.Util.CheckGl();
         }
 
         /** Loads a shader from file, checking for any errors.
