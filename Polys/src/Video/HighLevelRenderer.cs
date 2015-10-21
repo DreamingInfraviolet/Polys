@@ -49,6 +49,8 @@ namespace Polys.Video
                 
                 LowLevelRenderer.geometry = LowLevelRenderer.quad;
 
+                LowLevelRenderer.shader = shaderIndexedBitmapSprite;
+
                 //For each tile
                 foreach (Tile tile in tiles.Value)
                 {
