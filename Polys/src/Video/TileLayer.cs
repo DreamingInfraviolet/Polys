@@ -17,7 +17,7 @@ namespace Polys.Video
         public TiledSharp.PropertyDict properties { get; private set; }
         
         /** A dictionary of tiles, organised by the tilesets to which they belong. */
-        public Dictionary<Tileset, List<Tile>> tileDict = new Dictionary<Tileset, List<Tile>>(); 
+        public Dictionary<Tileset, List<Sprite>> tileDict = new Dictionary<Tileset, List<Sprite>>(); 
 
         /** Initialises the tile layer from the given arguments.
           * @param layer The TiledSharp representation of the tile layer.
@@ -33,11 +33,10 @@ namespace Polys.Video
             for (int i = 0; i < layer.Tiles.Count; ++i)
             {
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
-                Tile tile = new Tile(layer.Tiles[i], tileset.tileCountX, tileset.tileCountY,
-                    tileset.tileWidth, tileset.tileHeight, tileset.width, tileset.height);
+                Sprite tile = new Sprite(layer.Tiles[i], tileset);
 
                 if (!tileDict.ContainsKey(tileset))
-                    tileDict[tileset] = new List<Tile>();
+                    tileDict[tileset] = new List<Sprite>();
 
                 tileDict[tileset].Add(tile);
             }
@@ -50,7 +49,7 @@ namespace Polys.Video
         /** Deletes all invisible tiles in the layer */
         public void deleteInvisibleTiles()
         {
-            List<Tile> tmp = new List<Tile>();
+            List<Sprite> tmp = new List<Sprite>();
             foreach (var p in tileDict)
             {
                 //Here it seems that we must use a temporary variable, as the iteration is

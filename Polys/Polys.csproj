@@ -105,7 +105,6 @@
     <Compile Include="src\Video\Palette.cs" />
     <Compile Include="src\Video\Sprite.cs" />
     <Compile Include="src\Video\SpriteImage.cs" />
-    <Compile Include="src\Video\Tile.cs" />
     <Compile Include="src\Video\TileLayer.cs" />
     <Compile Include="src\Video\Tileset.cs" />
     <Compile Include="src\Video\Transformable.cs" />

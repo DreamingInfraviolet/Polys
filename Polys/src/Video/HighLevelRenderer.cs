@@ -52,7 +52,7 @@ namespace Polys.Video
                 LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
                 //For each tile
-                foreach (Tile tile in tiles.Value)
+                foreach (Sprite tile in tiles.Value)
                 {
                     if (!tile.visible)
                         return;
@@ -79,7 +79,7 @@ namespace Polys.Video
             }
         }
 
-        public void draw(Tile tile, Camera camera, ShaderProgram program)
+        public void draw(Sprite tile, Camera camera, ShaderProgram program)
         {
             throw new NotImplementedException();
         }
