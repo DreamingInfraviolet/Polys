@@ -74,7 +74,10 @@ namespace Polys.Video
             HighLevelRenderer.shaderDrawSprite["transformMatrix"].SetValue(
                 Util.Maths.matrixFitRectIntoScreen(lowResWidth, lowResHeight, highResWidth, highResHeight));
 
-            HighLevelRenderer.shaderDrawSprite["uvMatrix"].SetValue(Matrix4.Identity);
+            HighLevelRenderer.shaderDrawSprite["uvMatrix"].SetValue(new Matrix4(new float[] {1,0,0,0,
+                                                                                            0,-1,0,0,
+                                                                                            0,0,0,0,
+                                                                                            0,0,0,1}));
             
             //Bind source texture
             Gl.BindTexture(TextureTarget.Texture2D, lowResBuffer.TextureID[0]);
@@ -86,6 +89,7 @@ namespace Polys.Video
         /** Copies the content of the current high resolution buffer to the screen */
         public void highresToScreen()
         {
+            LowLevelRenderer.shader = HighLevelRenderer.shaderDrawSprite;
             HighLevelRenderer.shaderDrawSprite["transformMatrix"].SetValue(Matrix4.Identity);
             HighLevelRenderer.shaderDrawSprite["uvMatrix"].SetValue(Matrix4.Identity);
             

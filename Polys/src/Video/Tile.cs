@@ -5,6 +5,10 @@ namespace Polys.Video
     /** Represents a single tile.. */
     class Tile : Sprite
     {
+
+
+
+
         /** Constructs the tile */
         public Tile(TiledSharp.TmxLayerTile tile, int tileCountX, int tileCountY,
                     int tileWidth, int tileHeight,
@@ -17,13 +21,11 @@ namespace Polys.Video
 
                   uvX :
                   //(float)(tilesetXIndex * tileWidth + 0.5f) / tilesetWidth
-                  (float)((tile.Gid == 0 ? 0 : (((tile.Gid - 1) % tileCountX)) *
-                      tileWidth + 0.5f)  / tilesetWidth),
+                  (float)((tile.Gid == 0 ? 0 : ((tile.Gid - 1) % tileCountX))*tileWidth+0.5f)/tilesetWidth,          
 
                   uvY : 
                   //(float)(tilesetYIndex * tileHeight + 0.5f) / tilesetHeight
-                  (float)((tile.Gid == 0 ? 0 : (((tile.Gid - 1) % tileCountY)) *
-                      tileHeight + 0.5f) / tilesetHeight),
+                  (float)((tile.Gid == 0 ? 0 : ((tile.Gid - 1) / tileCountY))*tileHeight+0.5f)/tilesetHeight,
                   
                   uvSizeX : (float)tileWidth  / tilesetWidth,
                   uvSizeY : (float)tileHeight / tilesetHeight)
