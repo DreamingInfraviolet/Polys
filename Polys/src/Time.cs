@@ -1,4 +1,6 @@
-﻿namespace Polys
+﻿using System;
+
+namespace Polys
 {
     /** A class to help handle time, providing functions to get the current time as well as the delta time. */
     class Time
@@ -24,8 +26,9 @@
         public static void endFrame()
         {
             stopwatch.Stop();
-            deltaTime = stopwatch.ElapsedMilliseconds;
+            deltaTime = (float)(stopwatch.ElapsedTicks / (double)System.Diagnostics.Stopwatch.Frequency);
             stopwatch.Reset();
         }
+
     }
 }

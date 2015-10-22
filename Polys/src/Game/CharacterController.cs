@@ -8,7 +8,8 @@
             get { return new Character(); }
         }
 
-        public int positionX, positionY;
+        //These should be floats, as otherwise small deltas have o effect.
+        public OpenGL.Vector2 position = new OpenGL.Vector2();
         public OpenGL.Vector2 velocity = new OpenGL.Vector2();
         float speed;
 
@@ -20,8 +21,7 @@
         public void finishGatheringInput()
         {
             velocity = velocity.Normalize()*speed*Time.deltaTime;
-            positionX += (int)velocity.x;
-            positionY += (int)velocity.y;
+            position += velocity;
             velocity.x = 0;
             velocity.y = 0;
         }

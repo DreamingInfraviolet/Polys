@@ -8,7 +8,7 @@ namespace Polys.Game.States
 {
     class PlayState : State
     {
-        CharacterController controller = new CharacterController(0.3f);
+        CharacterController controller = new CharacterController(1.0f);
         Video.Camera camera = new Video.Camera();
 
         public PlayState()
@@ -42,7 +42,7 @@ namespace Polys.Game.States
         public StateManager.StateUpdateResult updateAfterInput()
         {
             controller.finishGatheringInput();
-            camera.centreOn(controller.positionX, controller.positionY);
+            camera.centreOn((int)controller.position.x, (int)controller.position.y);
 
             return StateManager.StateUpdateResult.Finish;
         }
