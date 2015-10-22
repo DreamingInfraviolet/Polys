@@ -9,7 +9,11 @@ namespace Polys.Video
         public static ShaderProgram shaderDrawSprite;
         public static ShaderProgram shaderIndexedBitmapSprite;
 
+        static int targetIWidth, targetIHeight;
         static float targetWidth, targetHeight;
+
+        public static int width { get { return targetIWidth; } }
+        public static int height { get { return targetIHeight; } }
 
         public void Dispose()
         {
@@ -21,6 +25,8 @@ namespace Polys.Video
 
         public static void setTargetSize(int width, int height)
         {
+            targetIWidth = width;
+            targetIHeight = height;
             targetWidth = width;
             targetHeight = height;
         }

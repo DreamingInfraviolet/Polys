@@ -75,8 +75,9 @@
     <Compile Include="src\Audio\Sound.cs" />
     <Compile Include="src\Game\Character.cs" />
     <Compile Include="src\Game\CharacterController.cs" />
-    <Compile Include="src\Game\State.cs" />
-    <Compile Include="src\Game\StateManager.cs" />
+    <Compile Include="src\Game\States\PlayState.cs" />
+    <Compile Include="src\Game\States\State.cs" />
+    <Compile Include="src\Game\States\StateManager.cs" />
     <Compile Include="src\IntentHandler.cs" />
     <Compile Include="src\IntentManager.cs" />
     <Compile Include="src\Game\Inventory.cs" />

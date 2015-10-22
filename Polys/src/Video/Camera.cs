@@ -19,5 +19,11 @@
             mCornerX += dx;
             mCornerY += dy;
         }
+
+        public void centreOn(int x, int y)
+        {
+            mCornerX = x - HighLevelRenderer.width / 2;
+            mCornerY = y - HighLevelRenderer.height / 2;
+        }
     }
 }

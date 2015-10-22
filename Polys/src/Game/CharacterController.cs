@@ -8,22 +8,29 @@
             get { return new Character(); }
         }
 
-        public int movementX, movementY;
+        public int positionX, positionY;
+        public OpenGL.Vector2 velocity = new OpenGL.Vector2();
+        float speed;
 
-        public void begin(float deltaTime)
+        public CharacterController(float speed)
         {
-            movementX = movementY = 0;
+            this.speed = speed;
         }
 
-        public void end()
+        public void finishGatheringInput()
         {
-            
+            velocity = velocity.Normalize()*speed*Time.deltaTime;
+            positionX += (int)velocity.x;
+            positionY += (int)velocity.y;
+            velocity.x = 0;
+            velocity.y = 0;
         }
            
         public void addMoveVector(int v1, int v2)
         {
-            movementX += v1;
-            movementY += v2;
+
+            velocity.x += v1;
+            velocity.y += v2;
         }
 
         public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)

@@ -7,25 +7,12 @@ using System.Collections.Generic;
 
 namespace Polys.Game
 {
-    class World : IIntentHandler, IScriptInitialisable
+    class World : IIntentHandler, IScriptInitialisable, System.IDisposable
     {
-
-        Stack<State> states = new Stack<State>();
-
-        //The current list of scenes
-        SceneList sceneList = new SceneList();
-
-        //The active character controller
-        CharacterController controller = new CharacterController();
-
-        /** The current scene */
-        public Scene scene { get { return sceneList.current; } private set { sceneList.current = value; } }
-
+        public States.StateManager stateManager = new States.StateManager(new States.PlayState());
+        
         /** The current camera */
         public Video.Camera camera { get; private set; }
-        
-        /** The active intent manager */
-        public IntentManager intentManager = new IntentManager();
         
         /** Whether the world should be running */
         public bool running { get; private set; }
@@ -34,27 +21,26 @@ namespace Polys.Game
         public void beforeInput()
         {
             Time.startFrame();
-            controller.begin(Time.deltaTime);
+            stateManager.update(States.StateManager.UpdateType.BeforeInput);
         }
 
         /** This method is executed each frame after input is collected */
         public void afterInput()
         {
-            controller.end();
-            camera.move(controller.movementX, controller.movementY);
+            stateManager.update(States.StateManager.UpdateType.AfterInput);
         }
 
         /** This method is executed each frame just before the end of the frame */
         public void AfterLoop()
         {
             Time.endFrame();
+            stateManager.update(States.StateManager.UpdateType.AfterFrame);
         }
 
         /** Shuts down the world, freeing resources */
-        public void shutdown()
+        public void Dispose()
         {
-            if (sceneList != null)
-                sceneList.Dispose();
+            stateManager.Dispose();
         }
 
         /** Handles the intents for which the world is registered */
@@ -82,11 +68,7 @@ namespace Polys.Game
             running = true;
             camera = new Video.Camera();
 
-            intentManager.register(this, IntentManager.IntentType.ESC, true, false, false);
-            intentManager.register(controller, IntentManager.IntentType.WALK_DOWN, true, false, true);
-            intentManager.register(controller, IntentManager.IntentType.WALK_LEFT, true, false, true);
-            intentManager.register(controller, IntentManager.IntentType.WALK_RIGHT, true, false, true);
-            intentManager.register(controller, IntentManager.IntentType.WALK_UP, true, false, true);
+            IntentManager.register(this, IntentManager.IntentType.ESC, true, false, false);
         }
     }
 }

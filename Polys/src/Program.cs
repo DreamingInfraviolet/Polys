@@ -21,7 +21,7 @@ class Program
         video = new Video();
         audio = new Audio();
         world = new World();
-        input = new Input(world.intentManager);
+        input = new Input();
 
         ScriptManager.initialiseFromScript("configure.lua", video, audio, world, input);
 
@@ -41,7 +41,7 @@ class Program
             world.AfterLoop();
         }
 
-        world.shutdown();
+        world.Dispose();
         audio.shutdown();
         video.shutdown();
     }

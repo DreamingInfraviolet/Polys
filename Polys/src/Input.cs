@@ -8,8 +8,6 @@ namespace Polys
     /** The input class is a low-level class that keeps track of the keys currently active. */
     class Input : IScriptInitialisable
     {
-        //The intent manager to be notified of any key presses
-        IntentManager intentManager;
         
         //This keytable is used to handle continuous key presses.
         //Once a key is pressed, it is stored until it is unpressed.
@@ -28,9 +26,8 @@ namespace Polys
         }
 
         /** Basic constructor performing essential initialisation. */
-        public Input(IntentManager handler)
+        public Input()
         {
-            this.intentManager = handler;
             initKeyDictionary();
         }
 
@@ -38,14 +35,14 @@ namespace Polys
         public void keyDown(SDL.SDL_Keycode key)
         {
             mKeyTable[key] = true;
-            intentManager.keyDown(key);
+            IntentManager.keyDown(key);
         }
 
         /** Call this to signal that a key is being held up. */
         public void keyUp(SDL.SDL_Keycode key)
         {
             mKeyTable[key] = false;
-            intentManager.keyUp(key);
+            IntentManager.keyUp(key);
         }
 
         /** Sends out any pending keys and sends out intents to registered classes. */
@@ -53,9 +50,9 @@ namespace Polys
         {
             foreach(var v in mKeyTable)
                 if (v.Value)
-                    intentManager.keyHeld(v.Key);
+                    IntentManager.keyHeld(v.Key);
 
-            intentManager.dispatchRequestsAndClear();
+            IntentManager.dispatchRequestsAndClear();
         }
         
         /** Returns the script representation of the class. */
@@ -77,7 +74,7 @@ namespace Polys
                     SDL.SDL_Keycode key = (SDL.SDL_Keycode)Enum.Parse(typeof(SDL.SDL_Keycode), keyStr, true);
                     IntentManager.IntentType intent = (IntentManager.IntentType)Enum.Parse(typeof(IntentManager.IntentType), valueStr, true);
 
-                    intentManager.addBinding(key, intent);
+                    IntentManager.addBinding(key, intent);
 
                 }
                 catch (Exception e)

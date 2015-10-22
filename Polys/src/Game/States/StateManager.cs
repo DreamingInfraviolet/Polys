@@ -1,7 +1,16 @@
-﻿namespace Polys.Game
+﻿using System;
+
+namespace Polys.Game.States
 {
-    class StateManager
+    class StateManager : System.IDisposable
     {
+        public enum UpdateType
+        {
+            BeforeInput,
+            AfterInput,
+            AfterFrame
+        }
+
         public enum StateUpdateResult
         {
             Finish,
@@ -48,7 +57,7 @@
 
         /** Executes the state stack.
           * @return True if the state manager wants to continue to run the game, or false to quit. */
-        public bool update(float dt)
+        public bool update(UpdateType type)
         {
             if (stack.Count == 0)
                 return false;
@@ -56,7 +65,23 @@
             {
                 for (int i = stack.Count - 1; i > -1; --i)
                 {
-                    StateUpdateResult result = stack[i].update(dt);
+                    StateUpdateResult result;
+
+                    switch (type)
+                    {
+                        case StateManager.UpdateType.BeforeInput:
+                            result = stack[i].updateBeforeInput();
+                            break;
+                        case StateManager.UpdateType.AfterInput:
+                            result = stack[i].updateAfterInput();
+                            break;
+                        case StateManager.UpdateType.AfterFrame:
+                            result = stack[i].updateAfterFrame();
+                            break;
+                        default:
+                            throw new System.NotImplementedException();
+                    }
+                    
                     switch (result)
                     {
                         case StateUpdateResult.Finish:
@@ -99,6 +124,14 @@
                     }
                 }
                 throw new System.Exception("SYSTEM LOGIC ERROR IN STATE LOOP");
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach(State state in stack)
+            {
+                state.Dispose();
             }
         }
     }

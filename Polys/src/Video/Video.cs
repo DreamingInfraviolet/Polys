@@ -92,10 +92,9 @@ namespace Polys.Video
             framebufferManager.bind();
 
             HighLevelRenderer.setTargetSize(framebufferManager.lowResWidth, framebufferManager.lowResHeight);
- 
-            //Draw all layers to the low-res target
-            foreach (TileLayer layer in world.scene.layers)
-                HighLevelRenderer.draw(layer, world.camera);
+
+            //Draw all to low res target
+            world.stateManager.draw();
 
             framebufferManager.lowresToHighres(!postFx);
 
