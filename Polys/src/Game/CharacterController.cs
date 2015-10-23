@@ -30,6 +30,8 @@
 
         Character.Orientation orientationFromVelocity(Character.Orientation @default)
         {
+            character.walkState = Character.WalkState.Walking;
+
             if (velocity.x > 0) //Going right
                 if (velocity.y > 0) //Going down
                     return Character.Orientation.DownRight;
@@ -50,7 +52,10 @@
             else if (velocity.y < 0) //Going up
                 return Character.Orientation.Up;
             else //Not moving on y axis
+            {
+                character.walkState = Character.WalkState.Standing;
                 return @default;
+            }
         }
            
         public void addMoveVector(int v1, int v2)

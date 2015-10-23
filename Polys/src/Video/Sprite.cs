@@ -50,7 +50,7 @@ namespace Polys.Video
             return new Matrix4(new float[] { width/tilesetWidth, 0, 0, 0,
                                0, height/tilesetHeight, 0, 0,
                                0, 0, 0, 0,
-                               uvX/tilesetWidth, uvY/tilesetHeight, 0, 1 });
+                               uvX/tilesetWidth + (0.5f/tilesetWidth), uvY/tilesetHeight + (0.5f/tilesetWidth), 0, 1 });
         }
     }
 }
