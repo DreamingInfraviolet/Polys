@@ -10,7 +10,7 @@ namespace Polys.Game.States
     {
         CharacterController controller = new CharacterController(50);
         Video.Camera camera = new Video.Camera();
-        Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp"));
+        Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp",0,0, 16, 32));
 
         public PlayState()
         {

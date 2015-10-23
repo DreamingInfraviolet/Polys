@@ -21,7 +21,7 @@ namespace Polys.Video
             : base(posX, posY, sizeX, sizeY, visible) {}
 
         /** Constructs the tile and loads a tileset */
-        public DrawableSprite(string spritePath, int posX=0, int posY=0, int sizeX = 1, int sizeY = 1, bool originIsCentre = true,
+        public DrawableSprite(string spritePath, int posX=0, int posY=0, int sizeX = 0, int sizeY = 0, bool originIsCentre = true,
             bool visible = true, int uvX = 0, int uvY = 0)
             : base(posX, posY, sizeX, sizeY, visible, uvX, uvY)
         {

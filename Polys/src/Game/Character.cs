@@ -17,18 +17,18 @@
                     case Orientation.Down:
                     case Orientation.DownLeft:
                     case Orientation.DownRight:
-                        sprite.setUV(sprite.tileset, 0, 0);
+                        sprite.setTilesetIndex(0, 0);
                         break;
                     case Orientation.Up:
                     case Orientation.UpLeft:
                     case Orientation.UpRight:
-                        sprite.setUV(sprite.tileset, 1, 0);
+                        sprite.setTilesetIndex(1, 0);
                         break;
                     case Orientation.Left:
-                        sprite.setUV(sprite.tileset, 2, 0);
+                        sprite.setTilesetIndex(2, 0);
                         break;
                     case Orientation.Right:
-                        sprite.setUV(sprite.tileset, 3, 0);
+                        sprite.setTilesetIndex(3, 0);
                         break;
                 }
             }
