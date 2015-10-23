@@ -8,6 +8,8 @@
         public OpenGL.Vector2 velocity = new OpenGL.Vector2();
         float speed;
 
+        public Character character;
+
         public CharacterController(float speed)
         {
             this.speed = speed;
@@ -17,8 +19,38 @@
         {
             velocity = velocity.Normalize()*speed*Time.deltaTime;
             position += velocity;
+
+            character.sprite.posX = (int)position.x;
+            character.sprite.posY = (int)position.y;
+            character.orientation = orientationFromVelocity(character.orientation);
+
             velocity.x = 0;
             velocity.y = 0;
+        }
+
+        Character.Orientation orientationFromVelocity(Character.Orientation @default)
+        {
+            if (velocity.x > 0) //Going right
+                if (velocity.y > 0) //Going down
+                    return Character.Orientation.DownRight;
+                else if (velocity.y < 0) //Going up
+                    return Character.Orientation.UpRight;
+                else //Not moving on y axis
+                    return Character.Orientation.Right;
+            else if (velocity.x < 0) //Going left
+                if (velocity.y > 0) //Going down
+                    return Character.Orientation.DownLeft;
+                else if (velocity.y < 0) //Going up
+                    return Character.Orientation.UpLeft;
+                else //Not moving on y axis
+                    return Character.Orientation.Left;
+            else //Not moving on x axis
+                if (velocity.y > 0) //Going down
+                return Character.Orientation.Down;
+            else if (velocity.y < 0) //Going up
+                return Character.Orientation.Up;
+            else //Not moving on y axis
+                return @default;
         }
            
         public void addMoveVector(int v1, int v2)

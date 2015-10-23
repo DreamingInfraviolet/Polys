@@ -5,54 +5,62 @@ namespace Polys.Video
 {
     class Sprite : Transformable
     {
-        /** Whether the tile should be flipped, and whether it is visible. */
-        public bool diagonalFlip, horizontalFlip, verticalFlip, visible;
+        /**  whether it is visible. */
+        public bool  visible;
         
         /** The tile source texture coordinates in the tileset (in pixels) */
-        public float uvX, uvY, uvSizeX, uvSizeY;
+        public int uvX, uvY, sizeX, sizeY;
 
         /** Constructs the tile */
         public Sprite(TiledSharp.TmxLayerTile tile, Tileset tileset)
             : base(tile.X, tile.Y)
         {
             visible = tile.Gid != 0;
-            diagonalFlip = tile.DiagonalFlip;
-            horizontalFlip = tile.HorizontalFlip;
-            verticalFlip = tile.VerticalFlip;
-
-            uvX = (float)((tile.Gid == 0 ? 0 : ((tile.Gid - 1) % tileset.tileCountX)) * tileset.tileWidth + 0.5f) / tileset.width;
-
-            uvY = (float)((tile.Gid == 0 ? 0 : ((tile.Gid - 1) / tileset.tileCountY)) * tileset.tileHeight + 0.5f) / tileset.height;
-
-            uvSizeX = (float)tileset.tileWidth / tileset.width;
-            uvSizeY = (float)tileset.tileHeight / tileset.height;
+            setUV(tileset, tile.Gid < 1 ? 0 : ((tile.Gid - 1) % tileset.tileCountX), tile.Gid < 1 ? 0 : ((tile.Gid - 1) / tileset.tileCountY));
         }
 
         /** Constructs the tile */
-        public Sprite(int posX, int posY, bool visible = true,
-            bool diagonalFlip = false, bool horizontalFlip = false,
-            bool verticalFlip = false, float uvX = 0, float uvY = 0, float uvSizeX = 1, float uvSizeY = 1)
+        public Sprite(int posX, int posY, int sizeX, int sizeY, bool visible = true,
+            int uvX = 0, int uvY = 0)
             : base(posX, posY)
         {
             //Copy in properties
             this.visible = visible;
-            this.diagonalFlip = diagonalFlip;
-            this.horizontalFlip = horizontalFlip;
-            this.verticalFlip = verticalFlip;
-            
-            this.uvX = uvX;
-            this.uvY = uvY;
-            this.uvSizeX = uvSizeX;
-            this.uvSizeY = uvSizeY;
+            setUV(uvX, uvY, sizeX, sizeY);
         }
 
-
-        public Matrix4 uvMatrix()
+        public void setUV(int uvX, int uvY, int uvSizeX, int uvSizeY)
         {
-            return new Matrix4(new float[] { uvSizeX, 0, 0, 0,
-                               0, uvSizeY, 0, 0,
+            this.uvX = uvX;
+            this.uvY = uvY;
+            this.sizeX = uvSizeX;
+            this.sizeY = uvSizeY;
+        }
+
+        public void setUV(Tileset tileset, int xTile, int yTile)
+        {
+            uvX = ((xTile) * tileset.tileWidth);
+            uvY = ((yTile) * tileset.tileHeight);
+            sizeX = tileset.tileWidth;
+            sizeY = tileset.tileHeight;
+
+        }
+
+        /** Transform matrix using the position as coordinates. */
+        public Matrix4 transformMatrix()
+        {
+            return new Matrix4(new float[] { sizeX, 0, 0, 0,
+                               0, sizeY, 0, 0,
                                0, 0, 0, 0,
-                               uvX, uvY, 0, 1 });
+                               posX, posY, 0, 1 });
+        }
+
+        public Matrix4 uvMatrix(float tilesetWidth, float tilesetHeight)
+        {
+            return new Matrix4(new float[] { sizeX/tilesetWidth, 0, 0, 0,
+                               0, sizeY/tilesetHeight, 0, 0,
+                               0, 0, 0, 0,
+                               uvX/tilesetWidth, uvY/tilesetHeight, 0, 1 });
         }
     }
 }

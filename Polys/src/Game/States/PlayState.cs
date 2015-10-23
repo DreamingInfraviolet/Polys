@@ -8,7 +8,7 @@ namespace Polys.Game.States
 {
     class PlayState : State
     {
-        CharacterController controller = new CharacterController(100.0f);
+        CharacterController controller = new CharacterController(50);
         Video.Camera camera = new Video.Camera();
         Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp"));
 
@@ -18,6 +18,8 @@ namespace Polys.Game.States
             IntentManager.register(controller, IntentManager.IntentType.WALK_LEFT, true, false, true);
             IntentManager.register(controller, IntentManager.IntentType.WALK_RIGHT, true, false, true);
             IntentManager.register(controller, IntentManager.IntentType.WALK_UP, true, false, true);
+
+            controller.character = player;
         }
 
         //The current list of scenes
@@ -45,9 +47,6 @@ namespace Polys.Game.States
         public StateManager.StateUpdateResult updateAfterInput()
         {
             controller.finishGatheringInput();
-            player.sprite.posX = (int)controller.position.x;
-            player.sprite.posY = (int)controller.position.y;
-            System.Console.WriteLine(player.sprite.posX + " " + player.sprite.posY);
             camera.centreOn(player.sprite.posX, player.sprite.posY);
 
             return StateManager.StateUpdateResult.Finish;

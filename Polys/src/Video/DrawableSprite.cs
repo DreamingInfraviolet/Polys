@@ -12,20 +12,18 @@ namespace Polys.Video
         public Tileset tileset;
 
         public DrawableSprite(TiledSharp.TmxLayerTile tile, Tileset tileset)
-            : base(tile, tileset) {}
+            : base(tile, tileset)
+        { }
 
         /** Constructs the tile */
-        public DrawableSprite(int posX, int posY, bool visible = true,
-            bool diagonalFlip = false, bool horizontalFlip = false,
-            bool verticalFlip = false, float uvX = 0, float uvY = 0, float uvSizeX = 1, float uvSizeY = 1)
-            : base(posX, posY, visible, diagonalFlip, horizontalFlip, verticalFlip, uvX, uvY, uvSizeX, uvSizeY) {}
+        public DrawableSprite(int posX, int posY, int sizeX, int sizeY, bool visible = true,
+            int uvX = 0, int uvY = 0, int uvSizeX = 0, int uvSizeY = 0)
+            : base(posX, posY, sizeX, sizeY, visible) {}
 
         /** Constructs the tile and loads a tileset */
-        public DrawableSprite(string spritePath, int posX=0, int posY=0, bool originIsCentre = true,
-            bool visible = true,
-            bool diagonalFlip = false, bool horizontalFlip = false,
-            bool verticalFlip = false, float uvX = 0, float uvY = 0, float uvSizeX = 1, float uvSizeY = 1)
-            : base(posX, posY, visible, diagonalFlip, horizontalFlip, verticalFlip, uvX, uvY, uvSizeX, uvSizeY)
+        public DrawableSprite(string spritePath, int posX=0, int posY=0, int sizeX = 1, int sizeY = 1, bool originIsCentre = true,
+            bool visible = true, int uvX = 0, int uvY = 0)
+            : base(posX, posY, sizeX, sizeY, visible, uvX, uvY)
         {
             tileset = new Tileset(spritePath, "tileset");
         }

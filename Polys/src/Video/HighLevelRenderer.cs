@@ -73,7 +73,7 @@ namespace Polys.Video
                     shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
                         Util.Maths.matrixPixelProjection(screenPosX, screenPosY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight));
 
-                    shaderIndexedBitmapSprite["uvMatrix"].SetValue(tile.uvMatrix());
+                    shaderIndexedBitmapSprite["uvMatrix"].SetValue(tile.uvMatrix(tiles.Key.width, tiles.Key.height));
 
                     //Draw
                     LowLevelRenderer.draw();
@@ -119,7 +119,8 @@ namespace Polys.Video
             shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
                 Util.Maths.matrixPixelProjection(sprite.posX, sprite.posY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight));
 
-            shaderIndexedBitmapSprite["uvMatrix"].SetValue(sprite.uvMatrix());
+            shaderIndexedBitmapSprite["uvMatrix"].SetValue(
+                sprite.uvMatrix(sprite.tileset.width, sprite.tileset.height));
 
             //Draw
             LowLevelRenderer.draw();
