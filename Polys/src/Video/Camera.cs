@@ -12,6 +12,13 @@
             x -= mCornerX;
             y -= mCornerY;
         }
+        
+        /** Applies the inverse of the camera transformation to a point. */
+        public void worldToScreen(Transformable t)
+        {
+            t.posX -= mCornerX;
+            t.posY -= mCornerY;
+        }
 
         /** Moves the camera by a specified amount. */
         public void move(int dx, int dy)

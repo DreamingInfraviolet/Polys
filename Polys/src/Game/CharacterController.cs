@@ -3,11 +3,6 @@
     /** A character controller can control any entity. */
     class CharacterController : IIntentHandler
     {
-        public Character character
-        {
-            get { return new Character(); }
-        }
-
         //These should be floats, as otherwise small deltas have o effect.
         public OpenGL.Vector2 position = new OpenGL.Vector2();
         public OpenGL.Vector2 velocity = new OpenGL.Vector2();

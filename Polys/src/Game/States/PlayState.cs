@@ -8,8 +8,9 @@ namespace Polys.Game.States
 {
     class PlayState : State
     {
-        CharacterController controller = new CharacterController(1.0f);
+        CharacterController controller = new CharacterController(100.0f);
         Video.Camera camera = new Video.Camera();
+        Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp"));
 
         public PlayState()
         {
@@ -30,6 +31,8 @@ namespace Polys.Game.States
                 Video.HighLevelRenderer.draw(layer, camera);
             }
 
+            Video.HighLevelRenderer.draw(player.sprite, camera);
+
             return StateManager.StateRenderResult.StopDrawing;
         }
 
@@ -42,7 +45,10 @@ namespace Polys.Game.States
         public StateManager.StateUpdateResult updateAfterInput()
         {
             controller.finishGatheringInput();
-            camera.centreOn((int)controller.position.x, (int)controller.position.y);
+            player.sprite.posX = (int)controller.position.x;
+            player.sprite.posY = (int)controller.position.y;
+            System.Console.WriteLine(player.sprite.posX + " " + player.sprite.posY);
+            camera.centreOn(player.sprite.posX, player.sprite.posY);
 
             return StateManager.StateUpdateResult.Finish;
         }

@@ -38,8 +38,8 @@ namespace Polys.Video
                 return;
 
             //Prepare
-            shaderDrawSprite.Use();
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
+            LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
             //In normalised GL coordinates:
             Vector2 screenVec = new Vector2(targetWidth, targetHeight);
@@ -53,10 +53,6 @@ namespace Polys.Video
                 int tileWidth = tiles.Key.tileWidth;
                 int tileHeight = tiles.Key.tileHeight;
                 
-                LowLevelRenderer.geometry = LowLevelRenderer.quad;
-
-                LowLevelRenderer.shader = shaderIndexedBitmapSprite;
-
                 //For each tile
                 foreach (Sprite tile in tiles.Value)
                 {
@@ -85,9 +81,48 @@ namespace Polys.Video
             }
         }
 
-        public void draw(Sprite tile, Camera camera, ShaderProgram program)
+        public void draw(Sprite tile, Tileset tileset, Camera camera)
         {
             throw new NotImplementedException();
+        }
+
+        public static void draw(DrawableSprite sprite, Camera camera)
+        {
+            if (sprite.visible == false)
+                return;
+
+            //Prepare
+            shaderDrawSprite.Use();
+            LowLevelRenderer.geometry = LowLevelRenderer.quad;
+
+            //In normalised GL coordinates:
+            Vector2 screenVec = new Vector2(targetWidth, targetHeight);
+
+            //Bind tileset texture
+            sprite.tileset.bind();
+
+            //Retrieve dimensions
+            int tileWidth = sprite.tileset.tileWidth;
+            int tileHeight = sprite.tileset.tileHeight;
+
+            LowLevelRenderer.shader = shaderIndexedBitmapSprite;
+            
+
+            camera.worldToScreen(sprite);
+
+            if (!Util.Maths.isRectVisible(sprite.posX, sprite.posY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight))
+                return;
+
+            //Set matrix uniforms
+            //shaderIndexedBitmapSprite["orthoMatrix"].SetValue(Matrix4.Identity);
+
+            shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
+                Util.Maths.matrixPixelProjection(sprite.posX, sprite.posY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight));
+
+            shaderIndexedBitmapSprite["uvMatrix"].SetValue(sprite.uvMatrix());
+
+            //Draw
+            LowLevelRenderer.draw();
         }
     }
 }
