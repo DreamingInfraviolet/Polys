@@ -10,7 +10,7 @@ namespace Polys.Audio
            
         }
 
-        public void shutdown()
+        public void Dispose()
         {
 
         }

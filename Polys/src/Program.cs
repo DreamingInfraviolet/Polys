@@ -42,8 +42,8 @@ class Program
         }
 
         world.Dispose();
-        audio.shutdown();
-        video.shutdown();
+        audio.Dispose();
+        video.Dispose();
     }
     
     /** Handles window events, feeding them into the relevant subsystems. */

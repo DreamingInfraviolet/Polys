@@ -48,13 +48,13 @@ namespace Polys.Video
         public void clear()
         {
             LowLevelRenderer.framebuffer = sourceFxBuffer;
-            LowLevelRenderer.clear(1);
+            LowLevelRenderer.clear();
             LowLevelRenderer.framebuffer = targetFxBuffer;
-            LowLevelRenderer.clear(0,1);
+            LowLevelRenderer.clear();
             LowLevelRenderer.framebuffer = lowResBuffer;
-            LowLevelRenderer.clear(0,0,1);
+            LowLevelRenderer.clear();
             LowLevelRenderer.resetFramebuffer(highResWidth, highResHeight);
-            LowLevelRenderer.clear(1,1,1);
+            LowLevelRenderer.clear();
         }
 
         /** Copies the low resolution target onto the high resolution target.

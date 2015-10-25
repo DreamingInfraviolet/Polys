@@ -81,7 +81,7 @@ namespace Polys.Video
             }
         }
 
-        public void draw(Sprite tile, Tileset tileset, Camera camera)
+        public static void draw(Sprite tile, Tileset tileset, Camera camera)
         {
             throw new NotImplementedException();
         }

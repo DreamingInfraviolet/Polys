@@ -31,6 +31,7 @@ namespace Polys.Video
             setUV(uvX, uvY, sizeX, sizeY);
         }
 
+
         void setUV(int uvX, int uvY, int uvSizeX, int uvSizeY)
         {
             this.uvX = uvX;

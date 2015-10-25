@@ -9,7 +9,7 @@ namespace Polys.Video
     * This class is responsible for handling the window and doing high-level drawing.
     */
 
-    class Video : IScriptInitialisable
+    class Video : IScriptInitialisable, IDisposable
     {
         //A pointer to the window
         IntPtr window;
@@ -72,14 +72,6 @@ namespace Polys.Video
             
             //Temporarily initialise chromatic shift effect
             chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
-        }
-
-        /** Shuts down the video state, destroying the window and GL context. */
-        public void shutdown()
-        {
-            framebufferManager.Dispose();
-            SDL.SDL_GL_DeleteContext(mGglContext);
-            SDL.SDL_DestroyWindow(window);
         }
 
         /** Draws everything in a world that should be drawn. */
@@ -153,6 +145,13 @@ namespace Polys.Video
             //Fullscreen?
             if (ScriptManager.retrieveValue(table, "fullscreen", 0) != 0)
                 SDL.SDL_SetWindowFullscreen(window, (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP);
+        }
+
+        public void Dispose()
+        {
+            framebufferManager.Dispose();
+            SDL.SDL_GL_DeleteContext(mGglContext);
+            SDL.SDL_DestroyWindow(window);
         }
     }
 }
