@@ -32,7 +32,7 @@ namespace Polys.Video
         }
 
         /** Draws a tile layer with a given camera. */
-        public static void draw(TileLayer layer, Camera camera)
+        public static void draw(TileLayer layer, Camera camera=null)
         {
             if (layer.visible == false)
                 return;
@@ -62,7 +62,8 @@ namespace Polys.Video
                     //Get screen coordinates of the tile in pixels
                     int screenPosX = tile.posX * tileWidth;
                     int screenPosY = tile.posY * tileHeight;
-                    camera.worldToScreen(ref screenPosX, ref screenPosY);
+                    if(camera!= null)
+                        camera.worldToScreen(ref screenPosX, ref screenPosY);
 
                     if (!Util.Maths.isRectVisible(screenPosX, screenPosY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight))
                         continue;
@@ -81,12 +82,7 @@ namespace Polys.Video
             }
         }
 
-        public static void draw(Sprite tile, Tileset tileset, Camera camera)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static void draw(DrawableSprite sprite, Camera camera)
+        public static void draw(Sprite sprite, Tileset tileset, Camera camera=null)
         {
             if (sprite.visible == false)
                 return;
@@ -99,13 +95,14 @@ namespace Polys.Video
             Vector2 screenVec = new Vector2(targetWidth, targetHeight);
 
             //Bind tileset texture
-            sprite.tileset.bind();
-            
+            tileset.bind();
+
             LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
             int spriteX = sprite.posX;
             int spriteY = sprite.posY;
-            camera.worldToScreen(ref spriteX, ref spriteY);
+            if(camera!= null)
+                camera.worldToScreen(ref spriteX, ref spriteY);
 
             if (!Util.Maths.isRectVisible(spriteX, spriteY, sprite.width, sprite.height, (int)targetWidth, (int)targetHeight))
                 return;
@@ -117,10 +114,15 @@ namespace Polys.Video
                 Util.Maths.matrixPixelProjection(spriteX, spriteY, sprite.width, sprite.height, (int)targetWidth, (int)targetHeight));
 
             shaderIndexedBitmapSprite["uvMatrix"].SetValue(
-                sprite.uvMatrix(sprite.tileset.width, sprite.tileset.height));
+                sprite.uvMatrix(tileset.width, tileset.height));
 
             //Draw
             LowLevelRenderer.draw();
+        }
+
+        public static void draw(DrawableSprite sprite, Camera camera=null)
+        {
+            draw(sprite, sprite.tileset, camera);
         }
     }
 }
