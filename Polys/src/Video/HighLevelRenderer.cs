@@ -62,8 +62,10 @@ namespace Polys.Video
                     //Get screen coordinates of the tile in pixels
                     int screenPosX = tile.posX * tileWidth;
                     int screenPosY = tile.posY * tileHeight;
-                    if(camera!= null)
+
+                    if (camera != null)
                         camera.worldToScreen(ref screenPosX, ref screenPosY);
+
 
                     if (!Util.Maths.isRectVisible(screenPosX, screenPosY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight))
                         continue;
@@ -103,6 +105,7 @@ namespace Polys.Video
             int spriteY = sprite.posY;
             if(camera!= null)
                 camera.worldToScreen(ref spriteX, ref spriteY);
+
 
             if (!Util.Maths.isRectVisible(spriteX, spriteY, sprite.width, sprite.height, (int)targetWidth, (int)targetHeight))
                 return;

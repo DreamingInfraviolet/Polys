@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 /**
-* Responsible for handling scenes and storing all game state.
+
 */
 
 namespace Polys.Game

@@ -10,6 +10,7 @@ namespace Polys.Game
         public TmxMap map { get; private set; }
         public Video.Tileset[] tilesets { get; private set; }
         public Video.TileLayer[] layers { get; private set; }
+        public Video.TileLayer collisionLayer { get; private set; }
 
         /** Initialises the scene from a script */
         public Scene(String path)
@@ -52,7 +53,13 @@ namespace Polys.Game
             //Initialise layers
             layers = new Video.TileLayer[map.Layers.Count];
             for (int iLayer = 0; iLayer < map.Layers.Count; ++iLayer)
+            {
+                //Note that keeping empty collision tiles currently ignores emptyness.
+                if (map.Layers[iLayer].Name == "collision")
+                    collisionLayer = new Video.TileLayer(map.Layers[iLayer], tilesets);
+               
                 layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets);
+            }
         }
     }
 }

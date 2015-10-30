@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="23" height="19" tilewidth="16" tileheight="16" nextobjectid="11">
  <tileset firstgid="1" name="Test" tilewidth="16" tileheight="16">
-  <image source="../tilesets/Sprite-0004.bmp" trans="ff00ff" width="256" height="256"/>
+  <image source="../tilesets/Sprite-0004.bmp" trans="ff00ff" width="512" height="512"/>
   <terraintypes>
    <terrain name="Grass" tile="-1"/>
    <terrain name="Dirt" tile="-1"/>
@@ -42,13 +42,17 @@
  </tileset>
  <layer name="Tile Layer 2" width="23" height="19">
   <data encoding="base64" compression="zlib">
-   eJztVEFuwzAM0+fWbuk5ge2d19neuUPiPaDt+unJAIkwAXbbcQYIp6olipJss/+1X7OjYS/47ntyZNgzEB3BsTjq7r8K3yB7gT3jOwAVMcircXmOPk18spxp8GOMLDl3+5vj7jjDN+Ec+aJwVDlDjoQ94jvK2Q/Hk+MdNuYUZW84S3/yJ+FmHRbJ7eJ4dnxK3Fn2AH/WryFmFTs5KurwDdyAs+jUOpGHvsyLGtiXAPurYwIOjtFxlZp3LQO0UC8REYP6s9iL1JgYwXGVfIvUX2vBeTCpTYGt631IvAnxpx0H68SY2osZsYOtM5MlZ9bk6HhBP3sdTuDYzw7zbbYu1oF6WMvB1vlgr6jpCA72QPsX0S8T3kU4eM90vhI0jcj3IvHvtp2bL2imDs6g9lnvWrPtrCf5PQjPDdoOEk9nnFr4fuhd4cxyNhbhOaEPXNW2bxtnPNu273yLeIZ6dZb/aumd/239ABj0iJk=
+   eJztVNFOwzAMdJ/Y4LvZoPuOVkn2HYw0fMdQG34CR9yp10q88UikUzrP9vlst2b/Z39mR8U94bndyZFhz0B0BMfiKLv/CmKD3BPsGc8BKMhBXs1LP8ZUicniUxHHHFlqbvY3x7EzuyE2wY98UTiK+JAj4Y54juL74Xh2vMPGmqLcFb6MJ38SbvZhkdrujhfHp+Sd5Q6IZ/8qchaxk6OgD4/dDw7ATXRqn8jDWNZFDZxLgP3qGIGTY3A8SM+blh5aqJeIyEH9WeyT9JgYwNHys95J+q+94D6Y9GaCrel96tZ8I/KPOw72iTl1FjNyB1t3JkvN7MnZ8Yp5tj5cwLHfHdZbbT3sA/Wwl72t+8FZUdMZHJyBzi9iXia8i3DwPdP9StA0oN675D922735gmbqSMI7CxfnX22760l+98LT5tC0nSSf7ji18Puh7wp3lruxCM8Fc+Aptv22ccezbefObxF9qFd3+a+OvvO/nW8mUPId
   </data>
  </layer>
  <layer name="Tile Layer 1" width="23" height="19">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFIxnMBuKZZOibAaVbgbgNTW4mFM+CYhifWBAJxNOBeCoQT0OTg5k3Cw3PJsF8XACbO0l1Oz4wHY1PDTdjAzMIK8EKqO0emDtg8TUKRgE9AABQ6BNV
+   eJxjYBgFIxloMzIwaDKSrk8DqocVSLOh6deEmqkFxZok2rESiNWB6lWBWA1Nnxaa2TCsTYYf0AE2d5LqdnxAHc0cargZG9Ag01xquwfmDlh8jYJRQA8AAE/iBaU=
   </data>
  </layer>
- <objectgroup name="MetaObjects"/>
+ <layer name="collision" width="23" height="19" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYBjZgI2RfH3kYFoBSv1Bqhp8ekjxOy45XPpICVtSwxyffZSaDdODj49sLiVphZi4IVUfsfYimwFjU8M/tMo/yG4cNRs1nKllNrb4I7f8JCbfAwC6rgKa
+  </data>
+ </layer>
 </map>

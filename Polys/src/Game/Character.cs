@@ -14,7 +14,6 @@
         {
             this.name = name;
             this.sprite = sprite;
-            sprite.setOriginAsSpriteCentre(sprite.tileset.width, sprite.tileset.height);
         }
 
         public string name { get; set; }

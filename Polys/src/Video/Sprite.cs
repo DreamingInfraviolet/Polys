@@ -53,5 +53,23 @@ namespace Polys.Video
                                0, 0, 0, 0,
                                uvX/tilesetWidth + (0.5f/tilesetWidth), uvY/tilesetHeight + (0.5f/tilesetWidth), 0, 1 });
         }
+
+        public int centreX() { return posX / width; }
+        public int centreY() { return posY / height; }
+
+        public bool overlaps(Sprite s)
+        {
+            //if (RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
+            //RectA.Bottom < RectB.Top && RectA.Top > RectB.Bottom)
+
+            return posX < (s.posX+s.width) && (posX+width) > s.posX &&
+                posY < (s.posY + s.height) && (posY + height) > s.posY;
+        }
+
+        public bool overlapsTile(Sprite tile)
+        {
+            Sprite tmp = new Sprite(tile.posX * tile.width, tile.posY * tile.height, tile.width, tile.height);
+            return overlaps(tmp);
+        }
     }
 }

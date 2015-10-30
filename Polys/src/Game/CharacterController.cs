@@ -15,17 +15,43 @@
             this.speed = speed;
         }
 
-        public void finishGatheringInput()
+        public void finishGatheringInput(Video.TileLayer collisionLayer)
         {
+            OpenGL.Vector2 oldPositon = position;
+
             velocity = velocity.Normalize()*speed*Time.deltaTime;
             position += velocity;
 
-            character.sprite.posX = (int)position.x;
-            character.sprite.posY = (int)position.y;
+            character.sprite.posX = (int)position.x-character.sprite.width/2;
+            character.sprite.posY = (int)position.y - character.sprite.height / 2;
             character.orientation = orientationFromVelocity(character.orientation);
 
             velocity.x = 0;
             velocity.y = 0;
+
+            //Check if we are colliding with something. If so, go back.
+            if(collisionLayer!= null)
+            {
+                bool overlapping = false;
+                Video.Sprite correctlyCollidingSprite = new Video.Sprite
+                    (character.sprite.posX, character.sprite.posY+16,
+                    character.sprite.width, character.sprite.height / 2);
+
+                //Use dumb approach: try everything.
+                foreach(var m in collisionLayer.tileDict)
+                    foreach(var tile in m.Value)
+                        if(correctlyCollidingSprite.overlapsTile(tile))
+                        {
+                            overlapping = true;
+                            break;
+                        }
+
+                if (overlapping)
+                    position = oldPositon;
+                
+                if (overlapping)
+                    System.Console.WriteLine("Overlapping");
+            }
         }
 
         Character.Orientation orientationFromVelocity(Character.Orientation @default)
