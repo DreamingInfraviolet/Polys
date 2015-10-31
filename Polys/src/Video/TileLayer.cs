@@ -23,7 +23,7 @@ namespace Polys.Video
           * @param layer The TiledSharp representation of the tile layer.
           * @param orderedTilesets An ordered array (ascending) of all the tilesets in the map 
           * @param filterEmpty If true, invisible tiles will be removed. Should be off for things like collision layers */
-        public TileLayer(TiledSharp.TmxLayer layer, Tileset[] orderedTilesets, bool filterEmpty = true)
+        public TileLayer(TiledSharp.TmxLayer layer, Tileset[] orderedTilesets, int tileCountY, bool filterEmpty = true)
         {
             name = layer.Name;
             visible = layer.Visible;
@@ -33,11 +33,11 @@ namespace Polys.Video
             for (int i = 0; i < layer.Tiles.Count; ++i)
             {
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
-                Sprite tile = new Sprite(layer.Tiles[i], tileset);
+                Sprite tile = new Sprite(layer.Tiles[i], tileset, tileCountY);
 
                if (!tileDict.ContainsKey(tileset))
                     tileDict[tileset] = new List<Sprite>();
-                tile = new Sprite(layer.Tiles[i], tileset);
+
                 tileDict[tileset].Add(tile);
             }
 
@@ -47,7 +47,7 @@ namespace Polys.Video
         }
 
         /** Deletes all invisible tiles in the layer */
-        public void deleteInvisibleTiles()
+        void deleteInvisibleTiles()
         {
             List<Sprite> tmp = new List<Sprite>();
             foreach (var p in tileDict)

@@ -28,7 +28,7 @@
 
             velocity.x = 0;
             velocity.y = 0;
-
+            
             //Check if we are colliding with something. If so, go back.
             if(collisionLayer!= null)
             {
@@ -46,8 +46,9 @@
                             break;
                         }
 
-                if (overlapping)
-                    position = oldPositon;
+                //Uncomment this to enable collision
+               // if (overlapping)
+                 //   position = oldPositon;
                 
                 if (overlapping)
                     System.Console.WriteLine("Overlapping");
@@ -59,24 +60,24 @@
             character.walkState = Character.WalkState.Walking;
 
             if (velocity.x > 0) //Going right
-                if (velocity.y > 0) //Going down
-                    return Character.Orientation.DownRight;
-                else if (velocity.y < 0) //Going up
+                if (velocity.y > 0) //Going up
                     return Character.Orientation.UpRight;
+                else if (velocity.y < 0) //Going down
+                    return Character.Orientation.DownRight;
                 else //Not moving on y axis
                     return Character.Orientation.Right;
             else if (velocity.x < 0) //Going left
-                if (velocity.y > 0) //Going down
-                    return Character.Orientation.DownLeft;
-                else if (velocity.y < 0) //Going up
+                if (velocity.y > 0) //Going up
                     return Character.Orientation.UpLeft;
+                else if (velocity.y < 0) //Going down
+                    return Character.Orientation.DownLeft;
                 else //Not moving on y axis
                     return Character.Orientation.Left;
             else //Not moving on x axis
-                if (velocity.y > 0) //Going down
-                return Character.Orientation.Down;
-            else if (velocity.y < 0) //Going up
+                if (velocity.y > 0) //Going up
                 return Character.Orientation.Up;
+            else if (velocity.y < 0) //Going down
+                return Character.Orientation.Down;
             else //Not moving on y axis
             {
                 character.walkState = Character.WalkState.Standing;
@@ -96,10 +97,10 @@
             switch(intentCode)
             {
                 case IntentManager.IntentType.WALK_DOWN:
-                    addMoveVector(0, 1);
+                    addMoveVector(0, -1);
                     break;
                 case IntentManager.IntentType.WALK_UP:
-                    addMoveVector(0, -1);
+                    addMoveVector(0, 1);
                     break;
                 case IntentManager.IntentType.WALK_LEFT:
                     addMoveVector(-1, 0);

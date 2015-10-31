@@ -69,7 +69,9 @@ namespace Polys.Video
             LowLevelRenderer.blending = true;
 
             framebufferManager = new FramebufferManager(640, 480, 256, 192);
-            
+
+            HighLevelRenderer.setTargetSize(framebufferManager.lowResWidth, framebufferManager.lowResHeight);
+
             //Temporarily initialise chromatic shift effect
             chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
         }

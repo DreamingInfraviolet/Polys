@@ -82,14 +82,11 @@ namespace Polys.Game.States
 
         public StateManager.StateRenderResult draw()
         {
-            foreach(var layer in sceneList.current.layers)
-            {
-                Video.HighLevelRenderer.draw(layer, camera);
-            }
+            Video.HighLevelRenderer.draw(sceneList.current, camera);
 
             Video.HighLevelRenderer.draw(player.sprite, camera);
 
-            font.renderText("HELLO WORLD", 2, 5);
+            font.renderText("HELLO WORLD", 5, 5);
 
             return StateManager.StateRenderResult.StopDrawing;
         }

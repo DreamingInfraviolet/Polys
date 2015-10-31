@@ -28,28 +28,30 @@ namespace Polys.Util
         public static bool isRectVisible(int rectX, int rectY, int rectW, int rectH, int screenW, int screenH)
         {
             if (rectX + rectW < 0 || rectY + rectH < 0 ||
-                rectX >= (int)screenW || rectY >= (int)screenH)
+                rectX > screenW || rectY > screenH)
                 return false;
             else
                 return true;
         }
 
+        //The position is the bottom left corner.
         public static Matrix4 matrixPixelProjection(int posX, int posY, int tileWidth, int tileHeight, int screenWidth, int screenHeight)
         {
             //We want the position to be the bottom left corner, so compensate.
             //Temporary solution.
-            posX -= tileWidth;
-            posY -= tileHeight;
+            //posX -= tileWidth;
+            //posY -= tileHeight;
 
             //Find projection and UV matrices.
-            Vector2 screenVec = new Vector2(screenWidth, screenHeight);
-            Vector2 p = (new Vector2(posX, posY) + 0.5f) / screenVec * 2.0f - 1.0f;
-            Vector2 s = new Vector2(tileWidth, tileHeight) / screenVec;
+            float px = (posX + 0.5f) / screenWidth * 2.0f - 1.0f;
+            float py = (screenHeight - posY - 0.5f - tileHeight) / screenHeight * 2.0f - 1.0f;
+            float sx = (float)tileWidth /screenWidth;
+            float sy = (float)tileHeight/screenHeight;
 
-            return new Matrix4(new float[] { s.x, 0, 0, 0,
-                                                           0, s.y, 0, 0,
+            return new Matrix4(new float[] { sx, 0, 0, 0,
+                                                           0, sy, 0, 0,
                                                            0, 0, 0, 0,
-                                                           s.x+p.x, s.y+p.y, 0, 1});
+                                                           sx+px, sy+py, 0, 1});
         }
     }
 }

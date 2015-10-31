@@ -11,9 +11,9 @@ namespace Polys.Video
         /** The tile source texture coordinates in the tileset (in pixels) */
         public int uvX, uvY, width, height;
 
-        /** Constructs the tile */
-        public Sprite(TiledSharp.TmxLayerTile tile, Tileset tileset)
-            : base(tile.X, tile.Y)
+        /** Constructs a tile. The position is subtracted from the tile count to account for up=down issue.*/
+        public Sprite(TiledSharp.TmxLayerTile tile, Tileset tileset, int tileCountY)
+            : base(tile.X, tileCountY-tile.Y-1)
         {
             visible = tile.Gid != 0;
             setUV(tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) % tileset.tileCountX)* tileset.tileWidth,

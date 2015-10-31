@@ -11,6 +11,8 @@ namespace Polys.Game
         public Video.Tileset[] tilesets { get; private set; }
         public Video.TileLayer[] layers { get; private set; }
         public Video.TileLayer collisionLayer { get; private set; }
+        public int gridTileWidth { get; private set; }
+        public int gridTileHeight { get; private set; }
 
         /** Initialises the scene from a script */
         public Scene(String path)
@@ -39,6 +41,9 @@ namespace Polys.Game
             if (!System.IO.File.Exists(tilemapPath))
                 throw new Exception(String.Format("Error loading \"{0}\". (is the path relative to assets/tilemaps/?)", tilemapPath));
             map = new TmxMap(tilemapPath);
+            gridTileWidth = map.TileWidth;
+            gridTileHeight = map.TileHeight;
+
 
             //Load tilesets
             tilesets = new Video.Tileset[map.Tilesets.Count];
@@ -56,9 +61,9 @@ namespace Polys.Game
             {
                 //Note that keeping empty collision tiles currently ignores emptyness.
                 if (map.Layers[iLayer].Name == "collision")
-                    collisionLayer = new Video.TileLayer(map.Layers[iLayer], tilesets);
+                    collisionLayer = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Height);
                
-                layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets);
+                layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Height);
             }
         }
     }

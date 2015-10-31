@@ -8,73 +8,63 @@ namespace Polys.Video
         //Various shader programs used during rendering
         public static ShaderProgram shaderDrawSprite;
         public static ShaderProgram shaderIndexedBitmapSprite;
+        
+        static int targetWidth, targetHeight;
 
-        static int targetIWidth, targetIHeight;
-        static float targetWidth, targetHeight;
-
-        public static int width { get { return targetIWidth; } }
-        public static int height { get { return targetIHeight; } }
+        public static int width { get { return targetWidth; } }
+        public static int height { get { return targetHeight; } }
 
         public void Dispose()
         {
-            if (shaderDrawSprite != null)
-                shaderDrawSprite.Dispose();
             if (shaderIndexedBitmapSprite != null)
                 shaderIndexedBitmapSprite.Dispose();
         }
 
         public static void setTargetSize(int width, int height)
         {
-            targetIWidth = width;
-            targetIHeight = height;
             targetWidth = width;
             targetHeight = height;
         }
 
-        /** Draws a tile layer with a given camera. */
-        public static void draw(TileLayer layer, Camera camera=null)
+        public static void draw(Game.Scene scene, Camera camera = null)
         {
-            if (layer.visible == false)
-                return;
+            foreach (var layer in scene.layers)
+                if (layer.visible)
+                    draw(layer, scene.gridTileWidth, scene.gridTileHeight, camera);
+        }
 
+        /** Draws a tile layer with a given camera. */
+        public static void draw(TileLayer layer, int gridTileWidth, int gridTileHeight, Camera camera = null)
+        {
             //Prepare
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
             LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
-            //In normalised GL coordinates:
-            Vector2 screenVec = new Vector2(targetWidth, targetHeight);
-
             foreach (var tiles in layer.tileDict)
             {
                 //Bind tileset textures
+
                 tiles.Key.bind();
-                
+
                 //For each tile
                 foreach (Sprite tile in tiles.Value)
                 {
                     if (!tile.visible)
-                        return;
-
-                    //Retrieve dimensions
-                    int tileWidth = tile.width;
-                    int tileHeight = tile.height;
+                        continue;
 
                     //Get screen coordinates of the tile in pixels
-                    //16 is temporary to represent the tileset tile size.
-                    int screenPosX = tile.posX * 16;
-                    int screenPosY = tile.posY * 16;
+                    int screenPosX = tile.posX * gridTileWidth;
+                    int screenPosY = tile.posY * gridTileHeight;
 
                     if (camera != null)
                         camera.worldToScreen(ref screenPosX, ref screenPosY);
-                    
-                    if (!Util.Maths.isRectVisible(screenPosX, screenPosY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight))
+
+                    if (!Util.Maths.isRectVisible(screenPosX, screenPosY, tile.width, tile.height, targetWidth, targetHeight))
                         continue;
 
                     //Set matrix uniforms
-                    //shaderIndexedBitmapSprite["orthoMatrix"].SetValue(Matrix4.Identity);
-
                     shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
-                        Util.Maths.matrixPixelProjection(screenPosX, screenPosY, tileWidth, tileHeight, (int)targetWidth, (int)targetHeight));
+                        Util.Maths.matrixPixelProjection(screenPosX, screenPosY, tile.width, tile.height, targetWidth, targetHeight));
 
                     shaderIndexedBitmapSprite["uvMatrix"].SetValue(tile.uvMatrix(tiles.Key.width, tiles.Key.height));
 
@@ -84,37 +74,29 @@ namespace Polys.Video
             }
         }
 
-        public static void draw(Sprite sprite, Tileset tileset, Camera camera=null)
+        public static void draw(Sprite sprite, Tileset tileset, Camera camera = null)
         {
-            if (sprite.visible == false)
+            if (!sprite.visible)
                 return;
 
             //Prepare
-            shaderDrawSprite.Use();
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
-
-            //In normalised GL coordinates:
-            Vector2 screenVec = new Vector2(targetWidth, targetHeight);
+            LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
             //Bind tileset texture
             tileset.bind();
 
-            LowLevelRenderer.shader = shaderIndexedBitmapSprite;
-
             int spriteX = sprite.posX;
             int spriteY = sprite.posY;
-            if(camera!= null)
+
+            if (camera != null)
                 camera.worldToScreen(ref spriteX, ref spriteY);
 
-
-            if (!Util.Maths.isRectVisible(spriteX, spriteY, sprite.width, sprite.height, (int)targetWidth, (int)targetHeight))
+            if (!Util.Maths.isRectVisible(spriteX, spriteY, sprite.width, sprite.height, targetWidth, targetHeight))
                 return;
 
-            //Set matrix uniforms
-            //shaderIndexedBitmapSprite["orthoMatrix"].SetValue(Matrix4.Identity);
-
             shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
-                Util.Maths.matrixPixelProjection(spriteX, spriteY, sprite.width, sprite.height, (int)targetWidth, (int)targetHeight));
+                Util.Maths.matrixPixelProjection(spriteX, spriteY, sprite.width, sprite.height, targetWidth, targetHeight));
 
             shaderIndexedBitmapSprite["uvMatrix"].SetValue(
                 sprite.uvMatrix(tileset.width, tileset.height));
@@ -123,9 +105,10 @@ namespace Polys.Video
             LowLevelRenderer.draw();
         }
 
-        public static void draw(DrawableSprite sprite, Camera camera=null)
+        public static void draw(DrawableSprite sprite, Camera camera = null)
         {
             draw(sprite, sprite.tileset, camera);
         }
     }
 }
+

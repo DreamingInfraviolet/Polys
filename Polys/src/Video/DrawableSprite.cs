@@ -11,10 +11,6 @@ namespace Polys.Video
     {
         public Tileset tileset;
 
-        public DrawableSprite(TiledSharp.TmxLayerTile tile, Tileset tileset)
-            : base(tile, tileset)
-        { }
-
         /** Constructs the tile */
         public DrawableSprite(int posX, int posY, int sizeX, int sizeY, bool visible = true,
             int uvX = 0, int uvY = 0, int uvSizeX = 0, int uvSizeY = 0)
