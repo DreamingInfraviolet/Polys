@@ -40,19 +40,22 @@
   <tile id="137" terrain="0,0,1,1"/>
   <tile id="138" terrain="0,1,1,1"/>
  </tileset>
+ <tileset firstgid="1025" name="Well" tilewidth="16" tileheight="32">
+  <image source="../tilesets/Sprite-0004.bmp" trans="ff00ff" width="512" height="512"/>
+ </tileset>
  <layer name="Tile Layer 2" width="23" height="19">
   <data encoding="base64" compression="zlib">
-   eJztVNFOwzAMdJ/Y4LvZoPuOVkn2HYw0fMdQG34CR9yp10q88UikUzrP9vlst2b/Z39mR8U94bndyZFhz0B0BMfiKLv/CmKD3BPsGc8BKMhBXs1LP8ZUicniUxHHHFlqbvY3x7EzuyE2wY98UTiK+JAj4Y54juL74Xh2vMPGmqLcFb6MJ38SbvZhkdrujhfHp+Sd5Q6IZ/8qchaxk6OgD4/dDw7ATXRqn8jDWNZFDZxLgP3qGIGTY3A8SM+blh5aqJeIyEH9WeyT9JgYwNHys95J+q+94D6Y9GaCrel96tZ8I/KPOw72iTl1FjNyB1t3JkvN7MnZ8Yp5tj5cwLHfHdZbbT3sA/Wwl72t+8FZUdMZHJyBzi9iXia8i3DwPdP9StA0oN675D922735gmbqSMI7CxfnX22760l+98LT5tC0nSSf7ji18Puh7wp3lruxCM8Fc+Aptv22ccezbefObxF9qFd3+a+OvvO/nW8mUPId
+   eJztVEFOwzAQ3Jxo4d20kL4jke2+g+KYdxQl5hOsxYwyicSNI5ZGTrfeHc/sJmb/a79mR8U+4bntyZERz0B0BMfiKLv/CnKD7BPiGc8BKKhBXq3Lc8ypkpPlTEUea2S5c4u/OY6d2Q25CefIF4WjyBlyJOwRzxFnGz4cz453/OadouwVNZlP/iTc9GGR2nfHi+NT4rPsAfn0r6JmkTg5Cnx47H5wAG6iU30iD3MX8StJXwLiV8cInByD40E8b1p6aKFeIqIG9WeJq8fEAI5Wn/elZ3svOA8m3kyINb1P3VpvRP1xx0GfWFN7MaN2sHVmstyZnpwdr+hn8+ECjv3s8L7V1kUfqIde9rbOB3tFTWdwsAfav4h+mfAuwsH3TOcrQdOA+96l/rHbzs0XNFNHEt5ZuNj/attZT/K7F57Wh6btJPV0xqmF3w99VziznI1FeC7oA1ex7beNM55t23d+i3iGenWW/2rpO//b+gYcnfHe
   </data>
  </layer>
  <layer name="Tile Layer 1" width="23" height="19">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFIxloMzIwaDKSrk8DqocVSLOh6deEmqkFxZok2rESiNWB6lWBWA1Nnxaa2TCsTYYf0AE2d5LqdnxAHc0cargZG9Ag01xquwfmDlh8jYJRQA8AAE/iBaU=
+   eJxjYBgFIxloMzIwaDKSrk8Djx5NqJlaUKxJoh0rgVgdqL6VhYGhjQVVTgvNbBjWJsMPuNxNSIxcoI5mDjXcjA3gixt8gNrugbkDFl+jYBTQAwAAVmcGXg==
   </data>
  </layer>
  <layer name="collision" width="23" height="19" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYBjZgI2RfH3kYFoBSv1Bqhp8ekjxOy45XPpICVtSwxyffZSaDdODj49sLiVphZi4IVUfsfYimwFjU8M/tMo/yG4cNRs1nKllNrb4I7f8JCbfAwC6rgKa
+   eJxjYBjZgI2RfH3kYFoBSv1BSE0LCfaR4ndsZqObQYzZ2MzHZTYhdxMSwydOyHx8fGRzKUkrxMQNqfqItRfZDBibGv6hVf5BduOo2ajhTC2zscUfueUnMfkeAAxKBBE=
   </data>
  </layer>
 </map>

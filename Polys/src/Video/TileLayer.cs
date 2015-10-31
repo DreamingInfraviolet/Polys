@@ -35,9 +35,9 @@ namespace Polys.Video
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
                 Sprite tile = new Sprite(layer.Tiles[i], tileset);
 
-                if (!tileDict.ContainsKey(tileset))
+               if (!tileDict.ContainsKey(tileset))
                     tileDict[tileset] = new List<Sprite>();
-
+                tile = new Sprite(layer.Tiles[i], tileset);
                 tileDict[tileset].Add(tile);
             }
 

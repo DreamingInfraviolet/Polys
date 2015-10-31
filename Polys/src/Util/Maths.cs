@@ -36,6 +36,11 @@ namespace Polys.Util
 
         public static Matrix4 matrixPixelProjection(int posX, int posY, int tileWidth, int tileHeight, int screenWidth, int screenHeight)
         {
+            //We want the position to be the bottom left corner, so compensate.
+            //Temporary solution.
+            posX -= tileWidth;
+            posY -= tileHeight;
+
             //Find projection and UV matrices.
             Vector2 screenVec = new Vector2(screenWidth, screenHeight);
             Vector2 p = (new Vector2(posX, posY) + 0.5f) / screenVec * 2.0f - 1.0f;

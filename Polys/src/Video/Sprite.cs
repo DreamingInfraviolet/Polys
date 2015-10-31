@@ -16,8 +16,8 @@ namespace Polys.Video
             : base(tile.X, tile.Y)
         {
             visible = tile.Gid != 0;
-            setUV(tile.Gid < 1 ? 0 : ((tile.Gid - 1) % tileset.tileCountX)* tileset.tileWidth,
-                tile.Gid < 1 ? 0 : ((tile.Gid - 1) / tileset.tileCountY)* tileset.tileHeight,
+            setUV(tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) % tileset.tileCountX)* tileset.tileWidth,
+                tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) / tileset.tileCountX)* tileset.tileHeight,
                 tileset.tileWidth, tileset.tileHeight);
         }
 
@@ -51,7 +51,7 @@ namespace Polys.Video
             return new Matrix4(new float[] { width/tilesetWidth, 0, 0, 0,
                                0, height/tilesetHeight, 0, 0,
                                0, 0, 0, 0,
-                               uvX/tilesetWidth + (0.5f/tilesetWidth), uvY/tilesetHeight + (0.5f/tilesetWidth), 0, 1 });
+                               uvX/tilesetWidth + (0.5f/tilesetWidth), uvY/tilesetHeight + (0.5f/tilesetHeight), 0, 1 });
         }
 
         public int centreX() { return posX / width; }
