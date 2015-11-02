@@ -3,7 +3,7 @@
 namespace Polys.Game
 {
     /** Represents a single inventory item */
-    class InventoryItem
+    public class InventoryItem
     {
         public InventoryItem(String name)
         {

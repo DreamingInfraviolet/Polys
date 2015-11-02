@@ -5,7 +5,7 @@ namespace Polys.Video
 {
     /** A class to represent a tileset image, based on a subset of the tmx format. It does not support a border, or spacing
       * between the tiles. Internally it uses a palette to store colours. */
-    class Tileset : SpriteImage
+    public class Tileset : SpriteImage
     {
         /** A constructor that loads the tileset and initialises the internal fields */
         public Tileset(String path, String name, int tileWidth = 0, int tileHeight = 0, int firstGid = 1)

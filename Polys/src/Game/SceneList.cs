@@ -5,7 +5,7 @@ using System.Collections.Generic;
   * Note that only one distinct copy of a scene may exist during one time. */
 namespace Polys.Game
 {
-    class SceneList
+    public class SceneList
     {
         //A dictionary of currently loaded scenes
         Dictionary<String, Scene> mScenes = new Dictionary<string, Scene>();

@@ -4,7 +4,7 @@ using OpenGL;
 namespace Polys.Video
 {
     /** Represents a piece of geometry in GPU memory */
-    class GeometryGPU
+    public class GeometryGPU
         : IDisposable
     {
         public uint vbo { get; private set; }

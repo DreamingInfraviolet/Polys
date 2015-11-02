@@ -10,7 +10,7 @@ using OpenGL;
 
 namespace Polys.Video
 {
-    class FramebufferManager : IDisposable
+    public class FramebufferManager : IDisposable
     {
         #region Public
         //The low resolution buffer dimensions

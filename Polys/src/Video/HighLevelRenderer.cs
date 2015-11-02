@@ -3,7 +3,7 @@ using OpenGL;
 
 namespace Polys.Video
 {
-    class HighLevelRenderer : IDisposable
+    public class HighLevelRenderer : IDisposable
     {
         //Various shader programs used during rendering
         public static ShaderProgram shaderDrawSprite;

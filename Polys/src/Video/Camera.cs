@@ -1,7 +1,7 @@
 ﻿namespace Polys.Video
 {
     /** Represents a camera in the game world. Does not allow for zoom or rotation, so it's purely positional. */
-    class Camera
+    public class Camera
     {
         /** The world pixel coordinate to be the top right corner of the screen */
         int mCornerX, mCornerY;

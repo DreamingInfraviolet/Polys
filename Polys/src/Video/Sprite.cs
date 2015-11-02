@@ -3,7 +3,7 @@ using OpenGL;
 
 namespace Polys.Video
 {
-    class Sprite : Transformable
+    public class Sprite : Transformable
     {
         /**  whether it is visible. */
         public bool  visible;

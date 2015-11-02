@@ -4,7 +4,7 @@ using Polys.Game;
 using Polys.Video;
 using SDL2;
 
-class Program
+public class Program
 {
     static Video video;
     static Audio audio;

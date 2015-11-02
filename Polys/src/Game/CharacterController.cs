@@ -1,7 +1,7 @@
 ﻿namespace Polys.Game
 {
     /** A character controller can control any entity. */
-    class CharacterController : IIntentHandler
+    public class CharacterController : IIntentHandler
     {
         //These should be floats, as otherwise small deltas have o effect.
         public OpenGL.Vector2 position = new OpenGL.Vector2();

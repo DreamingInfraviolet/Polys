@@ -1,6 +1,6 @@
 ﻿namespace Polys.Game
 {
-    class Character
+    public class Character
     {
         public enum Orientation { Up, Down, Left, Right, UpRight, UpLeft, DownLeft, DownRight };
         public enum WalkState { Standing, Walking };

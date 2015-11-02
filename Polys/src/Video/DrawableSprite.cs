@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Polys.Video
 {
     /** Similar to a sprite, but also contains an internal tileset for convenience. */
-    class DrawableSprite : Sprite
+    public class DrawableSprite : Sprite
     {
         public Tileset tileset;
 

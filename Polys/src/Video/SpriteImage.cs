@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Polys.Video
 {
-    class SpriteImage
+    public class SpriteImage
     {
         //A global cache of images to avoid duplication.
         static Util.ObjectCache<String, IndexedTexture> sImageCache = new Util.ObjectCache<string, IndexedTexture>();

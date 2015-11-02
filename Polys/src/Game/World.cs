@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Polys.Game
 {
-    class World : IIntentHandler, IScriptInitialisable, System.IDisposable
+    public class World : IIntentHandler, IScriptInitialisable, System.IDisposable
     {
         public States.StateManager stateManager = new States.StateManager(new States.PlayState());
         

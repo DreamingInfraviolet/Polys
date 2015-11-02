@@ -3,7 +3,7 @@
 namespace Polys.Util
 {
     /** A miscallaneous utility class. */
-    class Util
+    public class Util
     {
         /** Clamps a number into a specific range. */
         public static T Clamp<T>(T x, T min, T max) where T : IComparable<T>

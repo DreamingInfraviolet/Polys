@@ -3,7 +3,7 @@ using System;
 
 namespace Polys.Video
 {
-    class LowLevelRenderer
+    public class LowLevelRenderer
     {
 
         //6 vertices in {x,y,u,v} format representing the screen.

@@ -3,7 +3,7 @@
 namespace Polys.Video
 {
     /** Represents a colour, allowing useful colour operations. */
-    struct Colour
+    public struct Colour
     {
         //Components
         public byte r, g, b, a;

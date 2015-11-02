@@ -5,7 +5,7 @@ using TiledSharp;
 namespace Polys.Game
 {
     /** Represents a scene, containing data unique to the scene */
-    class Scene : IScriptInitialisable
+    public class Scene : IScriptInitialisable
     {
         public TmxMap map { get; private set; }
         public Video.Tileset[] tilesets { get; private set; }

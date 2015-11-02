@@ -3,7 +3,7 @@
 namespace Polys
 {
     /** A class to help handle time, providing functions to get the current time as well as the delta time. */
-    class Time
+    public class Time
     {
         static System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 

@@ -2,7 +2,7 @@
 
 namespace Polys.Game.States
 {
-    class StateManager : System.IDisposable
+    public class StateManager : System.IDisposable
     {
         public enum UpdateType
         {

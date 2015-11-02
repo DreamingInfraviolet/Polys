@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Polys
 {
     /** The input class is a low-level class that keeps track of the keys currently active. */
-    class Input : IScriptInitialisable
+    public class Input : IScriptInitialisable
     {
         
         //This keytable is used to handle continuous key presses.

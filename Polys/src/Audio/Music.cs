@@ -1,6 +1,6 @@
 ﻿namespace Polys.Audio
 {
-    class Music
+    public class Music
     {
     }
 }

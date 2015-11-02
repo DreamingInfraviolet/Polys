@@ -2,7 +2,7 @@
 
 namespace Polys
 {
-    class ScriptManager
+    public class ScriptManager
     {
         /** Attempts to retrieve a value from a table, returning a default if failed.
           * @param table The table to retrieve a value from

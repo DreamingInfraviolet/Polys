@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Polys.Game
 {
-    class Ai
+    public class Ai
     {
         public void step(Scene scene, long timeParameter)
         {

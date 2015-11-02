@@ -8,7 +8,7 @@ namespace Polys
       * Issues:
       * deregistering might leave empty arrays.
       */
-    class IntentManager
+    public class IntentManager
     {
         public enum KeyType { UP, DOWN, HELD };
 

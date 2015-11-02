@@ -4,7 +4,7 @@ namespace Polys.Util
 {
     /** Allows registering and deregistering of an object in such a
         way as to help avoid duplication of resources, retaining only a single copy in a cache. */
-    class ObjectCache<First, Second>
+    public class ObjectCache<First, Second>
     {
         //The dictionary mapping keys to values
         Dictionary<First, Pair<int, Second> > mList = new Dictionary<First, Pair<int, Second>>();

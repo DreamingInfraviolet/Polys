@@ -1,7 +1,7 @@
 ﻿namespace Polys.Util
     /** A generic pair class */
 {
-    class Pair<First, Second>
+    public class Pair<First, Second>
     {
         public First first;
         public Second second;

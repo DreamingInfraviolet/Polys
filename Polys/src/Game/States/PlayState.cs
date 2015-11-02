@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Polys.Game.States
 {
-    class PlayState : State
+    public class PlayState : State
     {
         CharacterController controller = new CharacterController(30);
         Video.Camera camera = new Video.Camera();

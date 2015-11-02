@@ -3,7 +3,7 @@ using OpenGL;
 
 namespace Polys.Util
 {
-    class Maths
+    public class Maths
     {
         /** Calculates a matrix to fit a unit rectangle into the screen */
         public static Matrix4 matrixFitRectIntoScreen(int sourceWidth, int sourceHeight, int targetWidth, int targetHeight)

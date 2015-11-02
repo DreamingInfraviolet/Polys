@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Polys.src.Game
 {
-    class EventSystem
+    public class EventSystem
     {
     }
 
-    class T { }
+    public class T { }
 }

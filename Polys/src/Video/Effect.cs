@@ -4,7 +4,7 @@ namespace Polys.Video
 {
     /** Represents an effect that can be applied to the image during a post-processing step.
       * An effect is a GLSL shader. */
-    class Effect
+    public class Effect
     {
         /** The shader program of the effect. */
         ShaderProgram program;

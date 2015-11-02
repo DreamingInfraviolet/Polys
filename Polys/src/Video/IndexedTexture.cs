@@ -4,7 +4,7 @@ using System;
 namespace Polys.Video
 {
     /** Represents an indexed bitmap image. Each pixel is an unsigned byte indexing a colour in a palette. */
-    class IndexedTexture
+    public class IndexedTexture
     {
         /** The original palette associated with the bitmap */
         public Palette palette { get; private set; }

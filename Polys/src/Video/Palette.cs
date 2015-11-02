@@ -3,7 +3,7 @@
 namespace Polys.Video
 {
     /** Represents a colour palette in CPU+GPU memory. It is a 1-D texture with 255 components. */
-    class Palette
+    public class Palette
     {
         //Array of pixels in rgba format
         byte[] colours = new byte[256 * 4];

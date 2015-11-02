@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Polys.Video
 {
-    class Transformable
+    public class Transformable
     {
         public int posX, posY;
 

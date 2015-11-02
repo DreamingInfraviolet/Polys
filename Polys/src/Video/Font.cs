@@ -6,7 +6,7 @@ namespace Polys.Video
 {
     /** Represents a bitmap font in memory. A font is nearly identical to a tileset,
       * mainly differing in that each tile is a letter. */
-    class Font : Tileset, IScriptInitialisable
+    public class Font : Tileset, IScriptInitialisable
     {
         int characterWidth, characterHeight;
         Dictionary<char, Util.Pair<int, int>> charPosMapping = new Dictionary<char, Util.Pair<int, int>>();

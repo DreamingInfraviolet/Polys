@@ -9,7 +9,7 @@ namespace Polys.Video
     * This class is responsible for handling the window and doing high-level drawing.
     */
 
-    class Video : IScriptInitialisable, IDisposable
+    public class Video : IScriptInitialisable, IDisposable
     {
         //A pointer to the window
         IntPtr window;

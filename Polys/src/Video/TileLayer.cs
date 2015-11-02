@@ -5,7 +5,7 @@ using System.Linq;
 namespace Polys.Video
 {
     /** The tile layer stores a series of tiles. */
-    class TileLayer
+    public class TileLayer
     {
         /** The name of the tile layer */
         public String name { get; private set; }

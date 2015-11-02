@@ -1,7 +1,7 @@
 ﻿namespace Polys.Game.States
 {
     /** Represents any object that can represent a state */
-    interface State : System.IDisposable
+    public interface State : System.IDisposable
     {
         /** Execute a frame of the state
           * @return Whether the game should stop. */

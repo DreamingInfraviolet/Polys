@@ -2,7 +2,7 @@
 
 namespace Polys.Audio
 {
-    class Audio : IScriptInitialisable
+    public class Audio : IScriptInitialisable
     {
 
         public void play(Game.World world)
