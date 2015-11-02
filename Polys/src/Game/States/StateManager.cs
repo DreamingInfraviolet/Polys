@@ -60,7 +60,7 @@ namespace Polys.Game.States
         public bool update(UpdateType type)
         {
             if (stack.Count == 0)
-                return false;
+                return true;
             else
             {
                 for (int i = stack.Count - 1; i > -1; --i)
@@ -123,7 +123,6 @@ namespace Polys.Game.States
                             throw new System.NotImplementedException();
                     }
                 }
-                throw new System.Exception("SYSTEM LOGIC ERROR IN STATE LOOP");
             }
         }
 

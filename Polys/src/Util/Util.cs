@@ -17,9 +17,7 @@ namespace Polys.Util
         public static void MemSet(byte[] array, byte value, int block = 32)
         {
             if (array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
+                return;
 
             int index = 0;
             int length = Math.Min(block, array.Length);
@@ -27,7 +25,8 @@ namespace Polys.Util
             //Fill the initial array
             while (index < length)
             {
-                array[index++] = value;
+                array[index] = value;
+                ++index;
             }
 
             length = array.Length;

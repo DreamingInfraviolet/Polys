@@ -101,7 +101,7 @@ namespace Polys.Video
             if(colourTexture==~0u)
                 colourTexture = OpenGL.Gl.GenTexture();
 
-            OpenGL.Gl.BindTexture(OpenGL.TextureTarget.Texture1D, colourTexture);
+            bind();
             OpenGL.Gl.TexImage1D(OpenGL.TextureTarget.Texture1D, 0, OpenGL.PixelInternalFormat.Rgba8, 256, 0, OpenGL.PixelFormat.Rgba, 
                 OpenGL.PixelType.UnsignedByte, System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(colours, 0));
             OpenGL.Gl.TexParameteri(OpenGL.TextureTarget.Texture1D, OpenGL.TextureParameterName.TextureMagFilter, OpenGL.TextureParameter.Nearest);
@@ -111,7 +111,6 @@ namespace Polys.Video
         /** Binds the palette as the current 1D texture */
         public void bind()
         {
-
             OpenGL.Gl.BindTexture(OpenGL.TextureTarget.Texture1D, colourTexture);
         }
     }
