@@ -25,17 +25,17 @@ namespace Polys.Util
                                             0,0,0,1});
         }
 
-        public static bool isRectVisible(int rectX, int rectY, int rectW, int rectH, int screenW, int screenH)
+        public static bool isRectVisible(Rect rect, int screenW, int screenH)
         {
-            if (rectX + rectW < 0 || rectY + rectH < 0 ||
-                rectX > screenW || rectY > screenH)
+            if (rect.right < 0 || rect.top < 0 ||
+                rect.x > screenW || rect.y > screenH)
                 return false;
             else
                 return true;
         }
 
         //The position is the bottom left corner.
-        public static Matrix4 matrixPixelProjection(int posX, int posY, int tileWidth, int tileHeight, int screenWidth, int screenHeight)
+        public static Matrix4 matrixPixelProjection(Rect spriteRect, int screenWidth, int screenHeight)
         {
             //We want the position to be the bottom left corner, so compensate.
             //Temporary solution.
@@ -43,10 +43,10 @@ namespace Polys.Util
             //posY -= tileHeight;
 
             //Find projection and UV matrices.
-            float px = (posX + 0.5f) / screenWidth * 2.0f - 1.0f;
-            float py = (screenHeight - posY - 0.5f - tileHeight) / screenHeight * 2.0f - 1.0f;
-            float sx = (float)tileWidth /screenWidth;
-            float sy = (float)tileHeight/screenHeight;
+            float px = (spriteRect.x + 0.5f) / screenWidth * 2.0f - 1.0f;
+            float py = (screenHeight - spriteRect.y - 0.5f - spriteRect.h) / screenHeight * 2.0f - 1.0f;
+            float sx = (float)spriteRect.w / screenWidth;
+            float sy = (float)spriteRect .h/ screenHeight;
 
             return new Matrix4(new float[] { sx, 0, 0, 0,
                                                            0, sy, 0, 0,

@@ -5,65 +5,43 @@ using OpenGL;
 namespace Polys.Util
 {
     /*
-    public class Quadtree<T> where T : new()
+    public class Quadtree
     {
-        public class Node
-        {
-            public T posX, posY;
-            Node topLeft, bottomLeft, topRight, bottomRight;
-            bool valid;
-
-            public Node(bool valid = false) { posX = posY = new T(); this.valid = valid; }
-
-            public Node(T posX, T posY, bool valid)
-            {
-                this.posX = posX;
-                this.posY = posY;
-                this.valid = valid;
-            }
-
-            public Node find(T x, T y)
-            {
-                if(x < posX)
-                {
-
-                }
-                else if (x> posX)
-                {
-
-                }
-                else
-                {
-
-                }
-            }
-
-            public bool hasChildren()
-            {
-                return topLeft != null || bottomLeft != null || topRight != null || bottomRight != null;
-            }
-        }
-
         Node root;
+        int maxObjects, maxLevels;
+        int level;
 
         public Vector2 origin { get; private set; }
 
-        public Quadtree()
+        public Quadtree(int maxObjects = 5, int maxLevels = 5)
         {
             root = new Node();
+            this.maxObjects = maxObjects;
+            this.maxLevels = maxLevels;
         }
+        
 
-        public Quadtree(T posX, T posY)
-        {
-            root = new Node(posX, posY, false);
-        }
-
-        public Node closest(T x, T y)
+        public Node closest(Video.Transformable t)
         {
             if (!root.hasChildren())
                 return null;
 
             return root.find(x, y);
+        }
+    }
+
+    public class Node
+    {
+        Video.Transformable obj;
+
+        Node topRight, topLeft, bottomLeft, bottomRight;
+
+        public Node(bool valid = false) {}
+
+ 
+        public bool hasChildren()
+        {
+            return topLeft != null || bottomLeft != null || topRight != null || bottomRight != null;
         }
     }
     */

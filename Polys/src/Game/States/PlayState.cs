@@ -10,7 +10,7 @@ namespace Polys.Game.States
     {
         CharacterController controller = new CharacterController(30);
         Video.Camera camera = new Video.Camera();
-        Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp", 0, 0, 16, 32));
+        Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp", new Util.Rect(0, 0, 16, 32)));
 
         Video.Font font = new Video.Font("assets/fonts/default.bmp", 8, 16);
 
@@ -49,7 +49,7 @@ namespace Polys.Game.States
         {
             controller.finishGatheringInput(sceneList.current.collisionLayer);
             player.updateUv();
-            camera.centreOn(player.sprite.posX, player.sprite.posY);
+            camera.centreOn(player.sprite.rect.x, player.sprite.rect.y);
 
             return StateManager.StateUpdateResult.Finish;
         }

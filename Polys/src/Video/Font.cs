@@ -47,8 +47,8 @@ namespace Polys.Video
                 if(!charPosMapping.TryGetValue(text[i], out charPos))
                     continue;
 
-                Sprite sprite = new Sprite(positionX+characterWidth*i, positionY,
-                    characterWidth, characterHeight, true,
+                Sprite sprite = new Sprite(new Util.Rect(positionX+characterWidth*i, positionY,
+                    characterWidth, characterHeight), true,
                     charPos.first*characterWidth, charPos.second*characterHeight);
 
                 HighLevelRenderer.draw(sprite, this, new Camera());

@@ -53,18 +53,17 @@ namespace Polys.Video
                         continue;
 
                     //Get screen coordinates of the tile in pixels
-                    int screenPosX = tile.posX * gridTileWidth;
-                    int screenPosY = tile.posY * gridTileHeight;
+                    Util.Rect rect = tile.rect;
 
                     if (camera != null)
-                        camera.worldToScreen(ref screenPosX, ref screenPosY);
+                        camera.worldToScreen(ref rect);
 
-                    if (!Util.Maths.isRectVisible(screenPosX, screenPosY, tile.width, tile.height, targetWidth, targetHeight))
+                    if (!Util.Maths.isRectVisible(rect, targetWidth, targetHeight))
                         continue;
 
                     //Set matrix uniforms
                     shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
-                        Util.Maths.matrixPixelProjection(screenPosX, screenPosY, tile.width, tile.height, targetWidth, targetHeight));
+                        Util.Maths.matrixPixelProjection(rect, targetWidth, targetHeight));
 
                     shaderIndexedBitmapSprite["uvMatrix"].SetValue(tile.uvMatrix(tiles.Key.width, tiles.Key.height));
 
@@ -86,17 +85,16 @@ namespace Polys.Video
             //Bind tileset texture
             tileset.bind();
 
-            int spriteX = sprite.posX;
-            int spriteY = sprite.posY;
+            Util.Rect rect = sprite.rect;
 
             if (camera != null)
-                camera.worldToScreen(ref spriteX, ref spriteY);
+                camera.worldToScreen(ref rect);
 
-            if (!Util.Maths.isRectVisible(spriteX, spriteY, sprite.width, sprite.height, targetWidth, targetHeight))
+            if (!Util.Maths.isRectVisible(rect, targetWidth, targetHeight))
                 return;
 
             shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
-                Util.Maths.matrixPixelProjection(spriteX, spriteY, sprite.width, sprite.height, targetWidth, targetHeight));
+                Util.Maths.matrixPixelProjection(rect, targetWidth, targetHeight));
 
             shaderIndexedBitmapSprite["uvMatrix"].SetValue(
                 sprite.uvMatrix(tileset.width, tileset.height));

@@ -7,69 +7,60 @@ namespace Polys.Video
     {
         /**  whether it is visible. */
         public bool  visible;
-        
-        /** The tile source texture coordinates in the tileset (in pixels) */
-        public int uvX, uvY, width, height;
+
+        int uvOffsetX, uvOffsetY;
 
         /** Constructs a tile. The position is subtracted from the tile count to account for up=down issue.*/
-        public Sprite(TiledSharp.TmxLayerTile tile, Tileset tileset, int tileCountY)
-            : base(tile.X, tileCountY-tile.Y-1)
+        public Sprite(TiledSharp.TmxLayerTile tile, int genericTileWidth, int genericTileHeight,
+            Tileset tileset, int tileCountY)
+            : base(new Util.Rect(tile.X* genericTileWidth,
+                (tileCountY-tile.Y-1)* genericTileHeight, 
+                tileset.tileWidth,
+                tileset.tileHeight))
         {
             visible = tile.Gid != 0;
             setUV(tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) % tileset.tileCountX)* tileset.tileWidth,
-                tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) / tileset.tileCountX)* tileset.tileHeight,
-                tileset.tileWidth, tileset.tileHeight);
+                tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) / tileset.tileCountX)* tileset.tileHeight);
         }
 
         /** Constructs the tile */
-        public Sprite(int posX, int posY, int sizeX, int sizeY, bool visible = true,
+        public Sprite(Util.Rect rect, bool visible = true,
             int uvX = 0, int uvY = 0)
-            : base(posX, posY)
+            : base(rect)
         {
             //Copy in properties
             this.visible = visible;
-            setUV(uvX, uvY, sizeX, sizeY);
+            setUV(uvX, uvY);
         }
 
 
-        void setUV(int uvX, int uvY, int uvSizeX, int uvSizeY)
+        void setUV(int uvX, int uvY)
         {
-            this.uvX = uvX;
-            this.uvY = uvY;
-            this.width = uvSizeX;
-            this.height = uvSizeY;
+            uvOffsetX = uvX;
+            uvOffsetY = uvY;
         }
 
         public void setTilesetIndex(int x, int y)
         {
-            uvX = x*width;
-            uvY = y*height;
+            uvOffsetX = x* rect.w;
+            uvOffsetY = y* rect.h;
         }
 
         public Matrix4 uvMatrix(float tilesetWidth, float tilesetHeight)
         {
-            return new Matrix4(new float[] { width/tilesetWidth, 0, 0, 0,
-                               0, height/tilesetHeight, 0, 0,
+            return new Matrix4(new float[] { rect.w/tilesetWidth, 0, 0, 0,
+                               0, rect.h/tilesetHeight, 0, 0,
                                0, 0, 0, 0,
-                               uvX/tilesetWidth + (0.5f/tilesetWidth), uvY/tilesetHeight + (0.5f/tilesetHeight), 0, 1 });
+                               uvOffsetX/tilesetWidth + (0.5f/tilesetWidth), uvOffsetY/tilesetHeight + (0.5f/tilesetHeight), 0, 1 });
         }
-
-        public int centreX() { return posX / width; }
-        public int centreY() { return posY / height; }
-
+        
         public bool overlaps(Sprite s)
         {
             //if (RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
             //RectA.Bottom < RectB.Top && RectA.Top > RectB.Bottom)
 
-            return posX < (s.posX+s.width) && (posX+width) > s.posX &&
-                posY < (s.posY + s.height) && (posY + height) > s.posY;
-        }
-
-        public bool overlapsTile(Sprite tile)
-        {
-            Sprite tmp = new Sprite(tile.posX * tile.width, tile.posY * tile.height, tile.width, tile.height);
-            return overlaps(tmp);
+            return rect.x < (s.rect.x+s.rect.w) && (rect.x+ rect.w) > s.rect.x &&
+                rect.y < (s.rect.y + s.rect.h) && (rect.y + rect.h) > s.rect.y;
         }
     }
 }

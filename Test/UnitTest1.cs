@@ -35,11 +35,11 @@ namespace Test
                 Assert.AreEqual(b, 3);
 
             //Is Rect Visible
-            Assert.AreEqual(Maths.isRectVisible(0, 0, 0, 0, 100, 100), true);
-            Assert.AreEqual(Maths.isRectVisible(99, 99, 2333, 400, 100, 100), true);
-            Assert.AreEqual(Maths.isRectVisible(-2, -3, 1, 1, 100, 100), false);
-            Assert.AreEqual(Maths.isRectVisible(0, 0, 1, 1, 1, 1), true);
-            Assert.AreEqual(Maths.isRectVisible(200, 330, 1, 5, 100, 100), false);
+            Assert.AreEqual(Maths.isRectVisible(new Rect(0, 0, 0, 0), 100, 100), true);
+            Assert.AreEqual(Maths.isRectVisible(new Rect(99, 99, 2333, 400), 100, 100), true);
+            Assert.AreEqual(Maths.isRectVisible(new Rect(-2, -3, 1, 1), 100, 100), false);
+            Assert.AreEqual(Maths.isRectVisible(new Rect(0, 0, 1, 1), 1, 1), true);
+            Assert.AreEqual(Maths.isRectVisible(new Rect(200, 330, 1, 5), 100, 100), false);
 
             //Fit rectangle inside rectangle projection
             OpenGL.Vector4 bottomLeftVec = new OpenGL.Vector4(-1, -1, 0, 1);

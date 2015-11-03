@@ -8,17 +8,19 @@ namespace Polys.Video
 {
     public class Transformable
     {
-        public int posX, posY;
+        public Util.Rect rect;
 
         public Transformable()
         {
-            posX = posY = 0;
+            rect = new Util.Rect();
         }
 
-        public Transformable(int posX, int posY)
+        public Transformable(Util.Rect r)
         {
-            this.posX = posX;
-            this.posY = posY;
+            rect = r;
         }
+        
+        public int centreX() { return rect.x / rect.w; }
+        public int centreY() { return rect.y / rect.h; }
     }
 }

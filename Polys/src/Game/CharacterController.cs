@@ -22,8 +22,8 @@
             velocity = velocity.Normalize()*speed*Time.deltaTime;
             position += velocity;
 
-            character.sprite.posX = (int)position.x-character.sprite.width/2;
-            character.sprite.posY = (int)position.y - character.sprite.height / 2;
+            character.sprite.rect.x = (int)position.x-character.sprite.rect.w/2;
+            character.sprite.rect.y = (int)position.y - character.sprite.rect.h / 2;
             character.orientation = orientationFromVelocity(character.orientation);
 
             velocity.x = 0;
@@ -34,21 +34,21 @@
             {
                 bool overlapping = false;
                 Video.Sprite correctlyCollidingSprite = new Video.Sprite
-                    (character.sprite.posX, character.sprite.posY+16,
-                    character.sprite.width, character.sprite.height / 2);
+                    (new Util.Rect(character.sprite.rect.x, character.sprite.rect.y,
+                    character.sprite.rect.w, character.sprite.rect.h / 2));
 
                 //Use dumb approach: try everything.
                 foreach(var m in collisionLayer.tileDict)
                     foreach(var tile in m.Value)
-                        if(correctlyCollidingSprite.overlapsTile(tile))
+                        if(correctlyCollidingSprite.overlaps(tile))
                         {
                             overlapping = true;
                             break;
                         }
 
                 //Uncomment this to enable collision
-               // if (overlapping)
-                 //   position = oldPositon;
+                if (overlapping)
+                    position = oldPositon;
                 
                 if (overlapping)
                     System.Console.WriteLine("Overlapping");

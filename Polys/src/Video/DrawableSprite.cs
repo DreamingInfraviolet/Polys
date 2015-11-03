@@ -12,14 +12,14 @@ namespace Polys.Video
         public Tileset tileset;
 
         /** Constructs the tile */
-        public DrawableSprite(int posX, int posY, int sizeX, int sizeY, bool visible = true,
+        public DrawableSprite(Util.Rect rect, bool visible = true,
             int uvX = 0, int uvY = 0, int uvSizeX = 0, int uvSizeY = 0)
-            : base(posX, posY, sizeX, sizeY, visible) {}
+            : base(rect, visible) {}
 
         /** Constructs the tile and loads a tileset */
-        public DrawableSprite(string spritePath, int posX=0, int posY=0, int sizeX = 0, int sizeY = 0, bool originIsCentre = true,
+        public DrawableSprite(string spritePath, Util.Rect rect, bool originIsCentre = true,
             bool visible = true, int uvX = 0, int uvY = 0)
-            : base(posX, posY, sizeX, sizeY, visible, uvX, uvY)
+            : base(rect, visible, uvX, uvY)
         {
             tileset = new Tileset(spritePath, "tileset");
         }

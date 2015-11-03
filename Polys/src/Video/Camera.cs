@@ -5,19 +5,26 @@
     {
         /** The world pixel coordinate to be the top right corner of the screen */
         int mCornerX, mCornerY;
-        
+
         /** Applies the inverse of the camera transformation to a point. */
         public void worldToScreen(ref int x, ref int y)
         {
             x -= mCornerX;
             y -= mCornerY;
         }
-        
+
+        /** Applies the inverse of the camera transformation to a point. */
+        public void worldToScreen(ref Util.Rect rect)
+        {
+            rect.x -= mCornerX;
+            rect.y -= mCornerY;
+        }
+
         /** Applies the inverse of the camera transformation to a point. */
         public void worldToScreen(Transformable t)
         {
-            t.posX -= mCornerX;
-            t.posY -= mCornerY;
+            t.rect.x -= mCornerX;
+            t.rect.y -= mCornerY;
         }
 
         /** Moves the camera by a specified amount. */
