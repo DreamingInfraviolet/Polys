@@ -56,11 +56,7 @@ namespace Polys.Video
         
         public bool overlaps(Sprite s)
         {
-            //if (RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
-            //RectA.Bottom < RectB.Top && RectA.Top > RectB.Bottom)
-
-            return rect.x < (s.rect.x+s.rect.w) && (rect.x+ rect.w) > s.rect.x &&
-                rect.y < (s.rect.y + s.rect.h) && (rect.y + rect.h) > s.rect.y;
+            return overlaps(s.rect);
         }
     }
 }
