@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polys.Game.States;
 using Polys.Util;
+using Polys;
 
 namespace Test
 {
@@ -145,6 +146,111 @@ namespace Test
             manager.draw();
             Assert.IsTrue(Enumerable.SequenceEqual(TestState.stateDrawOrder, new List<int>() { 0, 1, 2, 3, 4 }));
             TestState.stateDrawOrder = new List<int>();
+        }
+
+        class TestIntentHandler : IIntentHandler
+        {
+            public struct Data
+            {
+                public IntentManager.IntentType type;
+                public bool down, up, held;
+                public int id;
+                public Data(IntentManager.IntentType t, bool d, bool u, bool h, int i)
+                { type = t; down = d; up = u; held = h; id = i; }
+            }
+
+            public static List<Data> intentsHandled = new List<Data>();
+            int id;
+
+            public TestIntentHandler(int i) { id = i; }
+
+            public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
+            {
+                intentsHandled.Add(new Data(intentCode, isKeyDown, isKeyUp, isKeyHeld, id));
+            }
+        }
+
+        [TestMethod]
+        public void TestIntents()
+        {
+            TestIntentHandler handler1 = new TestIntentHandler(1);
+            TestIntentHandler handler2 = new TestIntentHandler(2);
+
+            IntentManager.register(handler1, IntentManager.IntentType.ESC, true, false, true);
+            IntentManager.addBinding(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE, IntentManager.IntentType.ESC);
+            IntentManager.addBinding(SDL2.SDL.SDL_Keycode.SDLK_w, IntentManager.IntentType.WALK_UP);
+
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 1 &&
+                TestIntentHandler.intentsHandled[0].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)));
+
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 2 &&
+                TestIntentHandler.intentsHandled[1].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)));
+
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_w);
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_s);
+            IntentManager.keyUp(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 2 &&
+                TestIntentHandler.intentsHandled[1].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)));
+
+            IntentManager.deregister(handler1);
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 2 &&
+                TestIntentHandler.intentsHandled[1].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)));
+
+            IntentManager.register(handler1, IntentManager.IntentType.ESC, true, true, false);
+            IntentManager.register(handler2, IntentManager.IntentType.ESC, false, false, true);
+            IntentManager.addBinding(SDL2.SDL.SDL_Keycode.SDLK_e, IntentManager.IntentType.ESC);
+
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_e);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 3 &&
+                TestIntentHandler.intentsHandled[2].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)));
+
+            IntentManager.register(handler1, IntentManager.IntentType.WALK_UP, true, false, false);
+
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_w);
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 5 &&
+                (TestIntentHandler.intentsHandled[3].Equals(new TestIntentHandler.Data(IntentManager.IntentType.WALK_UP, true, false, false, 1)) ^
+                TestIntentHandler.intentsHandled[4].Equals(new TestIntentHandler.Data(IntentManager.IntentType.WALK_UP, true, false, false, 1))) &&
+                (TestIntentHandler.intentsHandled[3].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)) ^
+                TestIntentHandler.intentsHandled[4].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1))));
+
+            IntentManager.register(handler2, IntentManager.IntentType.ESC, true, false, false);
+            IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 7 &&
+                (TestIntentHandler.intentsHandled[5].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 2)) ^
+                TestIntentHandler.intentsHandled[6].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 2))) &&
+                (TestIntentHandler.intentsHandled[5].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1)) ^
+                TestIntentHandler.intentsHandled[6].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, true, false, false, 1))));
+
+            IntentManager.register(handler1, IntentManager.IntentType.ESC, false, true, false);
+            IntentManager.register(handler2, IntentManager.IntentType.ESC, false, false, true);
+            IntentManager.register(handler2, IntentManager.IntentType.ESC, false, false, true);
+            IntentManager.keyUp(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.keyHeld(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE);
+            IntentManager.dispatchRequestsAndClear();
+
+            Assert.IsTrue(TestIntentHandler.intentsHandled.Count == 9 &&
+    (TestIntentHandler.intentsHandled[7].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, false, true, false, 1)) ^
+    TestIntentHandler.intentsHandled[8].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, false, true, false, 1))) &&
+    (TestIntentHandler.intentsHandled[7].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, false, false, true, 2)) ^
+    TestIntentHandler.intentsHandled[8].Equals(new TestIntentHandler.Data(IntentManager.IntentType.ESC, false, false, true, 2))));
         }
     }
 }

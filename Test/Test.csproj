@@ -38,6 +38,10 @@
     <Reference Include="OpenGL">
       <HintPath>..\Polys\Assemblies\OpenGL.dll</HintPath>
     </Reference>
+    <Reference Include="SDL2-CS, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Polys\Assemblies\SDL2-CS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
