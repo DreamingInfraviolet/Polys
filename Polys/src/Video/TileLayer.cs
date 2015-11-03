@@ -17,13 +17,13 @@ namespace Polys.Video
         public TiledSharp.PropertyDict properties { get; private set; }
         
         /** A dictionary of tiles, organised by the tilesets to which they belong. */
-        public Dictionary<Tileset, List<Sprite>> tileDict = new Dictionary<Tileset, List<Sprite>>(); 
+        public Dictionary<Tileset, Util.Quadtree> tileDict = new Dictionary<Tileset, Util.Quadtree>(); 
 
         /** Initialises the tile layer from the given arguments.
           * @param layer The TiledSharp representation of the tile layer.
           * @param orderedTilesets An ordered array (ascending) of all the tilesets in the map 
           * @param filterEmpty If true, invisible tiles will be removed. Should be off for things like collision layers */
-        public TileLayer(TiledSharp.TmxLayer layer, Tileset[] orderedTilesets, int tileCountY, int genericTileWidth, int genericTileHeight, bool filterEmpty = true)
+        public TileLayer(TiledSharp.TmxLayer layer, Tileset[] orderedTilesets, int tileCountX, int tileCountY, int genericTileWidth, int genericTileHeight)
         {
             name = layer.Name;
             visible = layer.Visible;
@@ -32,32 +32,28 @@ namespace Polys.Video
             //Insert tileset, breaking them up into tilesets.
             for (int i = 0; i < layer.Tiles.Count; ++i)
             {
+                //Ignore invisible tiles.
+                if (layer.Tiles[i].Gid == 0)
+                    continue;
+
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
                 Sprite tile = new Sprite(layer.Tiles[i], genericTileWidth, genericTileHeight, tileset, tileCountY);
 
-               if (!tileDict.ContainsKey(tileset))
-                    tileDict[tileset] = new List<Sprite>();
+                if (!tileDict.ContainsKey(tileset))
+                {
+                    //When constructing the quadtree to store the tiles, it must be of of a power-of-two size.
+                    //Find this size.
+                    int quadTreeWidth, quadTreeHeight;
+                    quadTreeWidth = (int)Util.Maths.biggerPowerOfTwo((long)((tileCountX+2) * tileset.tileWidth));
+                    quadTreeHeight = (int)Util.Maths.biggerPowerOfTwo((long)((tileCountY+2) * tileset.tileHeight));
 
-                tileDict[tileset].Add(tile);
-            }
+                    tileDict[tileset] = new Util.Quadtree(new Util.Rect(-genericTileWidth, -genericTileHeight, quadTreeWidth, quadTreeHeight));
+                }
 
-            //Filter empty tiles, if needed
-            if (filterEmpty)
-                deleteInvisibleTiles();
-        }
+                tileDict[tileset].insert(tile);
 
-        /** Deletes all invisible tiles in the layer */
-        void deleteInvisibleTiles()
-        {
-            List<Sprite> tmp = new List<Sprite>();
-            foreach (var p in tileDict)
-            {
-                //Here it seems that we must use a temporary variable, as the iteration is
-                //immutable.
-                tmp.Clear();
-                tmp.AddRange(p.Value);
-                p.Value.Clear();
-                p.Value.AddRange(from tile in tmp where (tile.visible == true) select tile);
+                //Save this quadtree for debug visualisation.
+                //tileDict[tileset].dumpGmlToFile("logs/"+tileset.name + ".gml");
             }
         }
 

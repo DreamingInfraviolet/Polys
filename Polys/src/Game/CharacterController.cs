@@ -33,20 +33,18 @@
             if(collisionLayer!= null)
             {
                 bool overlapping = false;
-                Video.Sprite correctlyCollidingSprite = new Video.Sprite
-                    (new Util.Rect(character.sprite.rect.x, character.sprite.rect.y,
-                    character.sprite.rect.w, character.sprite.rect.h / 2));
+                Util.Rect playerRect = new Util.Rect(character.sprite.rect.x, character.sprite.rect.y,
+                    character.sprite.rect.w, character.sprite.rect.h / 2);
 
-                //Use dumb approach: try everything.
-                foreach(var m in collisionLayer.tileDict)
-                    foreach(var tile in m.Value)
-                        if(correctlyCollidingSprite.overlaps(tile))
-                        {
-                            overlapping = true;
-                            break;
-                        }
+                //Use quadtree:
+                foreach (var m in collisionLayer.tileDict)
+                    if(m.Value.findIntersecting(playerRect).Count!=0)
+                    {
+                        overlapping = true;
+                        break;
+                    }
 
-                //Uncomment this to enable collision
+                //Comment this to disable collision
                 if (overlapping)
                     position = oldPositon;
                 

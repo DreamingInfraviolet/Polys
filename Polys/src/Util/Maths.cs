@@ -53,5 +53,35 @@ namespace Polys.Util
                                                            0, 0, 0, 0,
                                                            sx+px, sy+py, 0, 1});
         }
+
+        /** Returns a power of two bigger than n if n is non power of two. Otherwise returns n. */
+        public static int biggerPowerOfTwo(int n)
+        {
+            uint un = (uint)n;
+            
+            un--;
+            un |= (un >> 1);
+            un |= (un >> 2);
+            un |= (un >> 4);
+            un |= (un >> 8);
+            un |= (un >> 16);
+            return (int)(un + 1u);
+        }
+
+        /** Returns a power of two bigger than n if n is non power of two. Otherwise returns n. */
+        public static long biggerPowerOfTwo(long n)
+        {
+            ulong un = (ulong)n;
+
+            //If this is true, then the msb is on the left. Otherwise on the right.
+            un--; // comment out to always take the next biggest power of two, even if x is already a power of two
+            un |= (un >> 1);
+            un |= (un >> 2);
+            un |= (un >> 4);
+            un |= (un >> 8);
+            un |= (un >> 16);
+            un |= (un >> 32);
+            return (int)(un + 1ul);
+        }
     }
 }

@@ -57,6 +57,12 @@ namespace Test
             Assert.IsTrue(bottomLeftVec.x >= -1 && bottomLeftVec.x <= 1 && bottomLeftVec.y >= -1 && bottomLeftVec.y <= 1);
             projected = bottomLeftVec * Maths.matrixFitRectIntoScreen(35, 2, 1, 60);
             Assert.IsTrue(bottomLeftVec.x >= -1 && bottomLeftVec.x <= 1 && bottomLeftVec.y >= -1 && bottomLeftVec.y <= 1);
+
+            //Bigger power of two
+            Assert.AreEqual(Maths.biggerPowerOfTwo(3), 4);
+            Assert.AreEqual(Maths.biggerPowerOfTwo(4), 4);
+            Assert.AreEqual(Maths.biggerPowerOfTwo(0), 0);
+            Assert.AreEqual(Maths.biggerPowerOfTwo(4765849035765432L), 9007199254740992L);
         }
 
         //A state for testing purposes.

@@ -47,7 +47,7 @@ namespace Polys.Video
                 tiles.Key.bind();
 
                 //For each tile
-                foreach (Sprite tile in tiles.Value)
+                foreach (Sprite tile in tiles.Value.GetEnnumerable())
                 {
                     if (!tile.visible)
                         continue;

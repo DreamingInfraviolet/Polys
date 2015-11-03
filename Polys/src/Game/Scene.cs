@@ -61,9 +61,9 @@ namespace Polys.Game
             {
                 //Note that keeping empty collision tiles currently ignores emptyness.
                 if (map.Layers[iLayer].Name == "collision")
-                    collisionLayer = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Height, map.TileWidth, map.TileHeight);
+                    collisionLayer = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Width, map.Height, map.TileWidth, map.TileHeight);
                
-                layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Height, map.TileWidth, map.TileHeight);
+                layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Width, map.Height, map.TileWidth, map.TileHeight);
             }
         }
     }
