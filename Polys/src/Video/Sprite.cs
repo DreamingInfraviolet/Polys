@@ -25,17 +25,10 @@ namespace Polys.Video
             this.tileset = tileset;
         }
 
-        public Sprite(TiledSharp.TmxLayerTile tile, Tileset tileset, int genericTileWidth, int genericTileHeight, int tileCountY)
-    : base(new Util.Rect(tile.X * genericTileWidth,
-        (tileCountY - tile.Y - 1) * genericTileHeight,
-        tileset.tileWidth,
-        tileset.tileHeight))
-        {
-            visible = tile.Gid != 0;
-            setUV(tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) % tileset.tileCountX) * tileset.tileWidth,
-                tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) / tileset.tileCountX) * tileset.tileHeight);
-            this.tileset = tileset;
-        }
+        /** Constructs the tile and loads a tileset */
+        public Sprite(string spritePath, Util.Rect rect, bool originIsCentre = true,
+            bool visible = true, int uvX = 0, int uvY = 0)
+            : this(rect, new Tileset(spritePath, "tileset"), visible, uvX, uvY) { }
 
         /** Constructs the tile */
         public Sprite(Util.Rect rect, Tileset tileset, bool visible = true,

@@ -1,5 +1,6 @@
 ﻿using System;
 using OpenGL;
+using System.Collections.Generic;
 
 namespace Polys.Video
 {
@@ -40,20 +41,27 @@ namespace Polys.Video
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
             LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
-            foreach (var tiles in layer.tileDict)
+            //Sort the elements
+            Sprite[] sprites = new Sprite[layer.tiles.Count];
+            {
+                int index = 0;
+                foreach (Sprite s in layer.tiles)
+                    sprites[index++] = s;
+             }
+
+            Array.Sort<Sprite>(sprites);
+
+
+            foreach (Sprite s in sprites)
             {
                 //Bind tileset textures
+                s.tileset.bind();
 
-                tiles.Key.bind();
-
-                //For each tile
-                foreach (Sprite tile in tiles.Value.GetEnnumerable())
-                {
-                    if (!tile.visible)
+                    if (!s.visible)
                         continue;
 
                     //Get screen coordinates of the tile in pixels
-                    Util.Rect rect = tile.rect;
+                    Util.Rect rect = s.rect;
 
                     if (camera != null)
                         camera.worldToScreen(ref rect);
@@ -65,11 +73,11 @@ namespace Polys.Video
                     shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
                         Util.Maths.matrixPixelProjection(rect, targetWidth, targetHeight));
 
-                    shaderIndexedBitmapSprite["uvMatrix"].SetValue(tile.uvMatrix(tiles.Key.width, tiles.Key.height));
+                    shaderIndexedBitmapSprite["uvMatrix"].SetValue(s.uvMatrix(s.tileset.width, s.tileset.height));
 
                     //Draw
                     LowLevelRenderer.draw();
-                }
+               
             }
         }
 

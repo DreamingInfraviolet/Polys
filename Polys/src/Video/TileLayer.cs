@@ -16,10 +16,7 @@ namespace Polys.Video
         /** A dictionary of properties for the tile layer, as defined in the tmx file */
         public TiledSharp.PropertyDict properties { get; private set; }
         
-        /** A dictionary of tiles, organised by the tilesets to which they belong. */
-        public Dictionary<Tileset, Util.Quadtree> tileDict = new Dictionary<Tileset, Util.Quadtree>();
-
-        public Util.Quadtree tiles;
+        public List<Sprite> tiles;
 
         /** Initialises the tile layer from the given arguments.
           * @param layer The TiledSharp representation of the tile layer.
@@ -35,7 +32,7 @@ namespace Polys.Video
             //Find this size.
             int quadTreeWidth =  Util.Maths.biggerPowerOfTwo(((tileCountX + 2) * genericTileWidth));
             int quadTreeHeight = Util.Maths.biggerPowerOfTwo(((tileCountY + 2) * genericTileHeight));
-            tiles = new Util.Quadtree(new Util.Rect(-genericTileWidth, -genericTileHeight, quadTreeWidth, quadTreeHeight));
+            tiles = new List<Sprite>();
 
             //Insert tiles
             for (int i = 0; i < layer.Tiles.Count; ++i)
@@ -47,7 +44,7 @@ namespace Polys.Video
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
                 Sprite tile = new Sprite(layer.Tiles[i], tileset, genericTileWidth, genericTileHeight, tileCountY);
 
-                tiles.insert(tile);
+                tiles.Add(tile);
             }
         }
 

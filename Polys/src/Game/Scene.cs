@@ -10,9 +10,13 @@ namespace Polys.Game
         public TmxMap map { get; private set; }
         public Video.Tileset[] tilesets { get; private set; }
         public Video.TileLayer[] layers { get; private set; }
-        public Video.TileLayer collisionLayer { get; private set; }
+        public Util.Quadtree collisionObjects { get; private set; }
         public int gridTileWidth { get; private set; }
         public int gridTileHeight { get; private set; }
+        public Video.TileLayer startLayer { get { return layers[startLayerIndex]; } }
+
+        int startLayerIndex = 0;
+
 
         /** Initialises the scene from a script */
         public Scene(String path)
@@ -45,6 +49,10 @@ namespace Polys.Game
             gridTileHeight = map.TileHeight;
 
 
+            collisionObjects = new Util.Quadtree(new Util.Rect(-map.TileWidth, -map.TileHeight,
+                Util.Maths.biggerPowerOfTwo(map.TileWidth*(map.Width+1)),
+                Util.Maths.biggerPowerOfTwo(map.TileHeight*(map.Height+1))));
+
             //Load tilesets
             tilesets = new Video.Tileset[map.Tilesets.Count];
             for (int iTileset = 0; iTileset < tilesets.Length; ++iTileset)
@@ -57,13 +65,23 @@ namespace Polys.Game
 
             //Initialise layers
             layers = new Video.TileLayer[map.Layers.Count];
+
             for (int iLayer = 0; iLayer < map.Layers.Count; ++iLayer)
             {
-                //Note that keeping empty collision tiles currently ignores emptyness.
+              layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Width, map.Height, map.TileWidth, map.TileHeight);
+                
                 if (map.Layers[iLayer].Name == "collision")
-                    collisionLayer = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Width, map.Height, map.TileWidth, map.TileHeight);
-               
-                layers[iLayer] = new Video.TileLayer(map.Layers[iLayer], tilesets, map.Width, map.Height, map.TileWidth, map.TileHeight);
+                {
+                    //Note that the collision tiles must not be modified, as that will not update
+                    //collision correctly.
+                    foreach (Video.Sprite s in layers[iLayer].tiles)
+                        collisionObjects.insert(s);
+                }
+                else if(map.Layers[iLayer].Name == "start")
+                {
+                    //This is the layer where we want the player to start.
+                    startLayerIndex = iLayer;
+                }
             }
         }
     }
