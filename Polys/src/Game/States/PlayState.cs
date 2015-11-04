@@ -47,7 +47,6 @@ namespace Polys.Game.States
         public StateManager.StateUpdateResult updateAfterInput()
         {
             controller.finishGatheringInput(sceneList.current.collisionObjects);
-            System.Console.WriteLine(player.sprite.rect.x + " " + player.sprite.rect.y  + "\n--");
             player.updateUv();
             camera.centreOn(player.sprite.rect.x, player.sprite.rect.y);
 
