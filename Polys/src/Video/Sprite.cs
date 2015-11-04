@@ -10,27 +10,35 @@ namespace Polys.Video
 
         int uvOffsetX, uvOffsetY;
 
+        public Tileset tileset;
+
         /** Constructs a tile. The position is subtracted from the tile count to account for up=down issue.*/
-        public Sprite(TiledSharp.TmxLayerTile tile, int genericTileWidth, int genericTileHeight,
-            Tileset tileset, int tileCountY)
-            : base(new Util.Rect(tile.X* genericTileWidth,
-                (tileCountY-tile.Y-1)* genericTileHeight, 
+        public Sprite(TiledSharp.TmxLayerTile tile, Tileset tileset, int genericTileWidth, int genericTileHeight, int tileCountY)
+            : base(new Util.Rect(tile.X * genericTileWidth,
+                (tileCountY - tile.Y - 1) * genericTileHeight,
                 tileset.tileWidth,
                 tileset.tileHeight))
         {
             visible = tile.Gid != 0;
-            setUV(tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) % tileset.tileCountX)* tileset.tileWidth,
-                tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) / tileset.tileCountX)* tileset.tileHeight);
+            setUV(tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) % tileset.tileCountX) * tileset.tileWidth,
+                tile.Gid < 1 ? 0 : ((tile.Gid - tileset.firstGid) / tileset.tileCountX) * tileset.tileHeight);
+            this.tileset = tileset;
         }
 
+        /** Constructs the tile and loads a tileset */
+        public Sprite(string spritePath, Util.Rect rect, bool originIsCentre = true,
+            bool visible = true, int uvX = 0, int uvY = 0)
+            : this(rect, new Tileset(spritePath, "tileset"), visible, uvX, uvY) { }
+
         /** Constructs the tile */
-        public Sprite(Util.Rect rect, bool visible = true,
+        public Sprite(Util.Rect rect, Tileset tileset, bool visible = true,
             int uvX = 0, int uvY = 0)
             : base(rect)
         {
             //Copy in properties
             this.visible = visible;
             setUV(uvX, uvY);
+            this.tileset = tileset;
         }
 
 

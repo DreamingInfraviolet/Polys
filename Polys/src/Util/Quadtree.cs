@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using OpenGL;
+using Polys.Video;
 
 namespace Polys.Util
 {
     /**A region quadtree designed for optimising many tasks!*/
-    public class Quadtree
+    public class Quadtree : IEnumerable<Video.Transformable>
     {
         Node root;
         
@@ -17,18 +19,21 @@ namespace Polys.Util
                 throw new Exception("Attempting to create a quadtree with non power-of-two size.");
 
             root = new Node(rect);
+            size = 0;
         }
 
         /** Deletes all the nodes. */
         public void clear()
         {
             root.clear();
+            size = 0;
         }
 
         /** Inserts an item into the quadtree. */
         public void insert(Video.Transformable t)
         {
             root.insert(t);
+            ++size;
         }
 
         /** Finds all objects that intersect with the rect. */
@@ -39,12 +44,8 @@ namespace Polys.Util
             return answer;
         }
 
-        /** Allows one to quickly iterate through the internal objects. */
-        public System.Collections.IEnumerable GetEnnumerable()
-        {
-            foreach (var v in root.GetEnnumerable())
-                yield return v;
-        }
+        /** The number of elements in the quadtree. */
+        public int size { get; private set; }
 
         /** Writes this quadtree to a file as a directed graph in the GML format. */
         public void dumpGmlToFile(string path)
@@ -58,7 +59,18 @@ namespace Polys.Util
             System.IO.File.WriteAllText(path, text);
         }
 
-        class Node
+        public IEnumerator<Transformable> GetEnumerator()
+        {
+            foreach (var v in root)
+                yield return v;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        class Node : IEnumerable<Transformable>
         {
             //A node will not attempt to split until this number of object is contained in it.
             //It may still refuse to split if the object being inserted doesn't fit into a subnode.
@@ -168,26 +180,7 @@ namespace Polys.Util
                 if (next != null)
                     next.findIntersecting(r, answer);
             }
-
-            public System.Collections.IEnumerable GetEnnumerable()
-            {
-                //Return all objects in this node
-                foreach (Video.Transformable t in objects)
-                    yield return t;
-
-                //Return all objects in child nodes
-                if (hasChildren)
-                {
-                    foreach (var x in topRight.GetEnnumerable())
-                        yield return x;
-                    foreach (var x in topLeft.GetEnnumerable())
-                        yield return x;
-                    foreach (var x in bottomRight.GetEnnumerable())
-                        yield return x;
-                    foreach (var x in bottomLeft.GetEnnumerable())
-                        yield return x;
-                }
-            }
+            
 
             public void fillGml(ref string str, int id = 0, int parentId = 0, int type = 0)
             {
@@ -207,6 +200,31 @@ namespace Polys.Util
                     bottomLeft.fillGml(ref str, id + 3, id, 3);
                     bottomRight.fillGml(ref str, id + 4, id, 4);
                 }
+            }
+
+            public IEnumerator<Transformable> GetEnumerator()
+            {
+                //Return all objects in this node
+                foreach (Video.Transformable t in objects)
+                    yield return t;
+
+                //Return all objects in child nodes
+                if (hasChildren)
+                {
+                    foreach (var x in topRight)
+                        yield return x;
+                    foreach (var x in topLeft)
+                        yield return x;
+                    foreach (var x in bottomRight)
+                        yield return x;
+                    foreach (var x in bottomLeft)
+                        yield return x;
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
             }
         }
     }

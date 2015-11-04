@@ -10,7 +10,7 @@ namespace Polys.Game.States
     {
         CharacterController controller = new CharacterController(30);
         Video.Camera camera = new Video.Camera();
-        Player player = new Player("Anima", new Video.DrawableSprite("assets/sprites/player.bmp", new Util.Rect(0, 0, 16, 32)));
+        Player player = new Player("Anima", new Video.Sprite("assets/sprites/player.bmp", new Util.Rect(0, 0, 16, 32)));
 
         Video.Font font = new Video.Font("assets/fonts/default.bmp", 8, 16);
 
@@ -22,6 +22,8 @@ namespace Polys.Game.States
             IntentManager.register(controller, IntentManager.IntentType.WALK_UP, true, false, true);
 
             controller.character = player;
+
+            sceneList.current.startLayer.tiles.Add(player.sprite);
         }
 
         //The current list of scenes
@@ -31,10 +33,7 @@ namespace Polys.Game.States
         public StateManager.StateRenderResult draw()
         {
             Video.HighLevelRenderer.draw(sceneList.current, camera);
-
-            Video.HighLevelRenderer.draw(player.sprite, camera);
-
-            font.renderText("abcdefghijklmnopqrstuvwxyz.,!?ABCDEFGHIJKLMNOPQRSTUVWXYZ|}{/\\", 5, 5);
+            font.renderText("ABCDEFGHIJKLMNOPQRSTUVWXYZ|}{/\\", 5, 5);
 
             return StateManager.StateRenderResult.StopDrawing;
         }
@@ -47,7 +46,8 @@ namespace Polys.Game.States
 
         public StateManager.StateUpdateResult updateAfterInput()
         {
-            controller.finishGatheringInput(sceneList.current.collisionLayer);
+            controller.finishGatheringInput(sceneList.current.collisionObjects);
+            System.Console.WriteLine(player.sprite.rect.x + " " + player.sprite.rect.y  + "\n--");
             player.updateUv();
             camera.centreOn(player.sprite.rect.x, player.sprite.rect.y);
 
@@ -58,9 +58,6 @@ namespace Polys.Game.States
         {
             return StateManager.StateUpdateResult.Finish;
         }
-
-
-
 
         public void Dispose()
         {

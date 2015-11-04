@@ -15,47 +15,37 @@
             this.speed = speed;
         }
 
-        public void finishGatheringInput(Video.TileLayer collisionLayer)
+        public void finishGatheringInput(Util.Quadtree collisionTiles)
         {
-            OpenGL.Vector2 oldPositon = position;
+            velocity = velocity.Normalize() * speed * Time.deltaTime;
+            OpenGL.Vector2 newPosition = position + velocity;
+            int newPosX = (int)newPosition.x - character.sprite.rect.w / 2;
+            int newPosY = (int)newPosition.y - character.sprite.rect.h / 2;
 
-            velocity = velocity.Normalize()*speed*Time.deltaTime;
-            position += velocity;
+            //Check if we are colliding with something.
+            bool colliding = false;
+            if (collisionTiles != null)
+                colliding = collisionTiles.findIntersecting(
+                    new Util.Rect(newPosX, newPosY,
+                    character.sprite.rect.w, character.sprite.rect.h / 2)).Count != 0;
 
-            character.sprite.rect.x = (int)position.x-character.sprite.rect.w/2;
-            character.sprite.rect.y = (int)position.y - character.sprite.rect.h / 2;
-            character.orientation = orientationFromVelocity(character.orientation);
+            if (!colliding)
+            {
+                position = newPosition;
+                character.sprite.rect.x = newPosX;
+                character.sprite.rect.y = newPosY;
+            }
+            else
+                System.Console.WriteLine("Overlapping");
 
+            character.orientation = orientationFromVelocity(character.orientation, colliding);
             velocity.x = 0;
             velocity.y = 0;
-            
-            //Check if we are colliding with something. If so, go back.
-            if(collisionLayer!= null)
-            {
-                bool overlapping = false;
-                Util.Rect playerRect = new Util.Rect(character.sprite.rect.x, character.sprite.rect.y,
-                    character.sprite.rect.w, character.sprite.rect.h / 2);
-
-                //Use quadtree:
-                foreach (var m in collisionLayer.tileDict)
-                    if(m.Value.findIntersecting(playerRect).Count!=0)
-                    {
-                        overlapping = true;
-                        break;
-                    }
-
-                //Comment this to disable collision
-                if (overlapping)
-                    position = oldPositon;
-                
-                if (overlapping)
-                    System.Console.WriteLine("Overlapping");
-            }
         }
 
-        Character.Orientation orientationFromVelocity(Character.Orientation @default)
+        Character.Orientation orientationFromVelocity(Character.Orientation @default, bool walkingIsBlocked)
         {
-            character.walkState = Character.WalkState.Walking;
+            character.walkState = walkingIsBlocked ? Character.WalkState.Standing : Character.WalkState.Walking;
 
             if (velocity.x > 0) //Going right
                 if (velocity.y > 0) //Going up
@@ -71,8 +61,8 @@
                     return Character.Orientation.DownLeft;
                 else //Not moving on y axis
                     return Character.Orientation.Left;
-            else //Not moving on x axis
-                if (velocity.y > 0) //Going up
+            //Not moving on x axis
+            else if (velocity.y > 0) //Going up
                 return Character.Orientation.Up;
             else if (velocity.y < 0) //Going down
                 return Character.Orientation.Down;
@@ -82,7 +72,7 @@
                 return @default;
             }
         }
-           
+
         public void addMoveVector(int v1, int v2)
         {
 
@@ -92,7 +82,7 @@
 
         public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
         {
-            switch(intentCode)
+            switch (intentCode)
             {
                 case IntentManager.IntentType.WALK_DOWN:
                     addMoveVector(0, -1);
