@@ -48,10 +48,10 @@ namespace Polys.Video
                     continue;
 
                 Sprite sprite = new Sprite(new Util.Rect(positionX+characterWidth*i, positionY,
-                    characterWidth, characterHeight), true,
+                    characterWidth, characterHeight), this, true,
                     charPos.first*characterWidth, charPos.second*characterHeight);
 
-                HighLevelRenderer.draw(sprite, this, new Camera());
+                HighLevelRenderer.draw(sprite, new Camera());
             }
         }
 

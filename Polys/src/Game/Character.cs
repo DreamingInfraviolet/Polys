@@ -10,14 +10,14 @@
         public Orientation orientation { get; set; }
 
 
-        public Character(string name, Video.DrawableSprite sprite)
+        public Character(string name, Video.Sprite sprite)
         {
             this.name = name;
             this.sprite = sprite;
         }
 
         public string name { get; set; }
-        public Video.DrawableSprite sprite { get; private set; }
+        public Video.Sprite sprite { get; private set; }
         public void updateUv()
         {
             int xSpriteIndex, ySpriteIndex;

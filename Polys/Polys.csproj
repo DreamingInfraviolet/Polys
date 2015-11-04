@@ -100,7 +100,6 @@
     <Compile Include="src\Util\Util.cs" />
     <Compile Include="src\Video\Camera.cs" />
     <Compile Include="src\Video\Colour.cs" />
-    <Compile Include="src\Video\DrawableSprite.cs" />
     <Compile Include="src\Video\Effect.cs" />
     <Compile Include="src\Video\Font.cs" />
     <Compile Include="src\Video\GeometryGPU.cs" />

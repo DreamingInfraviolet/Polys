@@ -73,7 +73,7 @@ namespace Polys.Video
             }
         }
 
-        public static void draw(Sprite sprite, Tileset tileset, Camera camera = null)
+        public static void draw(Sprite sprite,  Camera camera = null)
         {
             if (!sprite.visible)
                 return;
@@ -83,7 +83,7 @@ namespace Polys.Video
             LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
             //Bind tileset texture
-            tileset.bind();
+            sprite.tileset.bind();
 
             Util.Rect rect = sprite.rect;
 
@@ -97,15 +97,10 @@ namespace Polys.Video
                 Util.Maths.matrixPixelProjection(rect, targetWidth, targetHeight));
 
             shaderIndexedBitmapSprite["uvMatrix"].SetValue(
-                sprite.uvMatrix(tileset.width, tileset.height));
+                sprite.uvMatrix(sprite.tileset.width, sprite.tileset.height));
 
             //Draw
             LowLevelRenderer.draw();
-        }
-
-        public static void draw(DrawableSprite sprite, Camera camera = null)
-        {
-            draw(sprite, sprite.tileset, camera);
         }
     }
 }
