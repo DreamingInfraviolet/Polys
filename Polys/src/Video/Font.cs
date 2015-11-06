@@ -39,22 +39,52 @@ namespace Polys.Video
             }
         }
 
-        public void renderText(string text, int positionX, int positionY)
+        public void renderText(string text, int positionX, int positionY, int boxWidth=0)
         {
-            for (int i = 0; i < text.Length; ++i)
+            int pixelPosX = positionX, pixelPosY = positionY;
+            string[] words = text.Split(' ', '\t');
+
+            foreach(var word in words)
             {
-                Util.Pair<int,int> charPos;
-                if(!charPosMapping.TryGetValue(text[i], out charPos))
-                    continue;
+                if (boxWidth > 0)
+                {
+                    //If the word is out of bounds  and not super big, insert a newline
+                    if ((pixelPosX+word.Length * characterWidth >= boxWidth) && word.Length * characterWidth < boxWidth)
+                    {
 
-                Sprite sprite = new Sprite(new Util.Rect(positionX+characterWidth*i, positionY,
-                    characterWidth, characterHeight), this, true,
-                    charPos.first*characterWidth, charPos.second*characterHeight);
+                        pixelPosX = positionX;
+                        pixelPosY -= characterHeight;
+                    }
+                }
 
-                HighLevelRenderer.draw(sprite, new Camera());
+                //Draw the word
+                foreach(var character in word)
+                {
+                    if (character == '\n' || (boxWidth > 0 && pixelPosX +characterWidth>=boxWidth))
+                    {
+                        pixelPosX = positionX;
+                        pixelPosY -= characterHeight;
+                    }
+                    else
+                    {
+                        Util.Pair<int, int> charPos;
+                        if (!charPosMapping.TryGetValue(character, out charPos))
+                            continue;
+
+                        pixelPosX += characterWidth;
+
+                        Sprite sprite = new Sprite(new Util.Rect(pixelPosX, pixelPosY,
+                            characterWidth, characterHeight), this, true,
+                            charPos.first * characterWidth, charPos.second * characterHeight);
+
+                        HighLevelRenderer.draw(sprite, new Camera());
+                    }
+                }
+
+                //Add space after the word
+                pixelPosX += characterWidth;
             }
-        }
-
+       } 
         public string ScriptName()
         {
             return "map";
