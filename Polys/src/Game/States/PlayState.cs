@@ -35,7 +35,7 @@ namespace Polys.Game.States
         public StateManager.StateRenderResult draw()
         {
             Video.HighLevelRenderer.draw(sceneList.current, camera);
-            font.renderText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa In school, we just started learning about trigonometry, and I was ... cosecant, secant, and cotangent of a single angle without using a calculator? Trigonometry is a subject that has to be studied after some background in geometry. Why? Because trigonometry has its whole basis in triangles and angle.Rational trigonometry avoids direct use of transcendental functions like sine and ... There is no assumption, in other words, of the existence of real number", 5, 150, 220);
+            font.renderText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 5, 150, 240);
 
             return StateManager.StateRenderResult.StopDrawing;
         }

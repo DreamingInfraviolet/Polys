@@ -23,9 +23,6 @@ namespace Polys.Video
         //The width and height of the window
         int width, height;
 
-        //A temporary effect, later to be replaced with an effect pipeline.
-        Effect chromaticShiftFx;
-
         /** If this is enabled, the post processing filters are active. This introduces an intermediary texture to which the game
           * is rendered before it is sent to the screen. If this is false, then that stage is skipped, resulting in a dramatic performance
           * increase on systems with weak graphics cards but also skipping all post-processing steps (e.g., Effects). */
@@ -54,13 +51,24 @@ namespace Polys.Video
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
                 throw new Exception("Could not initialise video system");
 
-            //Create a window
+            SDL.SDL_DisplayMode mode;
+            SDL.SDL_GetDesktopDisplayMode(0, out mode);
+            int drawTargetWidth = 256, drawTargetHeight = 192;
+
+            //Set the width of the window to span the screen, and the height to best fit the screen
+            //resolution while being a multiple of the drawing target.
+            int windowWidth = mode.w;
+            int windowHeight = drawTargetHeight * (mode.h / drawTargetHeight);
+
+
+
+            //Create a window. The dimensions are the biggest that is a multiple of the low res target.
             window = SDL.SDL_CreateWindow("Polys",
-                SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED,
-                640, 480,
+                SDL.SDL_WINDOWPOS_CENTERED, 0,
+                windowWidth, windowHeight,
                 SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL |
-                SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE |
-                SDL.SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS);
+                SDL.SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS |
+                SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS);
 
             //Create the GL context
             mGglContext = SDL.SDL_GL_CreateContext(window);
@@ -68,12 +76,10 @@ namespace Polys.Video
             LowLevelRenderer.initialise();
             LowLevelRenderer.blending = true;
 
-            framebufferManager = new FramebufferManager(640, 480, 256, 192);
+            framebufferManager = new FramebufferManager(windowWidth, windowHeight, drawTargetWidth, drawTargetHeight);
 
             HighLevelRenderer.setTargetSize(framebufferManager.lowResWidth, framebufferManager.lowResHeight);
 
-            //Temporarily initialise chromatic shift effect
-            chromaticShiftFx = new Effect(loadShader("effects/chromaticShift"));
         }
 
         /** Draws everything in a world that should be drawn. */
@@ -94,7 +100,7 @@ namespace Polys.Video
 
             if (postFx)
             {
-                framebufferManager.applyEffect(chromaticShiftFx, Time.currentTime);
+                //Apply effects here
                 framebufferManager.highresToScreen();
             }
 
@@ -134,10 +140,6 @@ namespace Polys.Video
         /** Inherited from IScriptInitialisable */
         public void InitialiseFromScript(Table table)
         {
-            //Set screen size
-            setWindowSize(ScriptManager.retrieveValue(table, "width", 600),
-                       ScriptManager.retrieveValue(table, "height", 400));
-
             //Post effects?
             postFx = ScriptManager.retrieveValue(table, "postFx", 1) != 0;
 

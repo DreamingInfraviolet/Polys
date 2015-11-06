@@ -43,15 +43,15 @@ namespace Polys.Util
             //posY -= tileHeight;
 
             //Find projection and UV matrices.
-            float px = (spriteRect.x + 0.5f) / screenWidth * 2.0f - 1.0f;
-            float py = (screenHeight - spriteRect.y - 0.5f - spriteRect.h) / screenHeight * 2.0f - 1.0f;
-            float sx = (float)spriteRect.w / screenWidth;
-            float sy = (float)spriteRect .h/ screenHeight;
+            double px = (spriteRect.x + 0.5) / screenWidth * 2.0 - 1.0;
+            double py = (screenHeight - spriteRect.y - 0.5 - spriteRect.h) / screenHeight * 2.0 - 1.0;
+            double sx = (double)spriteRect.w / screenWidth;
+            double sy = (double)spriteRect .h/ screenHeight;
 
-            return new Matrix4(new float[] { sx, 0, 0, 0,
-                                                           0, sy, 0, 0,
+            return new Matrix4(new float[] { (float)sx, 0, 0, 0,
+                                                           0, (float)sy, 0, 0,
                                                            0, 0, 0, 0,
-                                                           sx+px, sy+py, 0, 1});
+                                                           (float)(sx+px), (float)(sy+py), 0, 1});
         }
 
         /** Returns a power of two bigger than n if n is non power of two. Otherwise returns n. */
