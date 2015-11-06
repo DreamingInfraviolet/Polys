@@ -21,7 +21,7 @@
             OpenGL.Vector2 newPosition = position + velocity;
             int newPosX = (int)newPosition.x;
             int newPosY = (int)newPosition.y;
-            int colliderWidth = 6, colliderHeight = 3;
+            int colliderWidth = 10, colliderHeight = 4;
             int colliderX = newPosX + character.sprite.rect.w / 2 - colliderWidth / 2;
             int colliderY = newPosY + 3 - colliderHeight / 2;
 

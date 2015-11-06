@@ -37,9 +37,6 @@ namespace Polys.Video
         /** Draws a tile layer with a given camera. */
         public static void draw(TileLayer layer, int gridTileWidth, int gridTileHeight, Camera camera = null)
         {
-            //Prepare
-            LowLevelRenderer.geometry = LowLevelRenderer.quad;
-            LowLevelRenderer.shader = shaderIndexedBitmapSprite;
 
             //Sort the elements
             Sprite[] sprites = new Sprite[layer.tiles.Count];
@@ -85,11 +82,7 @@ namespace Polys.Video
         {
             if (!sprite.visible)
                 return;
-
-            //Prepare
-            LowLevelRenderer.geometry = LowLevelRenderer.quad;
-            LowLevelRenderer.shader = shaderIndexedBitmapSprite;
-
+        
             //Bind tileset texture
             sprite.tileset.bind();
 

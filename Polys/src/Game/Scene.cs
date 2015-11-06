@@ -88,7 +88,7 @@ namespace Polys.Game
 
             //Place the player:
             playerStartPixelX = ScriptManager.retrieveValue(table, "playerStartPixelX", 0);
-            playerStartPixelY = ScriptManager.retrieveValue(table, "playerStartPixelY", 0);
+            playerStartPixelY = (map.Height - 1)*map.TileHeight -ScriptManager.retrieveValue(table, "playerStartPixelY", 0);
         }
     }
 }
