@@ -24,6 +24,8 @@ namespace Polys.Game.States
             controller.character = player;
 
             sceneList.current.startLayer.tiles.Add(player.sprite);
+            player.sprite.rect.x = sceneList.current.playerStartPixelX;
+            player.sprite.rect.y = sceneList.current.playerStartPixelY;
         }
 
         //The current list of scenes

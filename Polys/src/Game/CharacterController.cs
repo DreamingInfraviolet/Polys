@@ -19,15 +19,17 @@
         {
             velocity = velocity.Normalize() * speed * Time.deltaTime;
             OpenGL.Vector2 newPosition = position + velocity;
-            int newPosX = (int)newPosition.x - character.sprite.rect.w / 2;
-            int newPosY = (int)newPosition.y - character.sprite.rect.h / 2;
+            int newPosX = (int)newPosition.x;
+            int newPosY = (int)newPosition.y;
+            int colliderWidth = 6, colliderHeight = 3;
+            int colliderX = newPosX + character.sprite.rect.w / 2 - colliderWidth / 2;
+            int colliderY = newPosY + 3 - colliderHeight / 2;
 
             //Check if we are colliding with something.
             bool colliding = false;
             if (collisionTiles != null)
                 colliding = collisionTiles.findIntersecting(
-                    new Util.Rect(newPosX, newPosY,
-                    character.sprite.rect.w, character.sprite.rect.h / 2)).Count != 0;
+                    new Util.Rect(colliderX, colliderY, colliderWidth, colliderHeight)).Count != 0;
 
             if (!colliding)
             {

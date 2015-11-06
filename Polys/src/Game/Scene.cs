@@ -16,6 +16,8 @@ namespace Polys.Game
         public Video.TileLayer startLayer { get { return layers[startLayerIndex]; } }
 
         int startLayerIndex = 0;
+        public int playerStartPixelX { get; private set; }
+        public int playerStartPixelY {get; private set;}
 
 
         /** Initialises the scene from a script */
@@ -83,6 +85,10 @@ namespace Polys.Game
                     startLayerIndex = iLayer;
                 }
             }
+
+            //Place the player:
+            playerStartPixelX = ScriptManager.retrieveValue(table, "playerStartPixelX", 0);
+            playerStartPixelY = ScriptManager.retrieveValue(table, "playerStartPixelY", 0);
         }
     }
 }
