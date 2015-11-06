@@ -37,19 +37,9 @@ namespace Polys.Video
         /** Draws a tile layer with a given camera. */
         public static void draw(TileLayer layer, int gridTileWidth, int gridTileHeight, Camera camera = null)
         {
-
-            //Sort the elements
-            Sprite[] sprites = new Sprite[layer.tiles.Count];
-            {
-                int index = 0;
-                foreach (Sprite s in layer.tiles)
-                    sprites[index++] = s;
-             }
-
-            Array.Sort<Sprite>(sprites);
-
-
-            foreach (Sprite s in sprites)
+            Util.Util.insertionSort<Sprite, Transformable>(layer.tiles);
+            
+            foreach (Sprite s in layer.tiles)
             {
                 //Bind tileset textures
                 s.tileset.bind();
