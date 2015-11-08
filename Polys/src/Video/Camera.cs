@@ -4,7 +4,7 @@
     public class Camera
     {
         /** The world pixel coordinate to be the top right corner of the screen */
-        int mCornerX, mCornerY;
+        public int mCornerX, mCornerY;
 
         /** Applies the inverse of the camera transformation to a point. */
         public void worldToScreen(ref int x, ref int y)

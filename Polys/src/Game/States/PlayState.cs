@@ -25,7 +25,7 @@ namespace Polys.Game.States
 
             controller.position.x = sceneList.current.playerStartPixelX;
             controller.position.y = sceneList.current.playerStartPixelY;
-            sceneList.current.startLayer.tiles.Add(player.sprite);
+            sceneList.current.startLayer.objects.Add(player.sprite);
         }
 
         //The current list of scenes

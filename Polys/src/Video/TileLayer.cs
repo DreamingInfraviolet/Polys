@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TiledSharp;
 
 namespace Polys.Video
 {
@@ -15,8 +16,12 @@ namespace Polys.Video
 
         /** A dictionary of properties for the tile layer, as defined in the tmx file */
         public TiledSharp.PropertyDict properties { get; private set; }
-        
-        public List<Sprite> tiles;
+
+        public List<Sprite> objects;
+        public Sprite[] tileCache;
+        public int[,] tiles;
+        public int tileCountX, tileCountY;
+        public int genericTileWidth, genericTileHeight;
 
         /** Initialises the tile layer from the given arguments.
           * @param layer The TiledSharp representation of the tile layer.
@@ -32,19 +37,61 @@ namespace Polys.Video
             //Find this size.
             int quadTreeWidth =  Util.Maths.biggerPowerOfTwo(((tileCountX + 2) * genericTileWidth));
             int quadTreeHeight = Util.Maths.biggerPowerOfTwo(((tileCountY + 2) * genericTileHeight));
-            tiles = new List<Sprite>();
+            objects = new List<Sprite>();
+            tiles = new int[tileCountX, tileCountY];
+            this.tileCountX = tileCountX;
+            this.tileCountY = tileCountY;
+            this.genericTileWidth = genericTileWidth;
+            this.genericTileHeight = genericTileHeight;
+
 
             //Insert tiles
-            for (int i = 0; i < layer.Tiles.Count; ++i)
+            //A dictionary mapping a tmp tile to a pair of an id to put into the grid and the corresponding tile.
+            Dictionary<TiledSharp.TmxLayerTile, Util.Pair<int,Sprite>> tileHash =
+                new Dictionary<TiledSharp.TmxLayerTile, Util.Pair<int, Sprite>>(new TmxTileComparer());
+            foreach (var tmxTile in layer.Tiles)
             {
                 //Ignore invisible tiles.
-                if (layer.Tiles[i].Gid == 0)
+                if (tmxTile.Gid == 0)
                     continue;
                 
-                Tileset tileset = getCorrespondingTilest(orderedTilesets, layer.Tiles[i].Gid);
-                Sprite tile = new Sprite(layer.Tiles[i], tileset, genericTileWidth, genericTileHeight, tileCountY);
+                Tileset tileset = getCorrespondingTilest(orderedTilesets, tmxTile.Gid);
+                
 
-                tiles.Add(tile);
+                Util.Pair<int, Sprite> pair;
+                if(!tileHash.TryGetValue(tmxTile, out pair))
+                {
+                    //If we can't find the value, add a new tile.
+                    int id = tileHash.Count;
+                    Sprite tile = new Sprite(tmxTile, tileset, genericTileWidth, genericTileHeight, tileCountY);
+                    pair = new Util.Pair<int, Sprite>(id, tile);
+                    tileHash.Add(tmxTile, pair);
+                }
+
+                tiles[tmxTile.X, tileCountY - tmxTile.Y - 1] = pair.first;
+            }
+
+            //When this is done, our grid should be filled with references to various tiles.
+            //Now convert the set to the vector user internally.
+            tileCache = new Sprite[tileHash.Count];
+            foreach (var p in tileHash)
+                tileCache[p.Value.first] = p.Value.second;
+        }
+
+        class TmxTileComparer : IEqualityComparer<TiledSharp.TmxLayerTile>
+        {
+            public bool Equals(TmxLayerTile x, TmxLayerTile y)
+            {
+                return x.VerticalFlip == y.VerticalFlip & x.HorizontalFlip == y.HorizontalFlip &&
+                    x.DiagonalFlip == y.DiagonalFlip &&
+                    x.Gid == y.Gid;
+            }
+
+            public int GetHashCode(TmxLayerTile obj)
+            {
+                return (obj.VerticalFlip?0:0x000000ff) ^
+                    (obj.HorizontalFlip ? 0 : 0x0000ff00) ^
+                    (obj.DiagonalFlip ? 0 : 0x00ff0000) ^ obj.Gid;
             }
         }
 
