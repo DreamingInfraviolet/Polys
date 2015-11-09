@@ -1,6 +1,6 @@
 --video
 video["postFx"]           = 0
-video["vsync"]            = 0
+video["vsync"]            = 1
 video["fullscreen"]       = 0
 
 --audio

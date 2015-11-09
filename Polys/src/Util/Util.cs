@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Polys.Util
 {
@@ -44,5 +45,33 @@ namespace Polys.Util
             if (err != OpenGL.ErrorCode.NoError)
                 Console.WriteLine("Open GL Error: " + err);
         }
+
+        public static void insertionSort<T,S>(List<T> objects) where T :IComparable<S>, S
+        {
+            for (int iOuterPos = 1; iOuterPos < objects.Count; ++iOuterPos)
+            {
+                T tmp = objects[iOuterPos];
+
+                int iInnerPos = iOuterPos - 1;
+                for (; iInnerPos > -1 && objects[iInnerPos].CompareTo(tmp) > 0; --iInnerPos)
+                    objects[iInnerPos + 1] = objects[iInnerPos];
+
+                objects[iInnerPos + 1] = tmp;
+            }
+        }
+
+        /*   Same as above, but not tested.     public static void insertionSort<T>(T[] objects) where T :IComparable
+        {
+            for (int iOuterPos = 1; iOuterPos < objects.Length; ++iOuterPos)
+            {
+                T tmp = objects[iOuterPos];
+
+                int iInnerPos = iOuterPos - 1;
+                for (; iInnerPos > -1 && objects[iInnerPos].CompareTo(tmp) > 0; --iInnerPos)
+                    objects[iInnerPos + 1] = objects[iInnerPos];
+
+                objects[iInnerPos + 1] = tmp;
+            }
+        }*/
     }
 }

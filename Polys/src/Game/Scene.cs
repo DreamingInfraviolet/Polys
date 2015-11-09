@@ -76,8 +76,9 @@ namespace Polys.Game
                 {
                     //Note that the collision tiles must not be modified, as that will not update
                     //collision correctly.
-                    foreach (Video.Sprite s in layers[iLayer].tiles)
-                        collisionObjects.insert(s);
+                    for (int yid = 0; yid < layers[iLayer].tileCountY; ++yid)
+                        for (int xid = 0; xid < layers[iLayer].tileCountX; ++xid)
+                            collisionObjects.insert(layers[iLayer].tileCache[layers[iLayer].tiles[xid, yid]]);
                 }
                 else if(map.Layers[iLayer].Name == "start")
                 {
@@ -88,7 +89,7 @@ namespace Polys.Game
 
             //Place the player:
             playerStartPixelX = ScriptManager.retrieveValue(table, "playerStartPixelX", 0);
-            playerStartPixelY = ScriptManager.retrieveValue(table, "playerStartPixelY", 0);
+            playerStartPixelY = (map.Height - 1)*map.TileHeight -ScriptManager.retrieveValue(table, "playerStartPixelY", 0);
         }
     }
 }

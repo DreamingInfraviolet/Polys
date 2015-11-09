@@ -88,10 +88,10 @@ namespace Polys.Video
             //Clear render buffers
 
             framebufferManager.clear();
-
             framebufferManager.bind();
-
             HighLevelRenderer.setTargetSize(framebufferManager.lowResWidth, framebufferManager.lowResHeight);
+            LowLevelRenderer.geometry = LowLevelRenderer.quad;
+            LowLevelRenderer.shader = HighLevelRenderer.shaderIndexedBitmapSprite;
 
             //Draw all to low res target
             world.stateManager.draw();

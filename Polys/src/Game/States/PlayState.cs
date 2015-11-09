@@ -25,7 +25,7 @@ namespace Polys.Game.States
 
             controller.position.x = sceneList.current.playerStartPixelX;
             controller.position.y = sceneList.current.playerStartPixelY;
-            sceneList.current.startLayer.tiles.Add(player.sprite);
+            sceneList.current.startLayer.objects.Add(player.sprite);
         }
 
         //The current list of scenes
@@ -35,7 +35,7 @@ namespace Polys.Game.States
         public StateManager.StateRenderResult draw()
         {
             Video.HighLevelRenderer.draw(sceneList.current, camera);
-            font.renderText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 5, 150, 240);
+            font.renderText("Polys", 100, 170, 240);
 
             return StateManager.StateRenderResult.StopDrawing;
         }
