@@ -42,8 +42,8 @@ namespace Polys.Video
             {
                 tileMinX = (camera.mCornerX - layer.maxTileWidth) / layer.genericTileWidth;
                 tileMinY = (camera.mCornerY - layer.maxTileHeight) / layer.genericTileHeight;
-                tileMaxX = tileMinX + (targetWidth+ layer.maxTileWidth) / layer.genericTileWidth+1;
-                tileMaxY = tileMinY + (targetHeight+ layer.maxTileHeight) / layer.genericTileHeight+1;
+                tileMaxX = tileMinX + (targetWidth+ layer.maxTileWidth) / layer.genericTileWidth+2;
+                tileMaxY = tileMinY + (targetHeight+ layer.maxTileHeight) / layer.genericTileHeight+2;
             }
             else
             { 
@@ -53,11 +53,14 @@ namespace Polys.Video
                 tileMaxY = (targetHeight) / layer.genericTileHeight+1;
             }
 
+            int limX = Math.Min(layer.tileCountX, tileMaxX);
+            int limY = Math.Max(tileMinY, 0);
+
             Util.Util.insertionSort<Sprite, Transformable>(layer.objects);
             int objectIndex = 0;
-            for (int yid = Math.Min(layer.tileCountY, tileMaxY)-1; yid >= Math.Max(tileMinX, 0); --yid)
+            for (int yid = Math.Min(layer.tileCountY, tileMaxY)-1; yid >= limY; --yid)
             {
-                int y = yid * layer.genericTileWidth;
+                int y = yid * layer.genericTileHeight;
 
                 //Draw objects until they start going below the current layer
                 for (; objectIndex < layer.objects.Count; ++objectIndex)
@@ -68,7 +71,7 @@ namespace Polys.Video
                 }
 
 
-                for (int xid = Math.Max(tileMinX, 0); xid < Math.Min(layer.tileCountX, tileMaxX); ++xid)
+                for (int xid = Math.Max(tileMinX, 0); xid < limX; ++xid)
                 {
                     int tileId = layer.tiles[xid, yid];
                     if (tileId < 0)

@@ -36,8 +36,8 @@ namespace Polys.Util
 
         public bool overlaps(Rect r)
         {
-            return r.x < (x + w) && (r.x + r.w) > x &&
-                r.y < (y + h) && (r.y + r.h) > y;
+            return r.x < (x + w) && (r.x + r.w) >= x &&
+                r.y < (y + h) && (r.y + r.h) >= y;
         }
     }
 }
