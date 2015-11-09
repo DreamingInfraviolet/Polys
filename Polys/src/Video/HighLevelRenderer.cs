@@ -42,10 +42,10 @@ namespace Polys.Video
             int tileMinX, tileMinY, tileMaxX, tileMaxY;
             if (camera != null)
             {
-                tileMinX = camera.mCornerX / layer.genericTileWidth;
-                tileMinY = camera.mCornerY / layer.genericTileHeight;
-                tileMaxX = (camera.mCornerX + targetWidth) / layer.genericTileWidth+1;
-                tileMaxY = (camera.mCornerY + targetHeight) / layer.genericTileHeight+1;
+                tileMinX = (camera.mCornerX - layer.maxTileWidth) / layer.genericTileWidth;
+                tileMinY = (camera.mCornerY - layer.maxTileHeight) / layer.genericTileHeight;
+                tileMaxX = tileMinX + (targetWidth+ layer.maxTileWidth) / layer.genericTileWidth+1;
+                tileMaxY = tileMinY + (targetHeight+ layer.maxTileHeight) / layer.genericTileHeight+1;
             }
             else
             { 

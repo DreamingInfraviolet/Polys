@@ -22,6 +22,7 @@ namespace Polys.Video
         public int[,] tiles;
         public int tileCountX, tileCountY;
         public int genericTileWidth, genericTileHeight;
+        public int maxTileWidth, maxTileHeight;
 
         /** Initialises the tile layer from the given arguments.
           * @param layer The TiledSharp representation of the tile layer.
@@ -44,6 +45,19 @@ namespace Polys.Video
             this.genericTileWidth = genericTileWidth;
             this.genericTileHeight = genericTileHeight;
 
+            //Find the maximum tile dimensions
+            if (orderedTilesets.Length != 0)
+            {
+                maxTileWidth = orderedTilesets[0].tileWidth;
+                maxTileHeight = orderedTilesets[0].tileHeight;
+                for(int i = 1; i < orderedTilesets.Length; ++i)
+                {
+                    if (orderedTilesets[i].tileWidth > maxTileWidth)
+                        maxTileWidth = orderedTilesets[i].tileWidth;
+                    if (orderedTilesets[i].tileHeight > maxTileHeight)
+                        maxTileHeight = orderedTilesets[i].tileHeight;
+                }
+            }
 
             //Insert tiles
             //A dictionary mapping a tmp tile to a pair of an id to put into the grid and the corresponding tile.
