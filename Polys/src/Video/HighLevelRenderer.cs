@@ -36,9 +36,7 @@ namespace Polys.Video
 
         /** Draws a tile layer with a given camera. */
         public static void draw(TileLayer layer, int gridTileWidth, int gridTileHeight, Camera camera = null)
-        {
-            //Util.Util.insertionSort<Sprite, Transformable>(layer.tiles);
-
+        {            
             int tileMinX, tileMinY, tileMaxX, tileMaxY;
             if (camera != null)
             {
@@ -55,13 +53,26 @@ namespace Polys.Video
                 tileMaxY = (targetHeight) / layer.genericTileHeight+1;
             }
 
-            for (int yid = Math.Max(tileMinX, 0); yid < Math.Min(layer.tileCountY, tileMaxY); ++yid)
+            Util.Util.insertionSort<Sprite, Transformable>(layer.objects);
+            int objectIndex = 0;
+            for (int yid = Math.Min(layer.tileCountY, tileMaxY)-1; yid >= Math.Max(tileMinX, 0); --yid)
+            {
+                int y = yid * layer.genericTileWidth;
+
+                //Draw objects until they start going below the current layer
+                for (; objectIndex < layer.objects.Count; ++objectIndex)
+                {
+                    if (layer.objects[objectIndex].rect.y < y)
+                        break;
+                    draw(layer.objects[objectIndex], camera);
+                }
+
+
                 for (int xid = Math.Max(tileMinX, 0); xid < Math.Min(layer.tileCountX, tileMaxX); ++xid)
                 {
                     Sprite tile = layer.tileCache[layer.tiles[xid, yid]];
 
                     int x = xid * layer.genericTileWidth;
-                    int y = yid * layer.genericTileWidth;
 
                     //Bind tileset textures
                     tile.tileset.bind();
@@ -90,6 +101,11 @@ namespace Polys.Video
                     LowLevelRenderer.draw();
 
                 }
+            }
+
+            //Draw all remaining objects
+            for (; objectIndex < layer.objects.Count; ++objectIndex)
+                draw(layer.objects[objectIndex], camera);
         }
 
         public static void draw(Sprite sprite, Camera camera = null)
@@ -119,4 +135,3 @@ namespace Polys.Video
         }
     }
 }
-

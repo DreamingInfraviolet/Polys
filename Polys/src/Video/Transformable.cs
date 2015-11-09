@@ -25,17 +25,10 @@ namespace Polys.Video
 
         public int CompareTo(Transformable other)
         {
-            if (rect.x == other.rect.x && rect.y == other.rect.y)
+            if (rect.top==other.rect.top)
                 return 0;
-            if (rect.y > other.rect.y)
+            if (rect.top > other.rect.top)
                 return -1;
-            else if (rect.y == other.rect.y)
-            {
-                if (rect.x < other.rect.x)
-                    return -1;
-                else
-                    return 1;
-            }
             else
                 return 1;
         }

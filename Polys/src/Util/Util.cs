@@ -84,19 +84,5 @@ namespace Polys.Util
 
             return x[minIndex];
         }
-
-        /*   Same as above, but not tested.     public static void insertionSort<T>(T[] objects) where T :IComparable
-        {
-            for (int iOuterPos = 1; iOuterPos < objects.Length; ++iOuterPos)
-            {
-                T tmp = objects[iOuterPos];
-
-                int iInnerPos = iOuterPos - 1;
-                for (; iInnerPos > -1 && objects[iInnerPos].CompareTo(tmp) > 0; --iInnerPos)
-                    objects[iInnerPos + 1] = objects[iInnerPos];
-
-                objects[iInnerPos + 1] = tmp;
-            }
-        }*/
     }
 }
