@@ -132,5 +132,9 @@ namespace Polys.Video
 
             return tileset;
         }
+
+        public bool intersects(Util.Rect rect)
+        {
+        }
     }
 }

@@ -15,7 +15,7 @@
             this.speed = speed;
         }
 
-        public void finishGatheringInput(Util.Quadtree collisionTiles)
+        public void finishGatheringInput(Video.TileLayer collisionLayer)
         {
             velocity = velocity.Normalize() * speed * Time.deltaTime;
             OpenGL.Vector2 newPosition = position + velocity;
@@ -27,9 +27,9 @@
 
             //Check if we are colliding with something.
             bool colliding = false;
-            if (collisionTiles != null)
-                colliding = collisionTiles.findIntersecting(
-                    new Util.Rect(colliderX, colliderY, colliderWidth, colliderHeight)).Count != 0;
+            if (collisionLayer != null)
+                colliding = collisionLayer.intersects(
+                    new Util.Rect(colliderX, colliderY, colliderWidth, colliderHeight));
 
             if (!colliding)
             {
