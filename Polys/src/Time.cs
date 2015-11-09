@@ -7,6 +7,8 @@ namespace Polys
     {
         static System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 
+        static float[] deltaTimeHistory = new float[5];
+
         /** The time (in milliseconds) that the last frame took to complete. */
         public static float deltaTime { get; private set; }
 
@@ -26,7 +28,17 @@ namespace Polys
         public static void endFrame()
         {
             stopwatch.Stop();
-            deltaTime = (float)(stopwatch.ElapsedTicks / (double)System.Diagnostics.Stopwatch.Frequency);
+
+            //Push delta time history down:
+            for (int i = 0; i < deltaTimeHistory.Length-1; ++i)
+                deltaTimeHistory[i] = deltaTimeHistory[i+1];
+
+            //Add new dt to history
+            deltaTimeHistory[deltaTimeHistory.Length - 1] = (float)(stopwatch.ElapsedTicks / (double)System.Diagnostics.Stopwatch.Frequency);
+
+            //Get mode thingy
+            deltaTime = Util.Util.findClosestToAllOthers(deltaTimeHistory);
+
             stopwatch.Reset();
         }
 

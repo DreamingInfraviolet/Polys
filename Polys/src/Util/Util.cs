@@ -60,6 +60,31 @@ namespace Polys.Util
             }
         }
 
+        //Returns the value most like the others. Use dumb algorithm for now.
+        public static float findClosestToAllOthers(float[] x)
+        {
+            if (x.Length == 1)
+                return x[0];
+            else if (x.Length == 0)
+                return 0;
+
+            float[] distances = new float[x.Length];
+            for (int i = 0; i < x.Length; ++i)
+                for (int j = 0; j < x.Length; ++j)
+                    distances[i] += Math.Abs(x[j] - x[i]);
+
+            float min = distances[0];
+            int minIndex = 0;
+            for(int i = 1; i < distances.Length; ++i)
+                if(distances[i]< min)
+                {
+                    min = distances[i];
+                    minIndex = i;
+                }
+
+            return x[minIndex];
+        }
+
         /*   Same as above, but not tested.     public static void insertionSort<T>(T[] objects) where T :IComparable
         {
             for (int iOuterPos = 1; iOuterPos < objects.Length; ++iOuterPos)
