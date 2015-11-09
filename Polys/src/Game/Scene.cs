@@ -10,10 +10,10 @@ namespace Polys.Game
         public TmxMap map { get; private set; }
         public Video.Tileset[] tilesets { get; private set; }
         public Video.TileLayer[] layers { get; private set; }
-        public Util.Quadtree collisionObjects { get; private set; }
         public int gridTileWidth { get; private set; }
         public int gridTileHeight { get; private set; }
         public Video.TileLayer startLayer { get { return layers[startLayerIndex]; } }
+        public Video.TileLayer collisionLayer { get; private set; }
 
         int startLayerIndex = 0;
         public int playerStartPixelX { get; private set; }
@@ -49,12 +49,7 @@ namespace Polys.Game
             map = new TmxMap(tilemapPath);
             gridTileWidth = map.TileWidth;
             gridTileHeight = map.TileHeight;
-
-
-            collisionObjects = new Util.Quadtree(new Util.Rect(-map.TileWidth, -map.TileHeight,
-                Util.Maths.biggerPowerOfTwo(map.TileWidth*(map.Width+1)),
-                Util.Maths.biggerPowerOfTwo(map.TileHeight*(map.Height+1))));
-
+            
             //Load tilesets
             tilesets = new Video.Tileset[map.Tilesets.Count];
             for (int iTileset = 0; iTileset < tilesets.Length; ++iTileset)
@@ -74,11 +69,7 @@ namespace Polys.Game
                 
                 if (map.Layers[iLayer].Name == "collision")
                 {
-                    //Note that the collision tiles must not be modified, as that will not update
-                    //collision correctly.
-                    for (int yid = 0; yid < layers[iLayer].tileCountY; ++yid)
-                        for (int xid = 0; xid < layers[iLayer].tileCountX; ++xid)
-                            collisionObjects.insert(layers[iLayer].tileCache[layers[iLayer].tiles[xid, yid]]);
+                    collisionLayer = layers[iLayer];
                 }
                 else if(map.Layers[iLayer].Name == "start")
                 {

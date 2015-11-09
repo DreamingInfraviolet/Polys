@@ -22,6 +22,7 @@ namespace Polys.Video
         public int[,] tiles;
         public int tileCountX, tileCountY;
         public int genericTileWidth, genericTileHeight;
+        public int maxTileWidth, maxTileHeight;
 
         /** Initialises the tile layer from the given arguments.
           * @param layer The TiledSharp representation of the tile layer.
@@ -44,6 +45,19 @@ namespace Polys.Video
             this.genericTileWidth = genericTileWidth;
             this.genericTileHeight = genericTileHeight;
 
+            //Find the maximum tile dimensions
+            if (orderedTilesets.Length != 0)
+            {
+                maxTileWidth = orderedTilesets[0].tileWidth;
+                maxTileHeight = orderedTilesets[0].tileHeight;
+                for(int i = 1; i < orderedTilesets.Length; ++i)
+                {
+                    if (orderedTilesets[i].tileWidth > maxTileWidth)
+                        maxTileWidth = orderedTilesets[i].tileWidth;
+                    if (orderedTilesets[i].tileHeight > maxTileHeight)
+                        maxTileHeight = orderedTilesets[i].tileHeight;
+                }
+            }
 
             //Insert tiles
             //A dictionary mapping a tmp tile to a pair of an id to put into the grid and the corresponding tile.
@@ -53,7 +67,10 @@ namespace Polys.Video
             {
                 //Ignore invisible tiles.
                 if (tmxTile.Gid == 0)
+                {
+                    tiles[tmxTile.X, tileCountY - tmxTile.Y - 1] = -1;
                     continue;
+                }
                 
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, tmxTile.Gid);
                 
@@ -114,6 +131,38 @@ namespace Polys.Video
                 tileset = orderedTilesets.Last();
 
             return tileset;
+        }
+
+        public bool intersects(Util.Rect rect)
+        {
+            int tileMinX = (rect.x - maxTileWidth) / genericTileWidth;
+            int tileMinY = (rect.y - maxTileHeight) / genericTileHeight;
+            int tileMaxX = tileMinX + (rect.w + maxTileWidth) / genericTileWidth + 2;
+            int tileMaxY = tileMinY + (rect.h + maxTileHeight) / genericTileHeight + 2;
+            int endX = Math.Min(tileCountX, tileMaxX);
+            int endY = Math.Min(tileCountY, tileMaxY);
+
+            for (int yid = Math.Max(tileMinY, 0); yid < endY; ++yid)
+            {
+                int y = yid * genericTileHeight;
+
+                for (int xid = Math.Max(tileMinX, 0); xid < endX; ++xid)
+                {
+                    int x = xid * genericTileWidth;
+
+                    int tileId = tiles[xid, yid];
+                    if (tileId < 0)
+                        continue;
+                    else
+                    {
+                        Sprite tile = tileCache[tileId];
+                        Util.Rect spriteRect = new Util.Rect(x, y, tile.rect.w, tile.rect.h);
+                        if (rect.overlaps(spriteRect))
+                            return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

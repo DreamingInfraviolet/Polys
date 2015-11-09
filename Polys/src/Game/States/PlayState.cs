@@ -48,7 +48,7 @@ namespace Polys.Game.States
 
         public StateManager.StateUpdateResult updateAfterInput()
         {
-            controller.finishGatheringInput(sceneList.current.collisionObjects);
+            controller.finishGatheringInput(sceneList.current.collisionLayer);
             player.updateUv();
             camera.centreOn(player.sprite.rect.x, player.sprite.rect.y);
 

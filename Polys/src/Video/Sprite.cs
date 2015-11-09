@@ -64,7 +64,7 @@ namespace Polys.Video
         
         public bool overlaps(Sprite s)
         {
-            return overlaps(s.rect);
+            return rect.overlaps(s.rect);
         }
     }
 }

@@ -36,16 +36,14 @@ namespace Polys.Video
 
         /** Draws a tile layer with a given camera. */
         public static void draw(TileLayer layer, int gridTileWidth, int gridTileHeight, Camera camera = null)
-        {
-            //Util.Util.insertionSort<Sprite, Transformable>(layer.tiles);
-
+        {            
             int tileMinX, tileMinY, tileMaxX, tileMaxY;
             if (camera != null)
             {
-                tileMinX = camera.mCornerX / layer.genericTileWidth;
-                tileMinY = camera.mCornerY / layer.genericTileHeight;
-                tileMaxX = (camera.mCornerX + targetWidth) / layer.genericTileWidth+1;
-                tileMaxY = (camera.mCornerY + targetHeight) / layer.genericTileHeight+1;
+                tileMinX = (camera.mCornerX - layer.maxTileWidth) / layer.genericTileWidth;
+                tileMinY = (camera.mCornerY - layer.maxTileHeight) / layer.genericTileHeight;
+                tileMaxX = tileMinX + (targetWidth+ layer.maxTileWidth) / layer.genericTileWidth+2;
+                tileMaxY = tileMinY + (targetHeight+ layer.maxTileHeight) / layer.genericTileHeight+2;
             }
             else
             { 
@@ -55,19 +53,36 @@ namespace Polys.Video
                 tileMaxY = (targetHeight) / layer.genericTileHeight+1;
             }
 
-            for (int yid = Math.Max(tileMinX, 0); yid < Math.Min(layer.tileCountY, tileMaxY); ++yid)
-                for (int xid = Math.Max(tileMinX, 0); xid < Math.Min(layer.tileCountX, tileMaxX); ++xid)
+            int limX = Math.Min(layer.tileCountX, tileMaxX);
+            int limY = Math.Max(tileMinY, 0);
+
+            Util.Util.insertionSort<Sprite, Transformable>(layer.objects);
+            int objectIndex = 0;
+            for (int yid = Math.Min(layer.tileCountY, tileMaxY)-1; yid >= limY; --yid)
+            {
+                int y = yid * layer.genericTileHeight;
+
+                //Draw objects until they start going below the current layer
+                for (; objectIndex < layer.objects.Count; ++objectIndex)
                 {
-                    Sprite tile = layer.tileCache[layer.tiles[xid, yid]];
+                    if (layer.objects[objectIndex].rect.y < y)
+                        break;
+                    draw(layer.objects[objectIndex], camera);
+                }
+
+
+                for (int xid = Math.Max(tileMinX, 0); xid < limX; ++xid)
+                {
+                    int tileId = layer.tiles[xid, yid];
+                    if (tileId < 0)
+                        continue;
+
+                    Sprite tile = layer.tileCache[tileId];
 
                     int x = xid * layer.genericTileWidth;
-                    int y = yid * layer.genericTileWidth;
 
                     //Bind tileset textures
                     tile.tileset.bind();
-
-                    if (!tile.visible)
-                        continue;
 
                     //Get screen coordinates of the tile in pixels
                     Util.Rect rect = tile.rect;
@@ -90,6 +105,11 @@ namespace Polys.Video
                     LowLevelRenderer.draw();
 
                 }
+            }
+
+            //Draw all remaining objects
+            for (; objectIndex < layer.objects.Count; ++objectIndex)
+                draw(layer.objects[objectIndex], camera);
         }
 
         public static void draw(Sprite sprite, Camera camera = null)
@@ -119,4 +139,3 @@ namespace Polys.Video
         }
     }
 }
-
