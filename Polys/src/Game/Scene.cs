@@ -78,7 +78,17 @@ namespace Polys.Game
                     //collision correctly.
                     for (int yid = 0; yid < layers[iLayer].tileCountY; ++yid)
                         for (int xid = 0; xid < layers[iLayer].tileCountX; ++xid)
-                            collisionObjects.insert(layers[iLayer].tileCache[layers[iLayer].tiles[xid, yid]]);
+                        {
+                            int tileId = layers[iLayer].tiles[xid, yid];
+                            if (tileId < 0)
+                                continue;
+
+                            Video.Sprite sprite = layers[iLayer].tileCache[tileId];
+                            Util.Rect spriteRect = sprite.rect;
+                            spriteRect.x = xid * map.TileWidth;
+                            spriteRect.y = yid * map.TileHeight;
+                            collisionObjects.insert(spriteRect);
+                        }
                 }
                 else if(map.Layers[iLayer].Name == "start")
                 {

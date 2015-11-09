@@ -67,7 +67,10 @@ namespace Polys.Video
             {
                 //Ignore invisible tiles.
                 if (tmxTile.Gid == 0)
+                {
+                    tiles[tmxTile.X, tileCountY - tmxTile.Y - 1] = -1;
                     continue;
+                }
                 
                 Tileset tileset = getCorrespondingTilest(orderedTilesets, tmxTile.Gid);
                 

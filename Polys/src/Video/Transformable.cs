@@ -32,11 +32,5 @@ namespace Polys.Video
             else
                 return 1;
         }
-
-        public bool overlaps(Util.Rect r)
-        {
-            return r.x < (rect.x + rect.w) && (r.x + r.w) > rect.x &&
-                r.y < (rect.y + rect.h) && (r.y + r.h) > rect.y;
-        }
     }
 }

@@ -38,7 +38,11 @@
                 character.sprite.rect.y = newPosY;
             }
             else
+            {
+                character.sprite.rect.x = (int)position.x;
+                character.sprite.rect.y = (int)position.y;
                 System.Console.WriteLine("Overlapping");
+            }
 
             character.orientation = orientationFromVelocity(character.orientation, colliding);
             velocity.x = 0;

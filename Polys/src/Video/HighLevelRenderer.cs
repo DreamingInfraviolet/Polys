@@ -70,15 +70,16 @@ namespace Polys.Video
 
                 for (int xid = Math.Max(tileMinX, 0); xid < Math.Min(layer.tileCountX, tileMaxX); ++xid)
                 {
-                    Sprite tile = layer.tileCache[layer.tiles[xid, yid]];
+                    int tileId = layer.tiles[xid, yid];
+                    if (tileId < 0)
+                        continue;
+
+                    Sprite tile = layer.tileCache[tileId];
 
                     int x = xid * layer.genericTileWidth;
 
                     //Bind tileset textures
                     tile.tileset.bind();
-
-                    if (!tile.visible)
-                        continue;
 
                     //Get screen coordinates of the tile in pixels
                     Util.Rect rect = tile.rect;

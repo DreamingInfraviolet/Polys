@@ -32,5 +32,12 @@ namespace Polys.Util
         }
 
         public int area { get { return w * h; } }
+
+
+        public bool overlaps(Rect r)
+        {
+            return r.x < (x + w) && (r.x + r.w) > x &&
+                r.y < (y + h) && (r.y + r.h) > y;
+        }
     }
 }

@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using OpenGL;
 using Polys.Video;
+using Polys.Util;
 
 namespace Polys.Util
 {
     /**A region quadtree designed for optimising many tasks!*/
-    public class Quadtree : IEnumerable<Video.Transformable>
+    public class Quadtree : IEnumerable<Rect>
     {
         Node root;
         
@@ -30,16 +31,16 @@ namespace Polys.Util
         }
 
         /** Inserts an item into the quadtree. */
-        public void insert(Video.Transformable t)
+        public void insert(Rect t)
         {
             root.insert(t);
             ++size;
         }
 
         /** Finds all objects that intersect with the rect. */
-        public List<Video.Transformable> findIntersecting(Rect rect)
+        public List<Rect> findIntersecting(Rect rect)
         {
-            List<Video.Transformable> answer = new List<Video.Transformable>();
+            List<Rect> answer = new List<Rect>();
             root.findIntersecting(rect, answer);
             return answer;
         }
@@ -59,7 +60,7 @@ namespace Polys.Util
             System.IO.File.WriteAllText(path, text);
         }
 
-        public IEnumerator<Transformable> GetEnumerator()
+        public IEnumerator<Rect> GetEnumerator()
         {
             foreach (var v in root)
                 yield return v;
@@ -70,13 +71,13 @@ namespace Polys.Util
             return this.GetEnumerator();
         }
 
-        class Node : IEnumerable<Transformable>
+        class Node : IEnumerable<Rect>
         {
             //A node will not attempt to split until this number of object is contained in it.
             //It may still refuse to split if the object being inserted doesn't fit into a subnode.
-            static int minObjectsBeforeSplit = 3;
+            static int minObjectsBeforeSplit = 100;
 
-            List<Video.Transformable> objects = new List<Video.Transformable>();
+            List<Rect> objects = new List<Rect>();
 
             Node topRight, topLeft, bottomLeft, bottomRight;
             Rect rect;
@@ -88,7 +89,7 @@ namespace Polys.Util
                 rect = r;
             }
 
-            public void insert(Video.Transformable t)
+            public void insert(Rect t)
             {
                 //If the object is bigger than half the size of the node, insert it into this node.
                 //Else, insert it into a subnode.
@@ -96,12 +97,12 @@ namespace Polys.Util
                 int halfH = rect.h / 2;
 
                 //If we have not yet reached the max objects, or if it doesn't fit into any of subsquares, insert into this.
-                if (objects.Count < minObjectsBeforeSplit || t.rect.w > halfW || t.rect.h > halfH || halfW == 1 || halfH == 1)
+                if (objects.Count < minObjectsBeforeSplit || t.w > halfW || t.h > halfH || halfW == 1 || halfH == 1)
                     objects.Add(t);
                 else
                 {
                     //There is a chance that it will fit neatly into one of the subchildren. If so, split and insert.
-                    Node n = splitAndFindChildWithPerfectFit(t.rect, halfW, halfH);
+                    Node n = splitAndFindChildWithPerfectFit(t, halfW, halfH);
                     if (n != null)
                         n.insert(t);
                     else //If does not fit neatly into subquad
@@ -165,10 +166,10 @@ namespace Polys.Util
                 objects.Clear();
             }
 
-            public void findIntersecting(Rect r, List<Video.Transformable> answer)
+            public void findIntersecting(Rect r, List<Rect> answer)
             {
                 //Check if any objects in this node intersect.
-                foreach (Video.Transformable t in objects)
+                foreach (Rect t in objects)
                     if (t.overlaps(r))
                         answer.Add(t);
 
@@ -202,10 +203,10 @@ namespace Polys.Util
                 }
             }
 
-            public IEnumerator<Transformable> GetEnumerator()
+            public IEnumerator<Rect> GetEnumerator()
             {
                 //Return all objects in this node
-                foreach (Video.Transformable t in objects)
+                foreach (Rect t in objects)
                     yield return t;
 
                 //Return all objects in child nodes
