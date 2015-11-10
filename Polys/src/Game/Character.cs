@@ -2,7 +2,10 @@
 {
     public class Character
     {
-        public enum Orientation { Up, Down, Left, Right, UpRight, UpLeft, DownLeft, DownRight };
+        public enum Orientation { Up=0x0000000f, Down=0x000000f0,
+                                  Left=0x00000f00, Right= 0x0000f000,
+                                  UpRight = 0x0000f00f, UpLeft= 0x00000f0f,
+                                  DownRight = 0x0000f0f0, DownLeft=0x00000ff0, NA=0x00000000 };
         public enum WalkState { Standing, Walking };
         
         public WalkState walkState = WalkState.Standing;

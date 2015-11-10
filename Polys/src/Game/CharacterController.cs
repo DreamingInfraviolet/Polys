@@ -3,7 +3,7 @@
     /** A character controller can control any entity. */
     public class CharacterController : IIntentHandler
     {
-        //These should be floats, as otherwise small deltas have o effect.
+        //These should be floats, as otherwise small deltas have no effect.
         public OpenGL.Vector2 position = new OpenGL.Vector2();
         public OpenGL.Vector2 velocity = new OpenGL.Vector2();
         float speed;
@@ -15,13 +15,11 @@
             this.speed = speed;
         }
 
-        public void finishGatheringInput(Video.TileLayer collisionLayer)
+        bool canMove(OpenGL.Vector2 pos, Video.TileLayer collisionLayer)
         {
-            velocity = velocity.Normalize() * speed * Time.deltaTime;
-            OpenGL.Vector2 newPosition = position + velocity;
-            int newPosX = (int)newPosition.x;
-            int newPosY = (int)newPosition.y;
             int colliderWidth = 10, colliderHeight = 4;
+            int newPosX = (int)pos.x;
+            int newPosY = (int)pos.y;
             int colliderX = newPosX + character.sprite.rect.w / 2 - colliderWidth / 2;
             int colliderY = newPosY + 3 - colliderHeight / 2;
 
@@ -31,51 +29,56 @@
                 colliding = collisionLayer.intersects(
                     new Util.Rect(colliderX, colliderY, colliderWidth, colliderHeight));
 
-            if (!colliding)
+            return !colliding;
+        }
+
+        public void finishGatheringInput(Video.TileLayer collisionLayer)
+        {
+            velocity = velocity.Normalize() * speed * Time.deltaTime;
+            OpenGL.Vector2 newPosition = position + velocity;
+
+            bool canMoveXY = canMove(position + velocity, collisionLayer);
+            bool moved = true;
+
+            if (!canMoveXY)
             {
-                position = newPosition;
-                character.sprite.rect.x = newPosX;
-                character.sprite.rect.y = newPosY;
+                bool canMoveX = canMove(new OpenGL.Vector2(position.x + velocity.x, position.y), collisionLayer);
+                bool canMoveY = canMove(new OpenGL.Vector2(position.x, position.y+velocity.y), collisionLayer);
+
+                //If we are moving on less than two axes 
+                if (!(velocity.x != 0 & velocity.y != 0))
+                    moved = false;
+                else if (canMoveX)
+                    position.x += velocity.x;
+                else if (canMoveY)
+                    position.y += velocity.y;
             }
             else
-            {
-                character.sprite.rect.x = (int)position.x;
-                character.sprite.rect.y = (int)position.y;
-                System.Console.WriteLine("Overlapping");
-            }
+                position = position + velocity;
+            
+            character.sprite.rect.x = (int)position.x;
+            character.sprite.rect.y = (int)position.y;
 
-            character.orientation = orientationFromVelocity(character.orientation, colliding);
+            character.orientation = orientationFromVelocity(character.orientation, moved);
             velocity.x = 0;
             velocity.y = 0;
         }
 
-        Character.Orientation orientationFromVelocity(Character.Orientation @default, bool walkingIsBlocked)
+        Character.Orientation orientationFromVelocity(Character.Orientation @default, bool walking)
         {
-            character.walkState = walkingIsBlocked ? Character.WalkState.Standing : Character.WalkState.Walking;
+            character.walkState = walking ? Character.WalkState.Walking : Character.WalkState.Standing;
 
-            if (velocity.x > 0) //Going right
-                if (velocity.y > 0) //Going up
-                    return Character.Orientation.UpRight;
-                else if (velocity.y < 0) //Going down
-                    return Character.Orientation.DownRight;
-                else //Not moving on y axis
-                    return Character.Orientation.Right;
-            else if (velocity.x < 0) //Going left
-                if (velocity.y > 0) //Going up
-                    return Character.Orientation.UpLeft;
-                else if (velocity.y < 0) //Going down
-                    return Character.Orientation.DownLeft;
-                else //Not moving on y axis
-                    return Character.Orientation.Left;
-            //Not moving on x axis
-            else if (velocity.y > 0) //Going up
-                return Character.Orientation.Up;
-            else if (velocity.y < 0) //Going down
-                return Character.Orientation.Down;
-            else //Not moving on y axis
+            if(!walking)
             {
                 character.walkState = Character.WalkState.Standing;
                 return @default;
+            }
+            else
+            {
+                character.walkState = Character.WalkState.Walking;
+                return 
+                 (velocity.x != 0 ? (velocity.x > 0 ? Character.Orientation.Right : Character.Orientation.Left) : Character.Orientation.NA) |
+                 (velocity.y != 0 ? (velocity.y > 0 ? Character.Orientation.Up : Character.Orientation.Down) : Character.Orientation.NA);
             }
         }
 
