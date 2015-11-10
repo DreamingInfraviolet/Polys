@@ -38,20 +38,28 @@
             OpenGL.Vector2 newPosition = position + velocity;
 
             bool canMoveXY = canMove(position + velocity, collisionLayer);
-            bool moved = true;
+            bool moved = velocity.x != 0 || velocity.y != 0;
 
             if (!canMoveXY)
             {
-                bool canMoveX = canMove(new OpenGL.Vector2(position.x + velocity.x, position.y), collisionLayer);
-                bool canMoveY = canMove(new OpenGL.Vector2(position.x, position.y+velocity.y), collisionLayer);
+                float dx = speed * Time.deltaTime * (velocity.x > 0 ? 1 : -1);
+                float dy = speed * Time.deltaTime * (velocity.y > 0 ? 1 : -1);
+                bool canMoveX = canMove(new OpenGL.Vector2(position.x + dx, position.y), collisionLayer);
+                bool canMoveY = canMove(new OpenGL.Vector2(position.x, position.y+dy), collisionLayer);
 
                 //If we are moving on less than two axes 
                 if (!(velocity.x != 0 & velocity.y != 0))
                     moved = false;
                 else if (canMoveX)
-                    position.x += velocity.x;
+                {
+                    position.x += dx;
+                    velocity.y = 0;
+                }
                 else if (canMoveY)
-                    position.y += velocity.y;
+                {
+                    position.y += dy;
+                    velocity.x = 0;
+                }
             }
             else
                 position = position + velocity;
