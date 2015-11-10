@@ -5,7 +5,7 @@
     {
         //These should be floats, as otherwise small deltas have no effect.
         public OpenGL.Vector2 position = new OpenGL.Vector2();
-        public OpenGL.Vector2 velocity = new OpenGL.Vector2();
+        public OpenGL.Vector2 velocity = new OpenGL.Vector2(); 
         float speed;
 
         public Character character;

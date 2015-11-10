@@ -39,11 +39,11 @@
  <tileset firstgid="1025" name="Well" tilewidth="16" tileheight="32">
   <image source="../tilesets/Sprite-0004.bmp" trans="000000" width="512" height="512"/>
  </tileset>
- <tileset firstgid="1537" name="TallTrees" tilewidth="64" tileheight="64">
-  <image source="../tilesets/Sprite-0004.bmp" trans="000000" width="512" height="512"/>
- </tileset>
- <tileset firstgid="1601" name="collision" tilewidth="16" tileheight="16">
+ <tileset firstgid="1537" name="collision" tilewidth="16" tileheight="16">
   <image source="../tilesets/collision.bmp" trans="ff00ff" width="16" height="16"/>
+ </tileset>
+ <tileset firstgid="1538" name="Trees" tilewidth="48" tileheight="64">
+  <image source="../tilesets/trees.bmp" trans="000000" width="512" height="512"/>
  </tileset>
  <layer name="Tile Layer 2" width="30" height="20">
   <data encoding="base64" compression="zlib">
@@ -52,12 +52,12 @@
  </layer>
  <layer name="start" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJztVUEOgCAMG4nhxF1+oOg79d1KhDgnKMh2s8miW7Dt4gCAHzn0+nhazc9NOXNanB5SHL6GNaR6TvHS2qwAnLrXWzyN6ppjDhf0phAuo18D/M2wcy0dwNpd10xEN8ZMvJagxmuqP1qTwkB6+9KrB8cscM771z6wj5I13l/0H2fnxztq/m/tLBjhPYP5U1qt51QfwuozN+HdPOTRC/dd8bQvsa7EfSyFDVxpDaI=
+   eJztVO0OgzAIbJXVR9HV59yeeyFKwhgqTc9/u4RY6cdxQEjpDwGVX9/g+BCw74438Vg+j4f3tF/nAa3/iJ+x5m2/qDPTSdxRHq3nodbPvFndTf6ReFFKb/r2VcMrtnZwR+rk6UNojnDPhoO19vZZa08s4NoyemoWgc6LxC+903pf8t2S66Oz0TeQ88Obz3fBzkTxMdCzeij+9+ocElrTGIzD3msFmXcsH53UoLcXUBqu8AHsJQcg
   </data>
  </layer>
  <layer name="collision" width="30" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztlTsOwCAMQ5l6L+5/KVaEHMcJDe1ApCxgePnw6U9rvciZVTEVrmcnufPaSq6iRTFF81n3mHVoX5Q/0mbrzPJn9UT8CJfFHOllps6e1htTuRGz+qLEgjRR/spkvfbWKuOZmKx572xmmG/393K/4e68k8odtM7ezn9U5X+0AY5YOfg=
+   eJzNlVEOwCAIQ/Vn9z/yfhdTsS1g1sREDfJEAs5njNk0InUxGe5JN7nfs51cxhbdSY1n9cHaRXPVH6voPRGf5aJ7M1zEUOuIsT3tsdxqe7VvqNrlJVu/GTn5VeNnc747UxWj+84V/Kr8Ov2F4br1lOmTUQ2iP2ldu/9R1/ijXjvABek=
   </data>
  </layer>
 </map>
