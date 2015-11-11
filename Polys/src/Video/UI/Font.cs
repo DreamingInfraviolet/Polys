@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
 
-namespace Polys.Video
+namespace Polys.Video.UI
 {
     /** Represents a bitmap font in memory. A font is nearly identical to a tileset,
       * mainly differing in that each tile is a letter. */
@@ -77,7 +77,7 @@ namespace Polys.Video
                             characterWidth, characterHeight), this, true,
                             charPos.first * characterWidth, charPos.second * characterHeight);
 
-                        HighLevelRenderer.draw(sprite, new Camera());
+                        HighLevelRenderer.draw(sprite, null);
                     }
                 }
 

@@ -31,6 +31,18 @@ namespace Polys.Util
             set { if (value < x) { x = value; w = 0; } else w = value - x; }
         }
 
+        public int centreX
+        {
+            get { return x + w / 2; }
+            set { x = value - w / 2; }
+        }
+
+        public int centreY
+        {
+            get { return y + h / 2; }
+            set { y = value - h / 2; }
+        }
+
         public int area { get { return w * h; } }
 
 
