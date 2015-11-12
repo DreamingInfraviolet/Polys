@@ -120,12 +120,20 @@ namespace Polys.Video
             string frag = System.IO.File.ReadAllText(String.Format("shaders/{0}.frag", relativePathWithoutExtension));
             ShaderProgram program = new ShaderProgram(vert, frag);
 
-            //Check for errors
-            if (program.FragmentShader.ShaderLog.Length != 0)
+
+            //Check for errors.
+            int[] vertexStatus = new int[1];
+            int[] fragmentStatus = new int[1];
+            int[] linkStatus = new int[1];
+            Gl.GetShaderiv(program.VertexShader.ShaderID, ShaderParameter.CompileStatus, vertexStatus);
+            Gl.GetShaderiv(program.VertexShader.ShaderID, ShaderParameter.CompileStatus, fragmentStatus);
+            Gl.GetShaderiv(program.VertexShader.ShaderID, ShaderParameter.CompileStatus, linkStatus);
+
+            if (vertexStatus[0] == 0)
                 throw new Exception("Error compiling fragment shader: " + program.FragmentShader.ShaderLog);
-            if (program.VertexShader.ShaderLog.Length != 0)
+            if (fragmentStatus[0] == 0)
                 throw new Exception("Error compiling vertex shader: " + program.VertexShader.ShaderLog);
-            if (program.ProgramLog.Length != 0)
+            if (linkStatus[0] == 0)
                 throw new Exception("Error linking shader: " + program.ProgramLog);
 
             return program;

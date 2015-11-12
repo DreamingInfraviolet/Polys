@@ -8,14 +8,11 @@ namespace Polys.Video.UI
       * mainly differing in that each tile is a letter. */
     public class Font : Tileset, IScriptInitialisable
     {
-        int characterWidth, characterHeight;
         Dictionary<char, Util.Pair<int, int>> charPosMapping = new Dictionary<char, Util.Pair<int, int>>();
 
-        public Font(string path, int characterWidth, int characterHeight)
-          : base(path, "font", characterWidth, characterHeight)
+        public Font(string path)
+          : base(path, "font")
         {
-            this.characterWidth = characterWidth;
-            this.characterHeight = characterHeight;
             ScriptManager.initialiseFromScript(System.IO.Path.ChangeExtension(path, ".mapping"), this);
         }
 
@@ -37,52 +34,104 @@ namespace Polys.Video.UI
 
                 charPosMapping.Add(entry.Key.String[0], new Util.Pair<int, int>(x, y));
             }
+
+
+            tileWidth = ScriptManager.retrieveValue(table, "characterWidth", 16);
+            tileHeight = ScriptManager.retrieveValue(table, "characterHeight", 16);
         }
 
-        public void renderText(string text, int positionX, int positionY, int boxWidth=0)
+        List<Util.Pair<int,int>> getCharacterPositions(string text, int positionX, int positionY, int boxWidth)
         {
+            List<Util.Pair<int, int>> result = new List<Util.Pair<int, int>>();
+
             int pixelPosX = positionX, pixelPosY = positionY;
             string[] words = text.Split(' ', '\t');
 
-            foreach(var word in words)
+            foreach (var word in words)
             {
                 if (boxWidth > 0)
                 {
                     //If the word is out of bounds  and not super big, insert a newline
-                    if ((pixelPosX+word.Length * characterWidth >= boxWidth) && word.Length * characterWidth < boxWidth)
+                    if ((pixelPosX + word.Length * tileWidth >= boxWidth+ positionX) && word.Length * tileWidth < boxWidth)
                     {
 
                         pixelPosX = positionX;
-                        pixelPosY -= characterHeight;
+                        pixelPosY -= tileHeight;
                     }
                 }
 
                 //Draw the word
-                foreach(var character in word)
+                foreach (var character in word)
                 {
-                    if (character == '\n' || (boxWidth > 0 && pixelPosX +characterWidth>=boxWidth))
+                    if (character == '\n' || (boxWidth > 0 && pixelPosX + tileWidth >= boxWidth+ positionX))
                     {
                         pixelPosX = positionX;
-                        pixelPosY -= characterHeight;
+                        pixelPosY -= tileHeight;
                     }
-                    else
                     {
                         Util.Pair<int, int> charPos;
                         if (!charPosMapping.TryGetValue(character, out charPos))
                             continue;
-
-                        pixelPosX += characterWidth;
-
-                        Sprite sprite = new Sprite(new Util.Rect(pixelPosX, pixelPosY,
-                            characterWidth, characterHeight), this, true,
-                            charPos.first * characterWidth, charPos.second * characterHeight);
-
-                        HighLevelRenderer.draw(sprite, null);
+                        pixelPosX += tileWidth;
+                        result.Add(new Util.Pair<int, int>(pixelPosX, pixelPosY));
                     }
                 }
 
                 //Add space after the word
-                pixelPosX += characterWidth;
+                pixelPosX += tileWidth;
+            }
+
+            return result;
+        }
+
+        public int maxRightPosition(string text, int startX, int boxWidth)
+        {
+            var charPositions = getCharacterPositions(text, startX, 0, boxWidth);
+            if (charPositions.Count == 0)
+                return 0;
+            int max = charPositions[0].first;
+            for (int i = 1; i < charPositions.Count; ++i)
+                if (max < charPositions[i].first)
+                    max = charPositions[i].first;
+            return max;
+        }
+
+        public int minDownPosition(string text, int startY, int boxWidth)
+        {
+            var charPositions = getCharacterPositions(text, 0, startY, boxWidth);
+            if (charPositions.Count == 0)
+                return 0;
+            int min = charPositions[0].second;
+            for (int i = 1; i < charPositions.Count; ++i)
+                if (min < charPositions[i].second)
+                    min = charPositions[i].second;
+            return min;
+        }
+
+
+        public void renderText(string text, int positionX, int positionY, int boxWidth=0)
+        {
+            if (text.Length == 0)
+                return;
+
+            var charPositions = getCharacterPositions(text, positionX, positionY, boxWidth);
+
+            if (charPositions.Count == 0)
+                return;
+
+            int index = 0;
+            foreach(var c in text)
+            {
+                Util.Pair<int, int> charPos;
+                if (c != '\n' && charPosMapping.TryGetValue(c, out charPos))
+                {
+                    Sprite sprite = new Sprite(new Util.Rect(charPositions[index].first, charPositions[index].second    ,
+                        tileWidth, tileHeight), this, true,
+                        charPos.first * tileWidth, charPos.second * tileHeight);
+
+                    HighLevelRenderer.draw(sprite);
+                }
+            ++index;
             }
        } 
         public string ScriptName()

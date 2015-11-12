@@ -11,15 +11,16 @@ namespace Polys.Video.UI
     {
         int objectWidth, objectHeight;
 
-        public VisualRectangle(string path, int objectWidth, int objectHeight)
-          : base(path, "font", objectWidth, objectHeight)
+        public VisualRectangle(string path)
+          : base(path, "rect")
         {
-            if (this.width<3*objectWidth||this.height<3*objectHeight)
-                throw new Exception("Visual rectangle image smaller than the required size.");
+            this.objectWidth = width/3;
+            this.objectHeight = height/3;
+            this.tileCountX = width / objectWidth;
+            this.tileCountY = height / objectHeight;
             if (this.tileCountX < 3 || this.tileCountY < 3)
                 throw new Exception("Not enough rectangle elements. Must be at least a 3x3");
-            this.objectWidth = objectWidth;
-            this.objectHeight = objectHeight;
+
         }
         
         /** Draws a visual rectangle enclosing the rect parameter. Note that the actual rectangle drawn may be larger than the
@@ -44,8 +45,8 @@ namespace Polys.Video.UI
             int nWidthEdges = (actualRect.w - 2 * objectWidth) / objectWidth;
             int nHeightEdges = (actualRect.h - 2 * objectHeight) / objectHeight;
 
-            int lowerLeftX = desiredRect.x, lowerLeftY = desiredRect.y;
-            int upperRightX = desiredRect.x+objectWidth*(1+nWidthEdges), upperRightY = desiredRect.y + objectHeight * (1 + nHeightEdges);
+            int lowerLeftX = actualRect.x, lowerLeftY = actualRect.y;
+            int upperRightX = actualRect.x+objectWidth*(1+nWidthEdges), upperRightY = actualRect.y + objectHeight * (1 + nHeightEdges);
 
 
             //Draw the 4 corners

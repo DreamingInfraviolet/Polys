@@ -32,15 +32,15 @@ namespace Polys.Video
         public int firstGid { get; private set; }
 
         /** The width of the tiles in this tileset */
-        public int tileWidth { get; private set; }
+        public int tileWidth { get; protected set; }
 
         /** The height of the tiles in this tileset */
-        public int tileHeight { get; private set; }
+        public int tileHeight { get; protected set; }
 
         /** The number of tiles along the x axis */
-        public int tileCountX { get; private set; }
+        public int tileCountX { get; protected set; }
 
         /** The number of tiles along the y axis */
-        public int tileCountY { get; private set; }
+        public int tileCountY { get; protected set; }
     }
 }

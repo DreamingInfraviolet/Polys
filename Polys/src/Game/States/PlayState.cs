@@ -12,9 +12,7 @@ namespace Polys.Game.States
         Video.Camera camera = new Video.Camera();
         Player player = new Player("Anima", new Video.Sprite("assets/sprites/player.bmp", new Util.Rect(0, 0, 16, 32)));
 
-        Video.UI.Font font = new Video.UI.Font("assets/gui/fonts/default.bmp", 8, 16);
 
-        Video.UI.VisualRectangle testRect = new Video.UI.VisualRectangle("assets/gui/misc/rect.bmp", 5,5);
 
         public PlayState()
         {
@@ -37,10 +35,6 @@ namespace Polys.Game.States
         public StateManager.StateRenderResult draw()
         {
             Video.HighLevelRenderer.draw(sceneList.current, camera);
-            font.renderText("Polys", 100, 170, 240);
-
-            testRect.renderRect(new Util.Rect(20, 20, 40,40));
-
             return StateManager.StateRenderResult.StopDrawing;
         }
 

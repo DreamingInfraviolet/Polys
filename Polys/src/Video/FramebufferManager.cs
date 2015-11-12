@@ -141,7 +141,7 @@ namespace Polys.Video
         /** Creates a framebuffer, setting the correct texture filtering properties. */
         static FBO createFramebuffer(int width, int height)
         {
-            FBO f = new FBO(width, height, FramebufferAttachment.ColorAttachment0, PixelInternalFormat.Rgba32f, false);
+            FBO f = new FBO(width, height, FramebufferAttachment.ColorAttachment0, PixelInternalFormat.Rgba8, false);
             Gl.BindTexture(TextureTarget.Texture2D, f.TextureID[0]);
             Gl.TexParameteri(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, TextureParameter.Nearest);
             Gl.TexParameteri(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, TextureParameter.Nearest);

@@ -9,7 +9,7 @@ namespace Polys.Game
 {
     public class World : IIntentHandler, IScriptInitialisable, System.IDisposable
     {
-        public States.StateManager stateManager = new States.StateManager(new States.PlayState());
+        public States.StateManager stateManager = new States.StateManager(new States.MainMenuState());
         
         /** The current camera */
         public Video.Camera camera { get; private set; }

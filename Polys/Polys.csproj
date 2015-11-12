@@ -77,6 +77,7 @@
     <Compile Include="src\Audio\Sound.cs" />
     <Compile Include="src\Game\Character.cs" />
     <Compile Include="src\Game\CharacterController.cs" />
+    <Compile Include="src\Game\States\MenuState.cs" />
     <Compile Include="src\Game\States\PlayState.cs" />
     <Compile Include="src\Game\States\State.cs" />
     <Compile Include="src\Game\States\StateManager.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="src\Video\Camera.cs" />
     <Compile Include="src\Video\Colour.cs" />
     <Compile Include="src\Video\Effect.cs" />
+    <Compile Include="src\Video\UI\Button.cs" />
     <Compile Include="src\Video\UI\Font.cs" />
     <Compile Include="src\Video\GeometryGPU.cs" />
     <Compile Include="src\Video\HighLevelRenderer.cs" />
