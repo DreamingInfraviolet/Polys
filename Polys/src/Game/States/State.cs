@@ -12,5 +12,7 @@
         StateManager.StateUpdateResult updateAfterFrame();
 
         StateManager.StateRenderResult draw();
+
+        void setStateManager(StateManager m);
     }
 }

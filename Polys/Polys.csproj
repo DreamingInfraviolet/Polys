@@ -81,7 +81,7 @@
     <Compile Include="src\Game\States\PlayState.cs" />
     <Compile Include="src\Game\States\State.cs" />
     <Compile Include="src\Game\States\StateManager.cs" />
-    <Compile Include="src\IntentHandler.cs" />
+    <Compile Include="src\IIntentHandler.cs" />
     <Compile Include="src\IntentManager.cs" />
     <Compile Include="src\Game\Inventory.cs" />
     <Compile Include="src\Game\InventoryItem.cs" />
@@ -104,6 +104,7 @@
     <Compile Include="src\Video\Colour.cs" />
     <Compile Include="src\Video\Effect.cs" />
     <Compile Include="src\Video\UI\Button.cs" />
+    <Compile Include="src\Video\UI\ButtonList.cs" />
     <Compile Include="src\Video\UI\Font.cs" />
     <Compile Include="src\Video\GeometryGPU.cs" />
     <Compile Include="src\Video\HighLevelRenderer.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="src\Video\TileLayer.cs" />
     <Compile Include="src\Video\Tileset.cs" />
     <Compile Include="src\Video\Transformable.cs" />
+    <Compile Include="src\Video\UI\GUIManager.cs" />
     <Compile Include="src\Video\UI\VisualRectangle.cs" />
     <Compile Include="src\Video\Video.cs" />
     <Compile Include="src\Game\World.cs" />

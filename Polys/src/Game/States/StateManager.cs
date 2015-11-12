@@ -44,6 +44,7 @@ namespace Polys.Game.States
 
         public void push(State state)
         {
+            state.setStateManager(this);
             stack.Add(state);
         }
 

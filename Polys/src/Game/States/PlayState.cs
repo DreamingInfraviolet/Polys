@@ -58,6 +58,11 @@ namespace Polys.Game.States
             return StateManager.StateUpdateResult.Finish;
         }
 
+        public void setStateManager(StateManager m)
+        {
+
+        }
+
         public void Dispose()
         {
             sceneList.Dispose();

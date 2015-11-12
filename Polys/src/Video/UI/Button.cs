@@ -6,28 +6,43 @@ using System.Threading.Tasks;
 
 namespace Polys.Video.UI
 {
-    class Button
+    public class Button
     {
-        public Button(string text, Util.Rect rect, string fontPath, string rectPath)
+        public Button(string text, Util.Rect rect)
         {
-            font = new Font(fontPath);
-            vs = new VisualRectangle(rectPath);
+            this.font = GUIManager.mainFont;
+            this.vsSelected = GUIManager.buttonRectSelected;
+            this.vsUnselected = GUIManager.buttonRectUnselected;
+            this.rect = rect;
+            this.text = text;
+        }
+
+        public Button(string text, Util.Rect rect, Font font, VisualRectangle vsSelected, VisualRectangle vsUnselected)
+        {
+            this.font = font;
+            this.vsSelected = vsSelected;
+            this.vsUnselected = vsUnselected;
             this.rect = rect;
             this.text = text;
         }
 
         Font font;
-        VisualRectangle vs;
+        VisualRectangle vsSelected, vsUnselected;
         public string text { get; private set; }
 
         public Util.Rect rect;
 
-        public void draw()
+        public void draw(bool selected=false)
         {
             Util.Rect textRect = rect;
             textRect.w = font.maxRightPosition(text, 0, 0)+font.tileWidth;
             textRect.h = font.minDownPosition(text, 0, 0)+font.tileHeight;
-            vs.renderRect(rect);
+
+            if (selected)
+                vsSelected.renderRect(rect);
+            else
+                vsUnselected.renderRect(rect);
+
             font.renderText(text, rect.centreX - textRect.w / 2, rect.centreY - textRect.h / 2, textRect.w);
         }
     }

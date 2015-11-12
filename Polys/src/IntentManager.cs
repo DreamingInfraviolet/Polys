@@ -38,8 +38,8 @@ namespace Polys
             }
         }
 
-        public enum IntentType { WALK_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, ESC };
-
+        public enum IntentType { WALK_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, ESC, MOVE_SELECTION_UP, MOVE_SELECTION_DOWN, CONFIRM_SELECTION };
+        
         //Key bindings to intents. Each key is bound to a series of intents.
         static Dictionary<IntentType, List<Intent>> handlers = new Dictionary<IntentType, List<Intent>>();
 
