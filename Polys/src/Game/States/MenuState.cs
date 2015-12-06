@@ -18,9 +18,9 @@ namespace Polys.Game.States
 
         public MainMenuState()
         {
-            IntentManager.register(this, IntentManager.IntentType.MOVE_SELECTION_UP, true, false, false);
-            IntentManager.register(this, IntentManager.IntentType.MOVE_SELECTION_DOWN, true, false, false);
-            IntentManager.register(this, IntentManager.IntentType.CONFIRM_SELECTION, true, false, false);
+            IntentManager.register(this, IntentManager.IntentType.MOVE_SELECTION_UP);
+            IntentManager.register(this, IntentManager.IntentType.MOVE_SELECTION_DOWN);
+            IntentManager.register(this, IntentManager.IntentType.CONFIRM_SELECTION);
         }
 
         public void setStateManager(StateManager m)
@@ -32,7 +32,7 @@ namespace Polys.Game.States
         {
         }
 
-        public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
+        public void handleIntent(IntentManager.IntentType intentCode)
         {
             if (intentCode == IntentManager.IntentType.MOVE_SELECTION_DOWN)
                 buttons.selectNext();
@@ -43,7 +43,7 @@ namespace Polys.Game.States
                 if (buttons.activeButton == 0)
                     sm.push(new PlayState());
                 else if (buttons.activeButton == 1)
-                    IntentManager.keyDown(SDL2.SDL.SDL_Keycode.SDLK_ESCAPE); //temporary solution until I can trigger intents directly
+                    IntentManager.markForSending(IntentManager.IntentType.ESC);
             }
         }
 

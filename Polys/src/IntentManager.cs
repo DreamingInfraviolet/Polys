@@ -10,69 +10,27 @@ namespace Polys
       */
     public class IntentManager
     {
-        public enum KeyType { UP, DOWN, HELD };
-
-        private class Intent
-        {
-            public IIntentHandler handler;
-
-            //Defines when the intent should be triggered
-            public bool wantsKeyDown, wantsKeyUp, wantsKeyHeld;
-            
-            //Defines the conditions met for triggering
-            public bool getsKeyDown, getsKeyUp, getsKeyHeld;
-
-            public void resetExecution()
-            {
-                getsKeyDown = getsKeyUp = getsKeyHeld = false;
-            }
-
-            public void markKey(KeyType type)
-            {
-                if (type == KeyType.DOWN)
-                    getsKeyDown = true;
-                else if (type == KeyType.UP)
-                    getsKeyUp = true;
-                else if (type == KeyType.HELD)
-                    getsKeyHeld = true;
-            }
-        }
-
         public enum IntentType { WALK_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, ESC, MOVE_SELECTION_UP, MOVE_SELECTION_DOWN, CONFIRM_SELECTION };
         
-        //Key bindings to intents. Each key is bound to a series of intents.
-        static Dictionary<IntentType, List<Intent>> handlers = new Dictionary<IntentType, List<Intent>>();
+        //A dictinary of intent types matched with a list of handlers for each.
+        static Dictionary<IntentType, HashSet<IIntentHandler>> handlers =
+            new Dictionary<IntentType, HashSet<IIntentHandler>>();
 
-        static Dictionary<SDL.SDL_Keycode, HashSet<IntentType>> bindings = new Dictionary<SDL.SDL_Keycode, HashSet<IntentType>>();
 
         /** Adds a handler to be notified when the inputted intent occurs.
          * 
          * @param handler The handler object to be notified.
          * @param intent The intent that must occur for the handler to be notified.
-         * @param down Whether the intent should be fired if the key is down.
-         * @param up Whether the intent should be fired if the key is up.
-         * @param held Whether the event should be fired if the key is held.
          */
-        public static void register(IIntentHandler handler, IntentType intentCode, bool down, bool up, bool held)
+        public static void register(IIntentHandler handler, IntentType intentCode)
         {
-            deregister(handler, intentCode);
-
-            Intent intent = new Intent();
-            intent.handler = handler;
-            intent.getsKeyDown = intent.getsKeyUp = intent.getsKeyHeld = false;
-            intent.wantsKeyDown = down;
-            intent.wantsKeyUp = up;
-            intent.wantsKeyHeld = held;
-            
-
-            List<Intent> insertionList;
-            if (!handlers.TryGetValue(intentCode, out insertionList))
+            HashSet<IIntentHandler> set;
+            if (!handlers.TryGetValue(intentCode, out set))
             {
-                insertionList = new List<Intent>();
-                handlers.Add(intentCode, insertionList);
+                set = new HashSet<IIntentHandler>();
+                handlers.Add(intentCode, set);
             }
-
-            handlers[intentCode].Add(intent);
+            set.Add(handler);
         }
 
         /** The handler will no longer be notified when the particular intent occurs.
@@ -82,107 +40,38 @@ namespace Polys
          */
         public static void deregister (IIntentHandler handler, IntentType intentCode)
         {
-            //Find the intent and deregister it
-            foreach(var li in handlers)
-            {
-                for(int i = 0; i < li.Value.Count; ++i)
-                {
-                    if(li.Key == intentCode && li.Value[i].handler.Equals(handler))
-                    {
-                        li.Value.RemoveAt(i);
-                        --i;
-                    }
-                }
-            }
+            HashSet<IIntentHandler> set;
+            if(handlers.TryGetValue(intentCode, out set))
+                set.Remove(handler);
         }
 
         /** The handler will no longer be notified of any intents.
-         * 
-         * @param handler The handler to de-register from all intents.
-         */
+         * @param handler The handler to de-register from all intents. */
         public static void deregister(IIntentHandler handler)
         {
-            //Find the intent and deregister it
-            foreach (var li in handlers)
-                for (int i = 0; i < li.Value.Count; ++i)
-                    if (li.Value[i].handler.Equals(handler))
-                    {
-                        li.Value.RemoveAt(i);
-                        --i;
-                    }
+            foreach (var set in handlers)
+                set.Value.Remove(handler);
         }
 
-        /** Adds a key-intent binding, so that a particular intent will occur when a key is pressed or held.
-         * 
-         * @param key The key to be associated with the event.
-         * @param intent
-         */
-        public static void addBinding(SDL.SDL_Keycode key, IntentType intentCode)
-        {
-            //If there is no array list of intents associated with the key, create it
-            HashSet<IntentType> binding;
-            if (!bindings.TryGetValue(key, out binding))
-            {
-                binding = new HashSet<IntentType>();
-                bindings.Add(key, binding);
-            }
-
-            //Add the intent to the given key
-            binding.Add(intentCode);
-        }
         
-        private static void markIntentExecution(SDL2.SDL.SDL_Keycode key, KeyType type)
+        static HashSet<IntentType> sendBuffer = new HashSet<IntentType>();
+
+        /** Puts the intent into a queue to be sent during the next frame. Note that an intent is sent only once,
+          * no matter how many times it has been marked. */
+        public static void markForSending(IntentType t)
         {
-            HashSet<IntentType> binding;
-
-            //If there is no such binding, exit.
-            if(!bindings.TryGetValue(key, out binding))
-                return;
-            
-            //Iterate through all intent types bound to the key.
-            foreach(IntentType intentToHandle in binding)
-            {
-                List<Intent> intents;
-
-                //If binding exists but no handlers
-                if(!handlers.TryGetValue(intentToHandle, out intents))
-                    return;
-
-                for(int i = 0; i < intents.Count; ++i)
-                    if (type == KeyType.DOWN && intents[i].wantsKeyDown)
-                        intents[i].markKey(type);
-                    else if (type == KeyType.UP && intents[i].wantsKeyUp)
-                        intents[i].markKey(type);
-                    else if (type == KeyType.HELD && intents[i].wantsKeyHeld)
-                        intents[i].markKey(type);
-            }
+            sendBuffer.Add(t);
         }
 
-        public static void dispatchRequestsAndClear()
+        /** Sends all events, clearing the buffer. Events are allowed to be sent from handlers. */
+        public static void sendAll()
         {
-            foreach(var keyIntentPair in handlers)
-                foreach(Intent intent in keyIntentPair.Value)
-                    if((intent.getsKeyDown && intent.wantsKeyDown) ||
-                        (intent.getsKeyUp && intent.wantsKeyUp) ||
-                        (intent.getsKeyHeld && intent.wantsKeyHeld))
-                    {
-                        intent.handler.handleIntent(keyIntentPair.Key, intent.getsKeyDown, intent.getsKeyUp, intent.getsKeyHeld);
-                        intent.resetExecution();
-                    }
-        }
-
-        public static void keyDown(SDL.SDL_Keycode key)
-        {
-            markIntentExecution(key, KeyType.DOWN);
-        }
-
-        public static void keyUp(SDL.SDL_Keycode key)
-        {
-            markIntentExecution(key, KeyType.UP);
-        }
-        public static void keyHeld(SDL.SDL_Keycode key)
-        {
-            markIntentExecution(key, KeyType.HELD);
+            HashSet<IntentType> set = new HashSet<IntentType>(sendBuffer);
+            sendBuffer.Clear();
+            foreach (IntentType t in set)
+                if(handlers.ContainsKey(t))
+                    foreach (var handler in handlers[t])
+                        handler.handleIntent(t);
         }
     }
 }

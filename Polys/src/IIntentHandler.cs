@@ -4,6 +4,6 @@
     public interface IIntentHandler
     {
         /** Handles an intent for which the class was registered. */
-        void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld);
+        void handleIntent(IntentManager.IntentType intentCode);
     }
 }

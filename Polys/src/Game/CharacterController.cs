@@ -97,7 +97,7 @@
             velocity.y += v2;
         }
 
-        public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
+        public void handleIntent(IntentManager.IntentType intentCode)
         {
             switch (intentCode)
             {
@@ -115,5 +115,9 @@
                     break;
             }
         }
+
+        bool wantsKeyDownIntent() { return false; }
+        bool wantsKeyUpIntent() { return false; }
+        bool wantsKeyHeldIntent() { return true; }
     }
 }

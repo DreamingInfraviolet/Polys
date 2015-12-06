@@ -16,10 +16,10 @@ namespace Polys.Game.States
 
         public PlayState()
         {
-            IntentManager.register(controller, IntentManager.IntentType.WALK_DOWN, true, false, true);
-            IntentManager.register(controller, IntentManager.IntentType.WALK_LEFT, true, false, true);
-            IntentManager.register(controller, IntentManager.IntentType.WALK_RIGHT, true, false, true);
-            IntentManager.register(controller, IntentManager.IntentType.WALK_UP, true, false, true);
+            IntentManager.register(controller, IntentManager.IntentType.WALK_DOWN);
+            IntentManager.register(controller, IntentManager.IntentType.WALK_LEFT);
+            IntentManager.register(controller, IntentManager.IntentType.WALK_RIGHT);
+            IntentManager.register(controller, IntentManager.IntentType.WALK_UP);
 
             controller.character = player;
 

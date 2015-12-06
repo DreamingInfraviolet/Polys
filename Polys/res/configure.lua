@@ -9,18 +9,18 @@ video["fullscreen"]       = 0
 
 
 --input
-keyBindings["right"]      = "walk_right";
-keyBindings["left"]       = "walk_left";
-keyBindings["up"]         = "walk_up";
-keyBindings["down"]       = "walk_down";
-keyBindings["d"]          = "walk_right";
-keyBindings["a"]          = "walk_left";
-keyBindings["w"]          = "walk_up";
-keyBindings["s"]          = "walk_down";
-keyBindings["escape"]     = "esc";
-keyBindings["up"]         = "move_selection_up";
-keyBindings["down"]       = "move_selection_down";
-keyBindings["w"]          = "move_selection_up";
-keyBindings["s"]          = "move_selection_down";
-keyBindings["space"]      = "confirm_selection";
-keyBindings["return"]     = "confirm_selection";
+keyBindings["right"]      = "walk_right          : held";
+keyBindings["left"]       = "walk_left           : held";
+keyBindings["up"]         = "walk_up             : held";
+keyBindings["down"]       = "walk_down           : held";
+keyBindings["d"]          = "walk_right          : held";
+keyBindings["a"]          = "walk_left           : held";
+keyBindings["w"]          = "walk_up             : held";
+keyBindings["s"]          = "walk_down           : held";
+keyBindings["escape"]     = "esc                 : pressed";
+keyBindings["up"]         = "move_selection_up   : pressed";
+keyBindings["down"]       = "move_selection_down : pressed";
+keyBindings["w"]          = "move_selection_up   : pressed";
+keyBindings["s"]          = "move_selection_down : pressed";
+keyBindings["space"]      = "confirm_selection   : released";
+keyBindings["return"]     = "confirm_selection   : released";

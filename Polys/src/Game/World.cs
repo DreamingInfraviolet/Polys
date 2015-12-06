@@ -44,7 +44,7 @@ namespace Polys.Game
         }
 
         /** Handles the intents for which the world is registered */
-        public void handleIntent(IntentManager.IntentType intentCode, bool isKeyDown, bool isKeyUp, bool isKeyHeld)
+        public void handleIntent(IntentManager.IntentType intentCode)
         {
             if (intentCode == IntentManager.IntentType.ESC)
                 end();
@@ -68,7 +68,11 @@ namespace Polys.Game
             running = true;
             camera = new Video.Camera();
 
-            IntentManager.register(this, IntentManager.IntentType.ESC, true, false, false);
+            IntentManager.register(this, IntentManager.IntentType.ESC);
         }
+
+        bool wantsKeyDownIntent() { return true; }
+        bool wantsKeyUpIntent() { return false; }
+        bool wantsKeyHeldIntent() { return false; }
     }
 }
