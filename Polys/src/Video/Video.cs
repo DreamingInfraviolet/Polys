@@ -67,7 +67,6 @@ namespace Polys.Video
                 SDL.SDL_WINDOWPOS_CENTERED, 0,
                 windowWidth, windowHeight,
                 SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL |
-                SDL.SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS |
                 SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS);
 
             //Create the GL context

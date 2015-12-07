@@ -11,16 +11,11 @@ namespace Polys.Game.States
         CharacterController controller = new CharacterController(30);
         Video.Camera camera = new Video.Camera();
         Player player = new Player("Anima", new Video.Sprite("assets/sprites/player.bmp", new Util.Rect(0, 0, 16, 32)));
-
+        StateManager sm = null;
 
 
         public PlayState()
         {
-            IntentManager.register(controller, IntentManager.IntentType.WALK_DOWN);
-            IntentManager.register(controller, IntentManager.IntentType.WALK_LEFT);
-            IntentManager.register(controller, IntentManager.IntentType.WALK_RIGHT);
-            IntentManager.register(controller, IntentManager.IntentType.WALK_UP);
-
             controller.character = player;
 
             controller.position.x = sceneList.current.playerStartPixelX;
@@ -35,7 +30,7 @@ namespace Polys.Game.States
         public StateManager.StateRenderResult draw()
         {
             Video.HighLevelRenderer.draw(sceneList.current, camera);
-            return StateManager.StateRenderResult.StopDrawing;
+            return StateManager.StateRenderResult.Continue;
         }
 
         public StateManager.StateUpdateResult updateBeforeInput()
@@ -46,10 +41,12 @@ namespace Polys.Game.States
 
         public StateManager.StateUpdateResult updateAfterInput()
         {
-            controller.finishGatheringInput(sceneList.current.collisionLayer);
+            controller.update(sceneList.current.collisionLayer);
             player.updateUv();
             camera.centreOn(player.sprite.rect.x, player.sprite.rect.y);
 
+            if (IntentManager.isActive(IntentManager.IntentType.ESC))
+                sm.push(new MainMenuState(false));
             return StateManager.StateUpdateResult.Finish;
         }
 
@@ -60,7 +57,7 @@ namespace Polys.Game.States
 
         public void setStateManager(StateManager m)
         {
-
+            sm = m;
         }
 
         public void Dispose()

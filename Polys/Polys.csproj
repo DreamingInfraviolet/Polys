@@ -81,7 +81,6 @@
     <Compile Include="src\Game\States\PlayState.cs" />
     <Compile Include="src\Game\States\State.cs" />
     <Compile Include="src\Game\States\StateManager.cs" />
-    <Compile Include="src\IIntentHandler.cs" />
     <Compile Include="src\IntentManager.cs" />
     <Compile Include="src\Game\Inventory.cs" />
     <Compile Include="src\Game\InventoryItem.cs" />

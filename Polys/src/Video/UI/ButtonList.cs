@@ -9,7 +9,7 @@ namespace Polys.Video.UI
     public class ButtonList
     {
         public int activeButton { get; private set; }
-        Button[] buttons;
+        public Button[] buttons;
         bool cycle;
 
         public ButtonList(Button[] buttons, bool cycle = true)

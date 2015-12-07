@@ -28,7 +28,7 @@ namespace Polys.Video.UI
 
         Font font;
         VisualRectangle vsSelected, vsUnselected;
-        public string text { get; private set; }
+        public string text;
 
         public Util.Rect rect;
 

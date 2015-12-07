@@ -10,7 +10,7 @@ namespace Polys
     {
         struct Binding
         {
-            public enum HandlerType { Down=0x0000000f, Up=0x000000f0, Held=0x00000f00 };
+            public enum HandlerType { Down = 0x0000000f, Up = 0x000000f0, Held = 0x00000f00 };
             public HandlerType htype;
             public IntentManager.IntentType itype;
         }
@@ -28,7 +28,7 @@ namespace Polys
         //Once a key is pressed, it is stored until it is unpressed.
         //Maps SDL_Keycode value to bool, as it's a non-linear enum.
         Dictionary<SDL.SDL_Keycode, Key> mKeyTable = new Dictionary<SDL.SDL_Keycode, Key>();
-        
+
         /** Initialises the key table, mapping all possible keys to false. */
         private void initKeyDictionary()
         {
@@ -85,24 +85,26 @@ namespace Polys
             return mKeyTable[key].isDown && !mKeyTable[key].justChanged;
         }
 
-        /** Sends out any pending keys and sends out intents to registered classes. */
-        public void finalise()
+        public void endFrame()
         {
-            foreach(var pair in intentBindigs)
+            IntentManager.clearIntents();
+        }
+
+        public void startFrame()
+        {
+            foreach (var pair in intentBindigs)
             {
                 Key k = mKeyTable[pair.Key];
-                foreach(var binding in pair.Value)
+                foreach (var binding in pair.Value)
                 {
                     if (binding.htype == Binding.HandlerType.Down && k.isDown && k.justChanged)
                         IntentManager.markForSending(binding.itype);
                     else if (binding.htype == Binding.HandlerType.Held && k.isDown && !k.justChanged)
-                        IntentManager.markForSending(binding.itype);
+                         IntentManager.markForSending(binding.itype);
                     else if (binding.htype == Binding.HandlerType.Up && !k.isDown && k.justChanged)
                         IntentManager.markForSending(binding.itype);
                 }
             }
-
-            IntentManager.sendAll();
 
             //Update keys
             var copy = new Dictionary<SDL.SDL_Keycode, Key>(mKeyTable);
@@ -113,7 +115,7 @@ namespace Polys
                 mKeyTable[pair.Key] = key;
             }
         }
-        
+
         /** Returns the script representation of the class. */
         public string ScriptName()
         {
@@ -129,37 +131,42 @@ namespace Polys
                 {
                     //Parse
                     string keyStr = ("SDLK_" + entry.Key.CastToString());
-                    string[] valueStr = (entry.Value.CastToString()).Replace(" ",string.Empty).Split(':');
-                    if (valueStr.Length != 2)
-                        throw new Exception("Invalid attribute format.");
 
                     SDL.SDL_Keycode key = (SDL.SDL_Keycode)Enum.Parse(typeof(SDL.SDL_Keycode), keyStr, true);
-                    IntentManager.IntentType intent = (IntentManager.IntentType)Enum.Parse(typeof(IntentManager.IntentType), valueStr[0], true);
 
-                    //Add binding
-                    //If there is no array list of intents associated with the key, create it
-                    HashSet<Binding> binding;
-                    if (!intentBindigs.TryGetValue(key, out binding))
+                    //Each key may be associated with multiple actions using  ',' as a separator.
+                    string[] actions = (entry.Value.CastToString()).Replace(" ", string.Empty).Split(',');
+                    foreach (string action in actions)
                     {
-                        binding = new HashSet<Binding>();
-                        intentBindigs.Add(key, binding);
+                        string[] intent_type_pair = action.Split(':');
+                        if (intent_type_pair.Length != 2)
+                            throw new Exception("Invalid attribute format.");
+                        IntentManager.IntentType intent = (IntentManager.IntentType)Enum.Parse(typeof(IntentManager.IntentType), intent_type_pair[0], true);
+
+                        //Add binding
+                        //If there is no array list of intents associated with the key, create it
+                        HashSet<Binding> binding;
+                        if (!intentBindigs.TryGetValue(key, out binding))
+                        {
+                            binding = new HashSet<Binding>();
+                            intentBindigs.Add(key, binding);
+                        }
+
+                        //Add the intent to the given key
+                        Binding b;
+                        b.itype = intent;
+                        if (intent_type_pair[1].Equals("pressed"))
+                            b.htype = Binding.HandlerType.Down;
+                        else if (intent_type_pair[1].Equals("released"))
+                            b.htype = Binding.HandlerType.Up;
+                        else if (intent_type_pair[1].Equals("held"))
+                            b.htype = Binding.HandlerType.Held;
+                        else
+                            throw new Exception("Invalid attribute: must be 'held', 'pressed' or 'released'.");
+
+                        binding.Add(b);
                     }
-
-                    //Add the intent to the given key
-                    Binding b;
-                    b.itype = intent;
-                    if (valueStr[1].Equals("pressed"))
-                        b.htype = Binding.HandlerType.Down;
-                    else if (valueStr[1].Equals("released"))
-                        b.htype = Binding.HandlerType.Up;
-                    else if (valueStr[1].Equals("held"))
-                        b.htype = Binding.HandlerType.Held;
-                    else
-                        throw new Exception("Invalid attribute: must be 'held', 'pressed' or 'released'.");
-
-                    binding.Add(b);
-
-    }
+                }
                 catch (Exception e)
                 {
                     Console.WriteLine(String.Format("Invalid binding: \"{0}\"->\"{1}\". Reason: {2}", entry.Key, entry.Value, e.Message));
