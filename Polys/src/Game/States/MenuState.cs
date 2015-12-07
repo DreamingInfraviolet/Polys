@@ -22,6 +22,7 @@ namespace Polys.Game.States
         }
 
         Video.Sprite background = new Video.Sprite("assets/gui/misc/main_menu_background.bmp", new Util.Rect(0, 0, 256, 192));
+        Video.Sprite polysLogo = new Video.Sprite("assets/gui/misc/polysLogo.bmp", new Util.Rect(0,0, 200,100));
 
         Video.UI.ButtonList buttons = new Video.UI.ButtonList(new Video.UI.Button[] {
             new Video.UI.Button("Start", new Util.Rect(50, 45, 156, 20)),
@@ -39,6 +40,9 @@ namespace Polys.Game.States
         public StateManager.StateRenderResult draw()
         {
             Video.HighLevelRenderer.draw(background);
+            polysLogo.rect.x = 28;
+            polysLogo.rect.y = 80;
+            Video.HighLevelRenderer.draw(polysLogo);
             buttons.draw();
             return StateManager.StateRenderResult.Continue;
         }
