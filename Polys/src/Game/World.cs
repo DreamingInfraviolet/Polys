@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Polys.Game
 {
-    public class World : IIntentHandler, IScriptInitialisable, System.IDisposable
+    public class World : IScriptInitialisable, System.IDisposable
     {
         public States.StateManager stateManager = new States.StateManager(new States.MainMenuState());
         
@@ -27,7 +27,8 @@ namespace Polys.Game
         /** This method is executed each frame after input is collected */
         public void afterInput()
         {
-            stateManager.update(States.StateManager.UpdateType.AfterInput);
+            if(!stateManager.update(States.StateManager.UpdateType.AfterInput))
+                end();
         }
 
         /** This method is executed each frame just before the end of the frame */
@@ -41,13 +42,6 @@ namespace Polys.Game
         public void Dispose()
         {
             stateManager.Dispose();
-        }
-
-        /** Handles the intents for which the world is registered */
-        public void handleIntent(IntentManager.IntentType intentCode)
-        {
-            if (intentCode == IntentManager.IntentType.ESC)
-                end();
         }
 
         /** Marks that the world should no longer be running */
@@ -67,8 +61,6 @@ namespace Polys.Game
         {
             running = true;
             camera = new Video.Camera();
-
-            IntentManager.register(this, IntentManager.IntentType.ESC);
         }
 
         bool wantsKeyDownIntent() { return true; }

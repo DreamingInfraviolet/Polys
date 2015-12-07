@@ -44,7 +44,7 @@ namespace Polys.Util
 
             //Find projection and UV matrices.
             double px = (spriteRect.x + 0.5) / screenWidth * 2.0 - 1.0;
-            double py = (screenHeight - spriteRect.y - 0.5 - spriteRect.h) / screenHeight * 2.0 - 1.0;
+            double py = (screenHeight - spriteRect.y + 0.5 - spriteRect.h) / screenHeight * 2.0 - 1.0;
             double sx = (double)spriteRect.w / screenWidth;
             double sy = (double)spriteRect .h/ screenHeight;
 

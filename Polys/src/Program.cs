@@ -31,7 +31,7 @@ public class Program
             world.beforeInput();
 
             handleEvents();
-            input.finalise();
+            input.startFrame();
 
             world.afterInput();
 
@@ -39,6 +39,7 @@ public class Program
             audio.play(world);
 
             world.AfterLoop();
+            input.endFrame();
         }
 
         world.Dispose();

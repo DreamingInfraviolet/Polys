@@ -1,7 +1,7 @@
 ﻿namespace Polys.Game
 {
     /** A character controller can control any entity. */
-    public class CharacterController : IIntentHandler
+    public class CharacterController
     {
         //These should be floats, as otherwise small deltas have no effect.
         public OpenGL.Vector2 position = new OpenGL.Vector2();
@@ -32,8 +32,18 @@
             return !colliding;
         }
 
-        public void finishGatheringInput(Video.TileLayer collisionLayer)
+        public void update(Video.TileLayer collisionLayer)
         {
+            if (IntentManager.isActive(IntentManager.IntentType.WALK_DOWN))
+                addMoveVector(0, -1);
+            if (IntentManager.isActive(IntentManager.IntentType.WALK_UP))
+                addMoveVector(0, 1);
+            if (IntentManager.isActive(IntentManager.IntentType.WALK_LEFT))
+                addMoveVector(-1, 0);
+            if (IntentManager.isActive(IntentManager.IntentType.WALK_RIGHT))
+                addMoveVector(1, 0);
+
+
             velocity = velocity.Normalize() * speed * Time.deltaTime;
             OpenGL.Vector2 newPosition = position + velocity;
 
@@ -95,25 +105,6 @@
 
             velocity.x += v1;
             velocity.y += v2;
-        }
-
-        public void handleIntent(IntentManager.IntentType intentCode)
-        {
-            switch (intentCode)
-            {
-                case IntentManager.IntentType.WALK_DOWN:
-                    addMoveVector(0, -1);
-                    break;
-                case IntentManager.IntentType.WALK_UP:
-                    addMoveVector(0, 1);
-                    break;
-                case IntentManager.IntentType.WALK_LEFT:
-                    addMoveVector(-1, 0);
-                    break;
-                case IntentManager.IntentType.WALK_RIGHT:
-                    addMoveVector(1, 0);
-                    break;
-            }
         }
 
         bool wantsKeyDownIntent() { return false; }
