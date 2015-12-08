@@ -12,11 +12,13 @@
 
         public Orientation orientation { get; set; }
 
+        int idleFrames;
 
-        public Character(string name, Video.Sprite sprite)
+        public Character(string name, Video.Sprite sprite, int idleFrames=1)
         {
             this.name = name;
             this.sprite = sprite;
+            this.idleFrames = idleFrames;
         }
 
         public string name { get; set; }
@@ -49,9 +51,13 @@
             }
 
             if (walkState == WalkState.Standing)
-                ySpriteIndex = 0;
+            {
+                int msToChange = 400000;
+                ySpriteIndex = (((int)Time.currentTime / msToChange)%idleFrames);
+                System.Console.WriteLine(ySpriteIndex);
+            }
             else
-                ySpriteIndex = ((Time.currentTime%800000)<400000) ? 1 : 2;
+                ySpriteIndex = idleFrames + (((Time.currentTime % 800000) < 400000) ? 0 : 1);
 
             sprite.setTilesetIndex(xSpriteIndex, ySpriteIndex);
         }
