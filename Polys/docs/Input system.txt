@@ -4,13 +4,4 @@ So, the way in which input is gathered and processed is slightly complicated ^^ 
 
 Key-Intent bindings are processed from the main configuration file. They are stored in the Input class.
 
-The Input class checks for any pressed/released keys, and sends out the appropriate intents through the Intent Manager.
-
-The intent manager dispatches these intents to registered Intent Handlers, which process them. If an intent handler sends out an intent, it will be processed in the next frame.
-
-
-Now,
-
-What if the handleIntent method just marked that an object wanted to handle an intent THIS FRAME? The actual handling takes place in the state manager, and if not handled it is discarded.
-
-What if a class just checks if an Intent is active..?
+The Input class checks processes keys an determines which intents should be active during a particular frame. Objects inside the system can query these intents. Intents are not sent out automatically to avoid unwanted execution in an inactive state.

@@ -1,0 +1,13 @@
+When creating a character, one has to create the sprite sheet according to a layout in order for an animation to
+be correctly interpreted by the game. This is the layout, with optional components being inside a [] block ^_^
+A row with a + sign after it means that this row may be repeated multiple times.
+
+The sprite sheet itself is a matrix where each column is a direction, and each row is a frame.
+Note that ultimately some things will have to be specified in code, such as how many idle frames there are ^^
+That's a trivial task that I'll likely move to a LUA script.
+
+FrontFacingIdle   BackFacingIdle   LeftFacingIdle   RightFacingIdle+
+[
+FrontFacingWalk1  BackFacingWalk1  LeftFacingWalk1  RightFacingWalk1
+FrontFacingWalk2  BackFacingWalk2  LeftFacingWalk2  RightFacingWalk2
+]

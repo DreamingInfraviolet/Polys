@@ -56,7 +56,7 @@ namespace Polys.Video
             }
             catch(Exception e)
             {
-                throw new Exception(String.Format("Can not load \"{0}\": {1}", path, e.Message), e);
+                 throw new Exception(String.Format("Can not load \"{0}\": {1}", path, e.Message), e);
             }
         }
 
