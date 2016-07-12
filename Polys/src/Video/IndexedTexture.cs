@@ -17,7 +17,9 @@ namespace Polys.Video
 
         //The OpenGL texture handle
         uint indexTexture;
-        
+
+        public uint imageId { get { return indexTexture; } }
+
         /** Load the image from file */
         public IndexedTexture(String pathIn)
         {

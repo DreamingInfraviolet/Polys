@@ -25,7 +25,9 @@ namespace Polys.Video
 
         /** The height of the tileset */
         public int height { get { return image.height; } }
-        
+
+        public uint imageId { get { return image.imageId; } }
+
         /** A constructor that loads the tileset and initialises the internal fields */
         public SpriteImage(String path)
         {
@@ -43,8 +45,11 @@ namespace Polys.Video
         /** Binds the tileset and its palette */
         public void bind()
         {
+            OpenGL.Gl.ActiveTexture(OpenGL.TextureUnit.Texture0);
             image.bind();
+            OpenGL.Gl.ActiveTexture(OpenGL.TextureUnit.Texture1);
             palette.bind();
+            OpenGL.Gl.ActiveTexture(OpenGL.TextureUnit.Texture0);
         }
     }
 }

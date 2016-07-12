@@ -128,6 +128,10 @@ namespace Polys.Video
             if (!Util.Maths.isRectVisible(rect, targetWidth, targetHeight))
                 return;
 
+            //Bind to GL_TEXTURE0 and GL_TEXTURE1
+            shaderIndexedBitmapSprite["indexTexture"].SetValue(0);
+            shaderIndexedBitmapSprite["paletteTexture"].SetValue(1);
+
             shaderIndexedBitmapSprite["orthoMatrix"].SetValue(
                 Util.Maths.matrixPixelProjection(rect, targetWidth, targetHeight));
 

@@ -38,7 +38,6 @@ namespace Polys.Video
             set
             {
                 Gl.BindFramebuffer(FramebufferTarget.Framebuffer, value.BufferID);
-                Gl.DrawBuffer(DrawBufferMode.ColorAttachment0); //Do I need this here?
                 Gl.Viewport(0, 0, value.Size.Width, value.Size.Height);
             }
 
@@ -57,20 +56,31 @@ namespace Polys.Video
             Gl.Clear(ClearBufferMask.ColorBufferBit);
         }
 
+        static ShaderProgram mShader;
         public static ShaderProgram shader
         {
             set
             {
+                if (mShader == value)
+                    return;
+                mShader = value;
                 value.Use();
+            }
+            get
+            {
+                return mShader;
             }
         }
 
         static int geomVertexCount = 0;
 
+        static GeometryGPU mGeometry;
         public static GeometryGPU geometry
         {
             set
             {
+                if (mGeometry == value)
+                    return;
                 geomVertexCount = value.vertexCount;
                 Gl.BindBuffer(BufferTarget.ArrayBuffer, value.vbo);
                 Gl.EnableVertexAttribArray(0);

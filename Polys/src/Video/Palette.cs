@@ -9,7 +9,7 @@ namespace Polys.Video
         byte[] colours = new byte[256 * 4];
 
         //The GL texture handle
-        uint colourTexture = ~0u;
+        public uint colourTexture = ~0u;
 
         /** Sets the transparent colour of the palette. By default this is the first colour. */
         public void setTransparentColour(int index)
