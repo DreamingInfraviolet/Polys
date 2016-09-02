@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Polys.Game
 {
+    [System.Runtime.InteropServices.ComVisible(true)]
     public class World : IScriptInitialisable, System.IDisposable
     {
         public States.StateManager stateManager = new States.StateManager(new States.MainMenuState());

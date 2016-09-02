@@ -102,6 +102,7 @@
     <Compile Include="src\Video\Camera.cs" />
     <Compile Include="src\Video\Colour.cs" />
     <Compile Include="src\Video\Effect.cs" />
+    <Compile Include="src\Video\Framebuffer.cs" />
     <Compile Include="src\Video\UI\Button.cs" />
     <Compile Include="src\Video\UI\ButtonList.cs" />
     <Compile Include="src\Video\UI\Font.cs" />
@@ -122,7 +123,7 @@
     <Compile Include="src\Game\World.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="src\App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

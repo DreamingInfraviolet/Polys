@@ -27,7 +27,7 @@ namespace Polys.Video
 
             this.lowResWidth = lowResWidth;
             this.lowResHeight = lowResHeight;
-            lowResBuffer = createFramebuffer(lowResWidth, lowResHeight);
+            lowResBuffer = new Framebuffer(lowResWidth, lowResHeight);
         }
 
         /** Shuts down the system, disposing of resources. */
@@ -41,18 +41,15 @@ namespace Polys.Video
         /** The render target framebuffer */
         public void bind()
         {
-            LowLevelRenderer.framebuffer = lowResBuffer;
+            lowResBuffer.bind();
         }
         
         /** Clears all the internal buffers. */
         public void clear()
         {
-            LowLevelRenderer.framebuffer = sourceFxBuffer;
-            LowLevelRenderer.clear();
-            LowLevelRenderer.framebuffer = targetFxBuffer;
-            LowLevelRenderer.clear();
-            LowLevelRenderer.framebuffer = lowResBuffer;
-            LowLevelRenderer.clear();
+            sourceFxBuffer.clear();
+            targetFxBuffer.clear();
+            lowResBuffer.clear();
             LowLevelRenderer.resetFramebuffer(highResWidth, highResHeight);
             LowLevelRenderer.clear();
         }
@@ -68,8 +65,8 @@ namespace Polys.Video
             if (targetIsScreen)
                 LowLevelRenderer.resetFramebuffer(highResWidth, highResHeight);
             else
-                LowLevelRenderer.framebuffer = sourceFxBuffer;
-            
+                sourceFxBuffer.bind();
+
             //Set target size uniforms
             HighLevelRenderer.shaderDrawSprite["transformMatrix"].SetValue(
                 Util.Maths.matrixFitRectIntoScreen(lowResWidth, lowResHeight, highResWidth, highResHeight));
@@ -80,7 +77,7 @@ namespace Polys.Video
                                                                                             0,0,0,1}));
             
             //Bind source texture
-            Gl.BindTexture(TextureTarget.Texture2D, lowResBuffer.TextureID[0]);
+            Gl.BindTexture(TextureTarget.Texture2D, lowResBuffer.textures[0]);
 
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
             LowLevelRenderer.draw();
@@ -94,7 +91,7 @@ namespace Polys.Video
             HighLevelRenderer.shaderDrawSprite["uvMatrix"].SetValue(Matrix4.Identity);
             
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            Gl.BindTexture(TextureTarget.Texture2D, sourceFxBuffer.TextureID[0]);
+            Gl.BindTexture(TextureTarget.Texture2D, sourceFxBuffer.textures[0]);
 
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
             LowLevelRenderer.draw();
@@ -107,19 +104,19 @@ namespace Polys.Video
             highResHeight = height;
             
             disposeOfFxBuffers();
-            sourceFxBuffer = createFramebuffer(width, height);
-            targetFxBuffer = createFramebuffer(width, height);
+            sourceFxBuffer = new Framebuffer(width, height);
+            targetFxBuffer = new Framebuffer(width, height);
         }
 
         /** Applies an effect to the high res buffer. */
         public void applyEffect(Effect effect, long timeParameter)
         {
-            LowLevelRenderer.framebuffer = targetFxBuffer;
+            targetFxBuffer.bind();
 
             effect.bind();
             effect.setUniforms(timeParameter);
             
-            Gl.BindTexture(TextureTarget.Texture2D, sourceFxBuffer.TextureID[0]);
+            Gl.BindTexture(TextureTarget.Texture2D, sourceFxBuffer.textures[0]);
 
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
             LowLevelRenderer.draw();
@@ -132,7 +129,7 @@ namespace Polys.Video
         #region Private
 
         //The three framebuffer objects in use if effects are enabled.
-        FBO sourceFxBuffer, targetFxBuffer, lowResBuffer;
+        Framebuffer sourceFxBuffer, targetFxBuffer, lowResBuffer;
 
         //The high resolution buffer dimensions
         int highResWidth, highResHeight;
@@ -157,7 +154,7 @@ namespace Polys.Video
         }
         void flipBuffers()
         {
-            FBO tmp = sourceFxBuffer;
+            var tmp = sourceFxBuffer;
             sourceFxBuffer = targetFxBuffer;
             targetFxBuffer = sourceFxBuffer;
         }

@@ -37,6 +37,8 @@ namespace Polys.Video
         {
             set
             {
+                if (value == null)
+                    return;
                 Gl.BindFramebuffer(FramebufferTarget.Framebuffer, value.BufferID);
                 Gl.Viewport(0, 0, value.Size.Width, value.Size.Height);
             }
