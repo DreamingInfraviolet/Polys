@@ -32,7 +32,7 @@ namespace Polys.Video
         public void updateWindowSize()
         {
             SDL.SDL_GetWindowSize(window, out this.width, out this.height);
-            framebufferManager.resize(width, height);
+            framebufferManager.resizeHighRes(width, height);
             Gl.Viewport(0, 0, width, height);
         }
 
@@ -95,13 +95,15 @@ namespace Polys.Video
             //Draw all to low res target
             world.stateManager.draw();
 
-            framebufferManager.lowresToHighres(!postFx);
+            framebufferManager.finalise();
 
+            /*
             if (postFx)
             {
                 //Apply effects here
                 framebufferManager.highresToScreen();
             }
+            */
 
             //Present to the user
             SDL.SDL_GL_SwapWindow(window);
@@ -149,6 +151,8 @@ namespace Polys.Video
         {
             //Post effects?
             postFx = ScriptManager.retrieveValue(table, "postFx", 1) != 0;
+            framebufferManager.highresFxActive(postFx);
+            framebufferManager.lowresFxActive(postFx);
 
             //Set vsync on/off
             SDL.SDL_GL_SetSwapInterval((ScriptManager.retrieveValue(table, "vsync", 0) != 0) ? 1 : 0);

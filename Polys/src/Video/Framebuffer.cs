@@ -7,18 +7,6 @@ namespace Polys.Video
     {
         FBO fbo;
 
-        public uint[] textures
-        {
-            get
-            {
-                return fbo.TextureID;
-            }
-            private set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public Framebuffer(int width, int height)
         {
             resize(width, height);
@@ -71,8 +59,14 @@ namespace Polys.Video
             LowLevelRenderer.framebuffer = fbo;
         }
 
+        public FBO framebuffer()
         {
             return fbo;
+        }
+
+        public uint[] textures()
+        {
+            return fbo.TextureID;
         }
     }
 }

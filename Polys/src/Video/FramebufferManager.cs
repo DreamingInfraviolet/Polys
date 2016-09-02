@@ -13,8 +13,7 @@ namespace Polys.Video
     public class FramebufferManager : IDisposable
     {
         #region Public
-        //The low resolution buffer dimensions
-        /*public int lowResWidth
+        public int lowResWidth
         {
             get { return lowResBuffer.width(); }
         }
@@ -30,9 +29,7 @@ namespace Polys.Video
         public int highResHeight
         {
             get { return highResBuffer.height(); }
-        }*/
-        public int lowResWidth  { get; private set; }
-        public int lowResHeight { get; private set;  }
+        }
 
         /** Initialises the renderer, creating the internal buffers with the given dimensions. */
         public FramebufferManager(int width, int height, int lowResWidth, int lowResHeight)
@@ -40,10 +37,7 @@ namespace Polys.Video
             HighLevelRenderer.shaderDrawSprite = Video.loadShader("drawSprite");
             HighLevelRenderer.shaderIndexedBitmapSprite = Video.loadShader("indexedBitmapSprite");
 
-            resize(width, height);
-
-            this.lowResWidth = lowResWidth;
-            this.lowResHeight = lowResHeight;
+            highResBuffer = new Framebuffer(width, height);
             lowResBuffer = new Framebuffer(lowResWidth, lowResHeight);
         }
 
@@ -64,68 +58,91 @@ namespace Polys.Video
         /** Clears all the internal buffers. */
         public void clear()
         {
-            sourceFxBuffer.clear();
-            targetFxBuffer.clear();
+            highResBuffer.clear();
             lowResBuffer.clear();
             LowLevelRenderer.resetFramebuffer(highResWidth, highResHeight);
             LowLevelRenderer.clear();
         }
 
-        /** Copies the low resolution target onto the high resolution target.
-          * If targetIsScreen is false, it is copied into one of the internal buffers.
-          * otherwise it copies directly onto the screen. */
-        public void lowresToHighres(bool targetIsScreen)
+        public void copyFramebuffer(IFramebuffer source, IFramebuffer target, bool fromLowres)
         {
             //Bind shader
             LowLevelRenderer.shader = HighLevelRenderer.shaderDrawSprite;
-
-            if (targetIsScreen)
-                LowLevelRenderer.resetFramebuffer(highResWidth, highResHeight);
-            else
-                sourceFxBuffer.bind();
+            target.bind();
 
             //Set target size uniforms
-            HighLevelRenderer.shaderDrawSprite["transformMatrix"].SetValue(
-                Util.Maths.matrixFitRectIntoScreen(lowResWidth, lowResHeight, highResWidth, highResHeight));
+            var tmatrix = fromLowres ? Util.Maths.matrixFitRectIntoScreen(lowResWidth, lowResHeight, highResWidth, highResHeight)
+                                     : Matrix4.Identity;
+                                        
+            HighLevelRenderer.shaderDrawSprite["transformMatrix"].SetValue(tmatrix);
 
+            float yflip = fromLowres ? -1 : 1;
             HighLevelRenderer.shaderDrawSprite["uvMatrix"].SetValue(new Matrix4(new float[] {1,0,0,0,
-                                                                                            0,-1,0,0,
+                                                                                            0,yflip,0,0,
                                                                                             0,0,0,0,
                                                                                             0,0,0,1}));
-            
             //Bind source texture
-            Gl.BindTexture(TextureTarget.Texture2D, lowResBuffer.textures[0]);
-
+            Gl.BindTexture(TextureTarget.Texture2D, source.textures()[0]);
             LowLevelRenderer.geometry = LowLevelRenderer.quad;
             LowLevelRenderer.draw();
         }
 
-        /** Copies the content of the current high resolution buffer to the screen */
-        public void highresToScreen()
+        public void lowresFxActive(bool active)
         {
-            LowLevelRenderer.shader = HighLevelRenderer.shaderDrawSprite;
-            HighLevelRenderer.shaderDrawSprite["transformMatrix"].SetValue(Matrix4.Identity);
-            HighLevelRenderer.shaderDrawSprite["uvMatrix"].SetValue(Matrix4.Identity);
-            
-            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            Gl.BindTexture(TextureTarget.Texture2D, sourceFxBuffer.textures[0]);
+            var w = lowResBuffer.width();
+            var h = lowResBuffer.height(); 
+            lowResBuffer.Dispose();
+            if (active)
+                lowResBuffer = new DoubleFramebuffer(w, h);
+            else
+                lowResBuffer = new Framebuffer(w, h);
+        }
 
-            LowLevelRenderer.geometry = LowLevelRenderer.quad;
-            LowLevelRenderer.draw();
+        public void highresFxActive(bool active)
+        {
+            var w = highResBuffer.width();
+            var h = highResBuffer.height();
+            highResBuffer.Dispose();
+            if (active)
+                highResBuffer = new DoubleFramebuffer(w, h);
+            else
+            {
+                highResBuffer = screenFramebuffer;
+            }
+            resizeHighRes(w, h);
         }
 
         /** Resizes all of the internal framebuffers to the given size. */
-        public void resize(int width, int height)
+        public void resizeHighRes(int width, int height)
         {
-            highResWidth = width;
-            highResHeight = height;
-            
-            disposeOfFxBuffers();
-            sourceFxBuffer = new Framebuffer(width, height);
-            targetFxBuffer = new Framebuffer(width, height);
+            highResBuffer.resize(width, height);
+            screenFramebuffer.resize(width, height);
+        }
+
+        public void finalise()
+        {
+           
+            // This should be a method really :)
+            if(lowResBuffer.GetType() == typeof(DoubleFramebuffer))
+            {
+                var doublebuffer = (DoubleFramebuffer)lowResBuffer;
+                // ... apply low res effects here
+            }
+            copyFramebuffer(lowResBuffer, highResBuffer, true);
+            if (highResBuffer.GetType() == typeof(ScreenFramebuffer))
+            {
+                // Nothing to do, image is already on screen
+            }
+            else if(highResBuffer.GetType() == typeof(DoubleFramebuffer))
+            {
+                var doublebuffer = (DoubleFramebuffer)highResBuffer;
+                // ... apply high res effects here
+                copyFramebuffer(highResBuffer, screenFramebuffer, false);
+            }
         }
 
         /** Applies an effect to the high res buffer. */
+        /*
         public void applyEffect(Effect effect, long timeParameter)
         {
             targetFxBuffer.bind();
@@ -140,17 +157,15 @@ namespace Polys.Video
 
             flipBuffers();
         }
+        */
 
         #endregion
 
         #region Private
 
         //The three framebuffer objects in use if effects are enabled.
-        Framebuffer sourceFxBuffer, targetFxBuffer, lowResBuffer;
-
-        //The high resolution buffer dimensions
-        int highResWidth, highResHeight;
-
+        IFramebuffer highResBuffer, lowResBuffer;
+        ScreenFramebuffer screenFramebuffer = new ScreenFramebuffer();
 
         /** Creates a framebuffer, setting the correct texture filtering properties. */
         static FBO createFramebuffer(int width, int height)
@@ -164,18 +179,10 @@ namespace Polys.Video
 
         void disposeOfFxBuffers()
         {
-            if (sourceFxBuffer != null)
-                sourceFxBuffer.Dispose();
-            if (targetFxBuffer != null)
-                targetFxBuffer.Dispose();
+            highResBuffer.Dispose();
+            lowResBuffer.Dispose();
         }
-        void flipBuffers()
-        {
-            var tmp = sourceFxBuffer;
-            sourceFxBuffer = targetFxBuffer;
-            targetFxBuffer = sourceFxBuffer;
-        }
-
+            
         #endregion
     }
 }

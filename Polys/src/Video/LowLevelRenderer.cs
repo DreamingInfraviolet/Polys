@@ -83,6 +83,7 @@ namespace Polys.Video
             {
                 if (mGeometry == value)
                     return;
+                mGeometry = value;
                 geomVertexCount = value.vertexCount;
                 Gl.BindBuffer(BufferTarget.ArrayBuffer, value.vbo);
                 Gl.EnableVertexAttribArray(0);
