@@ -14,6 +14,23 @@ namespace Polys.Video
     {
         #region Public
         //The low resolution buffer dimensions
+        /*public int lowResWidth
+        {
+            get { return lowResBuffer.width(); }
+        }
+        public int lowResHeight
+        {
+            get { return lowResBuffer.height(); }
+        }
+
+        public int highResWidth
+        {
+            get { return highResBuffer.width(); }
+        }
+        public int highResHeight
+        {
+            get { return highResBuffer.height(); }
+        }*/
         public int lowResWidth  { get; private set; }
         public int lowResHeight { get; private set;  }
 

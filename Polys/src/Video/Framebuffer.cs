@@ -3,7 +3,7 @@ using OpenGL;
 
 namespace Polys.Video
 {
-    class Framebuffer : IDisposable
+    class Framebuffer : IFramebuffer, IDisposable
     {
         FBO fbo;
 
@@ -33,9 +33,15 @@ namespace Polys.Video
             return ret;
         }
 
-        public int width { get; private set; }
+        public int width()
+        {
+            return fbo.Size.Width;
+        }
 
-        public int height { get; private set; }
+        public int height()
+        {
+            return fbo.Size.Height;
+        }
 
         public void resize(int width, int height)
         {
@@ -63,6 +69,10 @@ namespace Polys.Video
         public void bind()
         {
             LowLevelRenderer.framebuffer = fbo;
+        }
+
+        {
+            return fbo;
         }
     }
 }

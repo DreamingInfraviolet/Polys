@@ -93,6 +93,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\ScriptManager.cs" />
     <Compile Include="src\Time.cs" />
+    <Compile Include="src\Util\DoubleBuffer.cs" />
     <Compile Include="src\Util\Maths.cs" />
     <Compile Include="src\Util\Pair.cs" />
     <Compile Include="src\Util\ObjectCache.cs" />
@@ -101,8 +102,11 @@
     <Compile Include="src\Util\Util.cs" />
     <Compile Include="src\Video\Camera.cs" />
     <Compile Include="src\Video\Colour.cs" />
+    <Compile Include="src\Video\DoubleFramebuffer.cs" />
     <Compile Include="src\Video\Effect.cs" />
     <Compile Include="src\Video\Framebuffer.cs" />
+    <Compile Include="src\Video\IFramebuffer.cs" />
+    <Compile Include="src\Video\ScreenFramebuffer.cs" />
     <Compile Include="src\Video\UI\Button.cs" />
     <Compile Include="src\Video\UI\ButtonList.cs" />
     <Compile Include="src\Video\UI\Font.cs" />
